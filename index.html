@@ -98,7 +98,7 @@ header.top .wrap{display:flex;flex-direction:column;gap:14px}
   font-size:clamp(15px,2.4vw,20px);color:var(--ink);margin:0 0 8px;
 }
 .h-meta{
-  font-family:var(--mono);font-size:11.5px;color:var(--muted-2);
+  font-family:var(--head);font-size:12.5px;color:var(--muted-2);
   display:flex;flex-wrap:wrap;gap:5px 14px;letter-spacing:.02em;
 }
 .h-meta b{color:var(--ink);font-weight:500}
@@ -141,7 +141,7 @@ main section.block + section.block{border-top:1px solid var(--hair)}
   font-size:clamp(52px,13.6vw,116px);font-weight:700;line-height:.88;letter-spacing:-.022em;
 }
 .hero-stat .cap{padding-bottom:10px}
-.hero-stat .cap .u{font-family:var(--mono);font-size:15px;color:var(--muted);display:block}
+.hero-stat .cap .u{font-family:var(--head);font-weight:500;font-size:16px;color:var(--muted);display:block}
 .hero-stat .cap .lbl{
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--muted-2);margin-top:4px;
@@ -169,7 +169,7 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 .callout.insight{background:linear-gradient(100deg, rgba(255,45,75,.055), rgba(255,45,75,.012));border-color:rgba(255,45,75,.20);margin-top:24px}
 .callout.insight .ct{font-size:15px}
 .alerts-cap{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin:0 0 12px}
-.rank-hint{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted-2);align-self:center;margin-left:2px}
+.rank-hint{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted-2);align-self:center;margin-left:2px}
 
 /* ---------- Controles (segmented + toggle) ---------- */
 .controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:6px 0 20px}
@@ -191,7 +191,7 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 }
 .rrow:hover,.rrow:focus-visible{background:rgba(255,45,75,.06);border-color:rgba(255,45,75,.22);outline:none}
 .rrow:hover .bar>i{filter:brightness(1.25)}
-.rrow .plate{font-family:var(--mono);font-weight:500;font-size:13px;letter-spacing:.02em;color:var(--ink)}
+.rrow .plate{font-family:var(--title);font-weight:700;font-size:15px;letter-spacing:.01em;color:var(--ink)}
 .rrow .who{min-width:0}
 .rrow .model{font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:6px}
 .rrow .mname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -200,7 +200,7 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 .bar>i{display:block;height:100%;width:0;border-radius:6px;
   background:linear-gradient(90deg,var(--crimson-2),var(--crimson) 60%,var(--magenta));
   box-shadow:0 0 14px rgba(255,45,75,.4);transition:width .9s cubic-bezier(.22,1,.36,1),filter .2s}
-.rrow .kv{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:500;text-align:right;color:var(--ink);white-space:nowrap}
+.rrow .kv{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;text-align:right;color:var(--ink);white-space:nowrap}
 .rrow .kv small{display:block;font-size:10px;color:var(--muted-2);letter-spacing:.1em;text-transform:uppercase;font-weight:400;margin-top:2px}
 .more{
   margin-top:14px;font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--crimson);
@@ -215,13 +215,13 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 body:not(.light) #rzMap .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.82) saturate(.35)}
 body.light #rzMap{background:#ECEBE8}
 .heat-cities{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.heat-cities .hc{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted);border:1px solid var(--hair);border-radius:999px;padding:6px 12px}
-.heat-cities .hc b{color:var(--ink);font-weight:500}
+.heat-cities .hc{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted);border:1px solid var(--hair);border-radius:999px;padding:6px 12px}
+.heat-cities .hc b{font-family:var(--title);font-weight:700;color:var(--ink)}
 @media (max-width:640px){#rzMap{height:320px}}
 /* navegação rápida do mapa */
 .mchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px;padding-bottom:2px}
 .mchips::-webkit-scrollbar{display:none}
-.mchips button{flex:0 0 auto;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted);
+.mchips button{flex:0 0 auto;font-family:var(--title);font-weight:700;font-size:12.5px;letter-spacing:.01em;color:var(--muted);
   background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 12px;cursor:pointer;
   transition:color .18s,border-color .18s,background .18s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
 .mchips button:hover{color:var(--ink);border-color:rgba(255,45,75,.4)}
@@ -240,15 +240,19 @@ body.light .map-tools button{background:rgba(255,255,255,.92);color:#16161A;bord
 .map-lock span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   color:#fff;background:rgba(14,10,14,.85);border:1px solid rgba(255,45,75,.4);border-radius:999px;padding:8px 14px}
 body.light .map-lock span{background:rgba(255,255,255,.95);color:#16161A;border-color:rgba(200,20,48,.35)}
-.dlt{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle;border:1px solid;white-space:nowrap}
+.dlt{display:inline-block;font-family:var(--head);font-weight:600;font-size:10.5px;letter-spacing:.02em;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle;border:1px solid;white-space:nowrap}
 .dlt.good{color:#37D18A;border-color:rgba(55,209,138,.4)}
 .dlt.bad{color:#FF5A78;border-color:rgba(255,45,75,.4)}
 .dlt.neu{color:var(--muted);border-color:var(--hair)}
 body.light .dlt.good{color:#1C7A45;border-color:rgba(28,122,69,.4)}
 body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
-#rzMap .leaflet-tooltip{font-family:var(--mono);font-size:11.5px;line-height:1.5;border-radius:8px;border:1px solid rgba(224,30,55,.45);background:rgba(255,255,255,.96);color:#16161A;box-shadow:0 6px 22px rgba(0,0,0,.25)}
+#rzMap .leaflet-tooltip{font-family:var(--head);font-weight:500;font-size:12.5px;line-height:1.5;border-radius:8px;border:1px solid rgba(224,30,55,.45);background:rgba(255,255,255,.96);color:#16161A;box-shadow:0 6px 22px rgba(0,0,0,.25)}
 #rzMap .leaflet-tooltip b{color:#C81430}
 #rzMap .leaflet-interactive{cursor:pointer}
+/* controles do Leaflet vem com fonte propria (Lucida Console / Helvetica) · trazidos pro sistema */
+#rzMap .leaflet-control-zoom a{font-family:var(--title);font-weight:700;text-decoration:none}
+#rzMap .leaflet-control-attribution,#rzMap .leaflet-control-attribution a,#rzMap .leaflet-popup-content{
+  font-family:var(--head);font-weight:500;font-size:10.5px}
 
 /* ---------- Vigilância ---------- */
 .vig-top{display:grid;grid-template-columns:auto 1fr;gap:38px;align-items:center;
@@ -266,7 +270,7 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .dot{width:9px;height:9px;border-radius:50%;background:#37d18a;flex:0 0 auto;position:relative;top:1px;box-shadow:0 0 0 0 rgba(55,209,138,.5);animation:pulse 2.6s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(55,209,138,.45)}70%{box-shadow:0 0 0 7px rgba(55,209,138,0)}100%{box-shadow:0 0 0 0 rgba(55,209,138,0)}}
 .indic .it{font-size:14.5px;color:var(--ink)}
-.indic .it b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500;color:#fff}
+.indic .it b{font-family:var(--title);font-variant-numeric:tabular-nums;font-weight:700;font-size:1.08em;color:#fff}
 .anchor{margin:26px 0 6px;font-family:var(--title);font-size:clamp(19px,3vw,28px);font-weight:700;letter-spacing:-.005em;line-height:1.12;text-wrap:balance}
 .alerts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
 .acard{background:var(--panel);border:1px solid var(--panel-b);border-radius:12px;padding:18px 20px}
@@ -285,12 +289,12 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .col.attn h3{color:var(--crimson)}
 .crow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:.18s}
 .crow:hover{background:rgba(255,45,75,.06);border-color:rgba(255,45,75,.2)}
-.crow .cp{font-family:var(--mono);font-weight:500;font-size:13px;color:var(--ink)}
-.crow .cs{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:500;padding:2px 10px;border-radius:6px;min-width:44px;text-align:center}
+.crow .cp{font-family:var(--title);font-weight:700;font-size:15px;color:var(--ink)}
+.crow .cs{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;padding:2px 10px;border-radius:6px;min-width:44px;text-align:center}
 .cs.good{color:#37d18a;background:rgba(55,209,138,.12)}
 .cs.mid{color:var(--ink);background:rgba(255,255,255,.07)}
 .cs.warn{color:#ff7a4d;background:rgba(255,122,77,.14)}
-.crow .cx{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;color:var(--muted);white-space:nowrap}
+.crow .cx{font-family:var(--head);font-weight:500;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--muted);white-space:nowrap}
 
 /* ---------- Drill-down (ficha do veículo) ---------- */
 .ovl{position:fixed;inset:0;z-index:60;background:rgba(4,3,4,.66);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
@@ -310,16 +314,16 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .sheet .sm{color:var(--muted);font-size:14px;margin-bottom:22px}
 .sheet .drow{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--hair)}
 .sheet .drow .dl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2)}
-.sheet .drow .dv{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:16px;color:var(--ink);text-align:right}
+.sheet .drow .dv{font-family:var(--title);font-variant-numeric:tabular-nums;font-weight:700;font-size:18px;color:var(--ink);text-align:right}
 .sheet .dv.crim{color:var(--crimson)}
-.sheet .note{font-family:var(--mono);font-size:11px;color:var(--muted-2);margin-top:20px;line-height:1.6}
+.sheet .note{font-family:var(--head);font-weight:500;font-size:12.5px;color:var(--muted-2);margin-top:20px;line-height:1.6}
 
 /* ---------- Footer ---------- */
 footer.bot{border-top:1px solid var(--hair);padding:30px 0;margin-top:40px;position:relative}
 footer.bot::before{content:"";position:absolute;top:-1px;left:0;width:120px;height:2px;background:linear-gradient(90deg,var(--crimson),transparent)}
 footer.bot .wrap{display:flex;flex-direction:column;gap:10px}
 footer.bot .slogan{font-size:15px;font-weight:600;letter-spacing:-.01em}
-footer.bot .f-line{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+footer.bot .f-line{font-family:var(--head);font-weight:500;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
 footer.bot b{color:var(--ink);font-weight:500}
 
 /* ---------- Botão PDF ---------- */
@@ -345,8 +349,8 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .dline{display:flex;align-items:baseline;gap:12px;padding:14px 18px;background:rgba(10,7,10,.55);text-decoration:none;transition:background .2s}
 .dline:hover{background:rgba(255,45,75,.07)}
 .dline .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);flex:1 1 auto;min-width:0}
-.dline .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:17px;font-weight:500;color:var(--ink);white-space:nowrap}
-.dline .go{font-family:var(--mono);color:var(--crimson);font-size:15px;flex:0 0 auto;align-self:center}
+.dline .v{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:19px;font-weight:700;color:var(--ink);white-space:nowrap}
+.dline .go{font-family:var(--head);color:var(--crimson);font-size:16px;flex:0 0 auto;align-self:center}
 .dline.act{flex-wrap:wrap}
 .dline.act .k{flex-basis:100%}
 .dline.act .v{white-space:normal;font-family:var(--head);font-size:14.5px;font-weight:500;line-height:1.4;flex:1 1 0;min-width:0}
@@ -367,34 +371,34 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .kmbar.we{fill:var(--muted-2);opacity:.55}
 .kmbar.pk{fill:var(--magenta);opacity:1}
 /* rótulos de escala (régua horizontal), no canto esquerdo sobre as linhas */
-.km-scale{position:absolute;left:0;transform:translateY(-50%);font-family:var(--mono);font-size:9px;line-height:1;color:var(--muted-2);background:var(--bg);padding:1px 4px 1px 0;pointer-events:none}
+.km-scale{position:absolute;left:0;transform:translateY(-50%);font-family:var(--title);font-weight:700;font-size:10px;line-height:1;color:var(--muted-2);background:var(--bg);padding:1px 4px 1px 0;pointer-events:none}
 /* rótulo do dia de pico, ancorado sobre a barra mais alta */
-.km-peak{position:absolute;top:0;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;line-height:1.15;color:var(--muted);white-space:nowrap;text-align:center;pointer-events:none;z-index:2}
-.km-peak b{display:block;color:var(--magenta);font-weight:600;font-size:12px}
+.km-peak{position:absolute;top:0;transform:translateX(-50%);font-family:var(--head);font-weight:500;font-size:11px;line-height:1.15;color:var(--muted);white-space:nowrap;text-align:center;pointer-events:none;z-index:2}
+.km-peak b{display:block;font-family:var(--title);color:var(--magenta);font-weight:700;font-size:14px}
 .km-peak::after{content:"";display:block;width:1px;height:8px;background:var(--magenta);margin:3px auto 0;opacity:.7}
 /* tooltip por barra · hover no desktop, toque no mobile */
-.km-tip{position:absolute;top:-2px;transform:translate(-50%,-100%);font-family:var(--mono);font-size:11px;white-space:nowrap;color:var(--ink);background:var(--bg2);border:1px solid var(--panel-b);border-radius:8px;padding:5px 9px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:3}
+.km-tip{position:absolute;top:-2px;transform:translate(-50%,-100%);font-family:var(--head);font-weight:500;font-size:12px;white-space:nowrap;color:var(--ink);background:var(--bg2);border:1px solid var(--panel-b);border-radius:8px;padding:5px 9px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:3}
 .km-tip.on{opacity:1}
-.km-tip b{color:var(--magenta);font-weight:600}
-.km-hint{display:block;margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--muted-2)}
+.km-tip b{font-family:var(--title);color:var(--magenta);font-weight:700;font-size:1.1em}
+.km-hint{display:block;margin-top:10px;font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted-2)}
 /* eixo de dias sob o gráfico */
 .km-axis{position:relative;height:14px;margin-top:6px}
-.km-axis span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--mono);font-size:10px;color:var(--muted-2)}
-.km-leg{margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.km-leg b{color:var(--ink);font-weight:500}
+.km-axis span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--title);font-weight:700;font-size:11px;color:var(--muted-2)}
+.km-leg{margin-top:14px;font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.km-leg b{font-family:var(--title);color:var(--ink);font-weight:700}
 .km-leg .lg{display:inline-flex;align-items:center;gap:6px;margin-right:14px}
 .km-sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 auto}
 .km-sw.wk{background:var(--crimson);opacity:.82}
 .km-sw.we{background:var(--muted-2);opacity:.55}
 .km-sw.pk{background:var(--magenta)}
 /* utilização · uma linha por veículo, número grande de dias + barrinha + quadradinhos */
-.km-sub{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--muted);margin:-4px 0 16px}
+.km-sub{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted);margin:-4px 0 16px}
 .urow{padding:16px 0;border-bottom:1px solid var(--hair)}
 .urow:last-child{border-bottom:0}
 .uhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:9px}
-.uplate{font-family:var(--mono);font-size:13px;color:var(--ink);letter-spacing:.02em;white-space:nowrap}
-.udias{font-family:var(--mono);color:var(--muted);font-size:12.5px}
-.udias b{font-variant-numeric:tabular-nums;font-size:23px;font-weight:600;color:var(--ink);margin-right:2px}
+.uplate{font-family:var(--title);font-weight:700;font-size:15px;color:var(--ink);letter-spacing:.01em;white-space:nowrap}
+.udias{font-family:var(--head);font-weight:500;color:var(--muted);font-size:13px}
+.udias b{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:25px;font-weight:700;color:var(--ink);margin-right:3px}
 .usub{margin-left:auto}
 .ubar{height:8px;background:var(--hair);border-radius:5px;overflow:hidden;margin-bottom:11px;max-width:440px}
 .ubar>i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--crimson-2),var(--crimson))}
@@ -404,7 +408,7 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .ucell.on{background:var(--crimson);opacity:.9}
 .ucell.ulg{margin:0 2px 0 6px;display:inline-block}
 /* manutenção preventiva */
-.mnt-odo{margin-top:4px;font-family:var(--mono);color:var(--muted-2)}
+.mnt-odo{margin-top:4px;font-family:var(--head);font-weight:500;color:var(--muted-2)}
 .mnt-note{margin-top:12px}
 /* benchmark vs mercado */
 .bmlist{margin-top:8px}
@@ -419,8 +423,8 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .bbar>i.avg{background:linear-gradient(90deg,#7a7280,#9b9096)}
 .bbar>i.you.ok{background:linear-gradient(90deg,#2FB574,#37D18A);box-shadow:0 0 12px rgba(55,209,138,.32)}
 .bbar>i.you.bad{background:linear-gradient(90deg,var(--crimson-2),var(--crimson));box-shadow:0 0 12px rgba(255,45,75,.32)}
-.bm-v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:500;color:var(--ink);text-align:right}
-.bm-read{font-family:var(--mono);font-size:12.5px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+.bm-v{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;color:var(--ink);text-align:right}
+.bm-read{font-family:var(--head);font-weight:500;font-size:14px;line-height:1.55;color:var(--muted);margin:12px 0 0}
 .bm-read a{color:var(--crimson);text-decoration:none;border-bottom:1px solid rgba(255,45,75,.35)}
 .bm-read a:hover{border-bottom-color:var(--crimson)}
 /* mapa de calor de alertas · 7 dias × 4 períodos, número dentro da célula */
@@ -429,9 +433,9 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .hm-corner{}
 .hm-ph{font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted-2);text-align:center;line-height:1.25;align-self:end;padding-bottom:2px}
 .hm-ph small{display:block;font-size:9px;letter-spacing:0;text-transform:none;color:var(--muted-2);margin-top:2px;opacity:.85}
-.hm-day{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center}
+.hm-day{font-family:var(--head);font-weight:500;font-size:12px;letter-spacing:0;color:var(--muted);display:flex;align-items:center}
 .hm-cell{min-height:40px;border-radius:7px;background:var(--hair);display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;color:var(--ink)}
+  font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;color:var(--ink)}
 .hm-cell.z{color:var(--muted-2);font-weight:400}
 .hm-leg{display:flex;align-items:center;gap:10px;margin-top:14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
 .hm-ramp{flex:0 0 120px;height:9px;border-radius:5px;background:linear-gradient(90deg,rgba(255,45,75,.14),var(--crimson))}
@@ -1168,7 +1172,7 @@ function __boot(){
       v.alertas.forEach(function(a){ totalAlertas += (a.qtd||0); });
       h+='<p class="alerts-cap reveal">O que a central 24h viu e tratou</p>'+
          '<div class="alerts reveal">'+v.alertas.map(function(a){
-        var pl=(a.placas&&a.placas.length)?'<div class="at" style="margin-top:6px;font-family:var(--mono);color:var(--crimson)">'+a.placas.map(esc).join(' · ')+'</div>':'';
+        var pl=(a.placas&&a.placas.length)?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+a.placas.map(esc).join(' · ')+'</div>':'';
         return '<div class="acard"><div class="aq mono">'+nf(a.qtd)+'</div><div class="at">'+esc(a.tipo)+'</div>'+pl+'</div>';
       }).join('')+'</div>'+
       insightHtml('A central 24h tratou '+nf(totalAlertas)+' alertas neste mês · cada um é um olho que você não precisou ter.');
@@ -1180,7 +1184,7 @@ function __boot(){
         '<div class="alerts reveal">'+
           '<div class="acard"><div class="aq mono">'+sd2.comunicando+'/'+sd2.comunicando_total+'</div><div class="at">Rastreadores comunicando</div></div>'+
           '<div class="acard"><div class="aq mono">'+bf.length+'</div><div class="at">Bateria de veículo fraca</div>'+
-            (bf.length?'<div class="at" style="margin-top:6px;font-family:var(--mono);color:var(--crimson)">'+
+            (bf.length?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+
               bf.map(function(x){ return esc(x.placa)+' · '+String(x.volts).replace('.',',')+' V'; }).join(' · ')+'</div>':'')+'</div>'+
           '<div class="acard"><div class="aq mono">'+(sd2.violacoes||0)+'</div><div class="at">Violações de equipamento</div></div>'+
         '</div>'+
