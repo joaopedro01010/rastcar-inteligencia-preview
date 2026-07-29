@@ -96,6 +96,7 @@ body{
 .tag.warn{color:#FF9E7A;background:rgba(255,122,77,.13);border-color:rgba(255,122,77,.40)}
 .tag.ghost{color:var(--muted);background:rgba(255,255,255,.04);border-color:var(--hair)}
 .tag + .tag{margin-left:6px}
+.tag[hidden]{display:none}
 
 /* ---------- Header (co-marca provedor + cliente) ---------- */
 header.top{padding:34px 0 26px}
@@ -1603,7 +1604,7 @@ function __boot(){
   ld.textContent = 'Carregando seu relatório…';
   document.body.appendChild(ld);
   fetch(API, { cache: 'no-store' })
-    .then(function(r){ if(!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function(r){ if(!r.ok){ var e = new Error('http ' + r.status); e.status = r.status; throw e; } return r.json(); })
     .then(function(d){
       window.RC_DADOS = d;
       ld.remove();
@@ -1614,8 +1615,11 @@ function __boot(){
         });
       }
     })
-    .catch(function(){
-      ld.innerHTML = '<div style="text-align:center;max-width:440px;padding:24px"><div style="font-size:12px;letter-spacing:.22em;color:#FF2D4B;margin-bottom:12px">RASTCAR · INTELIGÊNCIA</div><div style="font-size:18px;font-weight:700;margin-bottom:8px">Não foi possível carregar este relatório</div><div style="color:#a99e90;font-size:14px">Confira se o link está completo e correto.</div></div>';
+    .catch(function(err){
+      var pago = err && err.status === 402;
+      var titulo = pago ? 'Relatório indisponível no momento' : 'Não foi possível carregar este relatório';
+      var apoio  = pago ? 'Fale com a Rastcar para reativar o acesso · <span style="white-space:nowrap">(12) 3157-9090</span>' : 'Confira se o link está completo e correto.';
+      ld.innerHTML = '<div style="text-align:center;max-width:440px;padding:24px"><div style="font-size:12px;letter-spacing:.22em;color:#FF2D4B;margin-bottom:12px">RASTCAR · INTELIGÊNCIA</div><div style="font-size:18px;font-weight:700;margin-bottom:8px">' + titulo + '</div><div style="color:#a99e90;font-size:14px">' + apoio + '</div></div>';
     });
 })();
 
