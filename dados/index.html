@@ -209,13 +209,6 @@ img{max-width:100%}
   text-transform:uppercase;color:var(--muted-3);line-height:1.8;
 }
 
-/* sinal de rolagem · so a seta fina. Nao e botao, nao clica, nao anuncia.
-   Sem risco ao lado (o dono tirou o traco). */
-.scroll-cue{
-  display:inline-flex;align-items:center;margin-top:6px;color:var(--muted-2);
-}
-.scroll-cue svg{display:block;animation:cue 2.6s ease-in-out infinite}
-@keyframes cue{0%,72%{transform:translateY(0);opacity:.75}86%{transform:translateY(4px);opacity:1}100%{transform:translateY(0);opacity:.75}}
 
 /* --- a capa do relatorio flutuando · a primeira folha do deck --- */
 .hero-art{perspective:1600px;perspective-origin:50% 46%;min-width:0}
@@ -434,6 +427,29 @@ main section:empty{display:none}
   padding:9px 13px 8px;border-radius:999px;
   max-width:100%;white-space:normal;
 }
+/* No celular a lista em coluna vira uma pilha morta · vira TRILHO horizontal
+   com duas fileiras que correm juntas, arrastavel com o dedo. Mesma leitura
+   do desktop, sem virar lista. */
+@media(max-width:760px){
+  .chips{
+    display:grid;grid-auto-flow:column;grid-template-rows:repeat(2, auto);
+    grid-auto-columns:max-content;
+    gap:9px 9px;flex-wrap:nowrap;
+    overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    /* sangra ate a borda e devolve o respiro por dentro · o trilho encosta na
+       margem da tela, que e o sinal de "tem mais para o lado" */
+    margin-left:calc(var(--pad) * -1);margin-right:calc(var(--pad) * -1);
+    padding:0 var(--pad) 4px;
+    /* a ultima etiqueta desvanece na borda, convidando a arrastar */
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 88%,transparent 100%);
+            mask-image:linear-gradient(90deg,#000 0,#000 88%,transparent 100%);
+  }
+  .chips::-webkit-scrollbar{display:none}
+  .chips li{scroll-snap-align:start}
+  .chips .tag{white-space:nowrap}
+}
 
 /* etiquetas · a de vidro e a solida */
 .tag{
@@ -565,12 +581,10 @@ main section:empty{display:none}
 /* MELHOR VALOR e solida · 30% OFF e a mesma familia em tint, para as duas
    nao ficarem identicas coladas uma na outra */
 .p-chip--off{
-  /* mesmo rosa do valor riscado (#FF005B) com texto BRANCO · decisao do dono.
-     O par branco/rosa da 3,89:1 · abaixo do piso de 4,5 para texto pequeno,
-     entao a etiqueta cresce para 18,7px em peso 700, faixa em que a WCAG
-     considera TEXTO GRANDE (piso 3,0) e o par passa. Cor intacta. */
-  background:#FF005B;color:#FFFFFF;border:0;
-  font-size:max(calc(var(--w) * .0353), 18.7px);
+  /* etiqueta no MESMO tamanho da MELHOR VALOR · o rosa desceu de #FF005B para
+     #E70055 (indistinguivel a olho) porque so nesse ponto o branco passa o piso
+     de 4,5:1. O riscado usa o mesmo tom, entao os dois seguem identicos. */
+  background:#E70055;color:#FFFFFF;border:0;
 }
 .p-sub{
   font-family:var(--card-body);font-weight:400;
@@ -594,7 +608,7 @@ main section:empty{display:none}
 .p-was{
   /* o riscado usa o MESMO rosa da pilula 30% OFF · sobre o orbe rosa do fundo
      ele perdia leitura, entao ganha uma base clara propria que o sustenta */
-  font-size:calc(var(--w) * .0631);line-height:1;color:#FF005B;
+  font-size:calc(var(--w) * .0631);line-height:1;color:#E70055;
   text-decoration:line-through;text-decoration-thickness:.10em;
   margin-right:calc(var(--w) * .016);font-variant-numeric:tabular-nums;
 }
@@ -673,21 +687,68 @@ main section:empty{display:none}
   margin:calc(var(--w) * .050) 0 0;
 }
 .p-cta{
+  /* ====== O BOTAO DE COMPRA ======
+     E o elemento que decide a conversao, entao ele e o objeto mais bem
+     acabado da pagina. Grafite com material de verdade (nao retangulo
+     chapado): gradiente vertical, luz especular de 1px na aresta de cima,
+     sombra de contato curta + difusa longa, e um brilho que varre no hover.
+     Preto e branco de proposito · a cor viva ja e das etiquetas, o botao
+     ganha peso pelo material, nao por competir em cor. */
+  position:relative;overflow:hidden;isolation:isolate;
   margin-top:calc(var(--w) * .046);
-  display:inline-flex;align-items:center;justify-content:center;width:100%;
-  font-family:var(--head);font-weight:600;font-size:calc(var(--w) * .0435);
-  letter-spacing:-.01em;color:#fff;cursor:pointer;
-  min-height:52px;padding:calc(var(--w) * .036) calc(var(--w) * .04);
-  border:1px solid rgba(0,0,0,.9);border-radius:14px;
-  background:linear-gradient(180deg,#26262B,#141418);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),
-             0 1px 2px rgba(0,0,0,.16),
-             0 6px 16px -6px rgba(0,0,0,.24);
-  transition:transform .2s var(--ease),box-shadow .2s var(--ease);
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;width:100%;
+  font-family:var(--head);font-weight:600;font-size:calc(var(--w) * .0445);
+  letter-spacing:-.012em;color:#fff;cursor:pointer;
+  min-height:56px;padding:calc(var(--w) * .038) calc(var(--w) * .04);
+  border:1px solid rgba(0,0,0,.92);border-radius:15px;
+  background:linear-gradient(180deg,#32323A 0%,#1E1E24 46%,#121216 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 1px 2px rgba(18,14,24,.22),
+    0 10px 22px -8px rgba(18,14,24,.34);
+  transition:transform .22s var(--ease), box-shadow .22s var(--ease), filter .22s var(--ease);
+}
+/* seta que avanca · sinal de "vai para frente", nao enfeite */
+.p-cta::after{
+  content:"";width:.62em;height:.62em;flex:0 0 auto;
+  border:solid #fff;border-width:0 2px 2px 0;
+  transform:rotate(-45deg) translate(-1px,-1px);
+  opacity:.72;transition:transform .24s var(--ease), opacity .24s var(--ease);
+}
+/* brilho que varre a superficie no hover · o toque premium */
+.p-cta::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(105deg, transparent 34%, rgba(255,255,255,.16) 48%, transparent 62%);
+  transform:translateX(-130%);
+  transition:transform .72s cubic-bezier(.22,1,.36,1);
 }
 .p-cta:hover{
-  transform:translateY(-1px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 2px 4px rgba(0,0,0,.16), 0 10px 22px -8px rgba(0,0,0,.30);
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 2px 4px rgba(18,14,24,.24),
+    0 18px 38px -12px rgba(18,14,24,.42);
+}
+.p-cta:hover::before{transform:translateX(130%)}
+.p-cta:hover::after{transform:rotate(-45deg) translate(2px,2px);opacity:1}
+.p-cta:active{transform:translateY(0) scale(.986);transition-duration:.09s;filter:brightness(.94)}
+.p-cta:focus-visible{outline:0;box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 0 0 3px rgba(231,0,85,.34),
+    0 10px 22px -8px rgba(18,14,24,.34)}
+/* no cartao selecionado o botao confirma o estado */
+.plan.sel .p-cta{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    0 0 0 2px rgba(209,254,23,.55),
+    0 2px 4px rgba(18,14,24,.22),
+    0 14px 30px -10px rgba(18,14,24,.38);
+}
+@media (prefers-reduced-motion:reduce){
+  .p-cta::before{display:none}
+  .p-cta:hover{transform:none}
 }
 .p-cta:active{
   transform:scale(.985);transition-duration:.09s;
@@ -821,7 +882,10 @@ main section:empty{display:none}
 }
 @media(max-width:1039px){
   .plans{--w:336px;max-width:540px;margin-left:auto;margin-right:auto;gap:16px}
-  .plan--ano{order:-1}
+  /* no celular: anual primeiro, depois a frota maior, por ultimo a de entrada */
+  .plan--ano{order:1}
+  .plan[data-plano="mensal297"]{order:2}
+  .plan[data-plano="mensal149"]{order:3}
   .plan{padding:22px}
   .p-cta{padding:15px 20px;font-size:15px;border-radius:12px}
 }
@@ -1115,10 +1179,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
           <h1 class="rv" style="--d:.14s">Dados. O ativo mais valioso do mundo.</h1>
           <p class="support rv" style="--d:.22s">O relatório executivo completo da sua frota, <b>pronto todo mês</b>. Sai do que os rastreadores já registram hoje · você não instala nada, não muda nada na operação.</p>
           <p class="hero-mini rv" style="--d:.3s">Assinatura digital da Rastcar · pagamento pelo Stripe</p>
-          <span class="scroll-cue rv" style="--d:.42s" aria-hidden="true">
-            <svg viewBox="0 0 12 20" width="12" height="20" aria-hidden="true"><path d="M6 1v16M1.6 12.6 6 17.4l4.4-4.8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-        </div>
+</div>
         <div class="hero-art rv" style="--d:.16s" aria-hidden="true">
           <div class="ha-tilt" data-tilt>
             <div class="ha-float">
@@ -1433,9 +1494,11 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   var N = PAGS.length;
 
   var reduce   = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  var lowPower = window.innerWidth < 768 && (navigator.hardwareConcurrency || 8) <= 4;
-  /* decidido 1x no load, de proposito: girar o tablet no meio da leitura nao troca o modo */
-  var STATIC   = reduce || lowPower;
+  /* NAO usar hardwareConcurrency como gate: todo iPhone reporta 4 nucleos e
+     caia no modo estatico, matando cena 3D e gota justamente no aparelho em que
+     a landing mais vai ser vista. A performance ja esta resolvida (0 long task
+     com CPU 4x). So reduced-motion desliga os efeitos. */
+  var STATIC   = reduce;
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
