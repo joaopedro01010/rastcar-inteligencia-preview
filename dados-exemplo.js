@@ -4,7 +4,7 @@
  * amostra:true  => marca a peca como demonstracao (frota ficticia porem plausivel). */
 window.RC_DADOS = {
   amostra: true,
-  cliente: "Transportadora Serra Norte",
+  cliente: "( Nome da empresa )",
   periodo: "Julho · 2026",
   frota: 14,
 
