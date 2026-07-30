@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rastcar Inteligência · Pagamento</title>
+<!-- pagina de transacao: nao se indexa e nao se compartilha (sem og/twitter, de proposito) -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="256x256" href="assets/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<!-- fontes da tela · crossorigin e obrigatorio, sem ele o preload e descartado mesmo em same-origin -->
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/d-din-700.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/archivo-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/roboto-mono-latin.woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<style>
+/* ============================================================
+   Rastcar Inteligencia · tela pos pagamento (obrigado.html)
+   Tokens copiados do :root da landing (index.html): mesma paleta,
+   mesma hierarquia tipografica, zero dourado, zero request externo.
+   ============================================================ */
+:root{
+  --bg:#0A0A0A;
+  --panel:rgba(255,255,255,.028);
+  --bordo:#4A0010;
+  --bordo-rgb:74,0,16;
+  --crimson:#FF2D4B;      /* acento principal · igual ao relatorio */
+  --crimson-rgb:255,45,75;
+  --crimson-2:#E01E37;    /* 4,16:1 sobre o fundo · NUNCA como cor de texto, so gradiente/preenchimento */
+  --offwhite:#F8F4EE;
+  --ink:#F3ECE6;
+  --muted:#9b9096;
+  --muted-2:#8D848B;      /* piso de contraste legivel · 4,5:1 */
+  --hair:rgba(255,255,255,.08);
+
+  /* Hierarquia de fontes
+     D-DIN 700 caixa alta ... titulos
+     Archivo ................ frases e controles
+     Roboto Mono ............ eyebrows e rotulos curtos em caixa alta */
+  --title:'D-DIN','D-DIN Exp',system-ui,sans-serif;
+  --head:'Archivo',system-ui,sans-serif;
+  --mono:'Roboto Mono',ui-monospace,'SF Mono',Menlo,monospace;
+
+  --maxw:640px;
+  --pad:clamp(18px,4vw,44px);
+  --r:14px;
+  --dur:.4s;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--head);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;
+}
+img{max-width:100%}
+
+/* vinheta fixa · profundidade sem ornamento */
+.veil{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(var(--crimson-rgb),.06), transparent 55%),
+    radial-gradient(100% 60% at 50% 120%, rgba(var(--bordo-rgb),.30), transparent 60%);
+}
+.stage{position:relative;z-index:1;flex:1 0 auto;display:flex;flex-direction:column}
+
+.wrap{
+  width:100%;max-width:var(--maxw);margin:0 auto;
+  padding-left:max(var(--pad),env(safe-area-inset-left));
+  padding-right:max(var(--pad),env(safe-area-inset-right));
+}
+
+main{
+  flex:1 0 auto;display:flex;align-items:center;justify-content:center;
+  padding:64px 0 56px;
+}
+main .wrap{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:clamp(20px,4vw,28px);
+}
+.wm{width:clamp(150px,30vw,214px);height:auto;display:block}
+
+/* rotulo curto · risco de 22px a esquerda, assinatura da familia */
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--crimson);font-weight:500;
+  display:inline-flex;align-items:center;gap:11px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:currentColor;opacity:.6;flex:0 0 auto}
+
+/* ---------- Estados ---------- */
+.state[hidden]{display:none}
+.state{
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(16px,3vw,22px);width:100%;
+}
+h1{
+  font-family:var(--title);font-weight:700;text-transform:uppercase;
+  font-size:clamp(27px,6.4vw,48px);line-height:1.02;letter-spacing:-.015em;
+  margin:0;color:var(--offwhite);text-wrap:balance;max-width:16ch;
+}
+.lead{
+  font-family:var(--head);font-weight:500;
+  font-size:clamp(15px,2.4vw,19px);line-height:1.5;
+  color:var(--muted);margin:0;max-width:40ch;text-wrap:balance;
+}
+.note{
+  font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  /* 368px = a maior das duas oracoes MEDIDA renderizada (357px) + folga.
+     Nao se usa "ch" aqui: o ch ignora o letter-spacing de .09em e o texto
+     quebrava em tres linhas com orfao. Assim quebra exatamente no "·". */
+  color:var(--muted-2);margin:0;max-width:368px;line-height:1.8;
+}
+/* cada oracao e um bloco atomico · a quebra cai no "·", nunca no meio da frase.
+   No 320px o inline-block encolhe pro espaco disponivel e quebra dentro, sem estourar. */
+.note .cl{display:inline-block}
+.fine{
+  font-family:var(--head);font-size:14px;color:var(--muted-2);margin:0;max-width:36ch;
+}
+
+/* linha de progresso · giro sutil, sem biblioteca e sem contador */
+.working{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:var(--head);font-weight:500;font-size:clamp(15px,2.4vw,18px);
+  color:var(--ink);
+}
+.spinner{
+  width:17px;height:17px;flex:0 0 auto;border-radius:50%;
+  border:2px solid rgba(255,255,255,.14);
+  border-top-color:var(--crimson);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* painel sutil que segura o estado em curso */
+.panel{
+  width:100%;border:1px solid var(--hair);border-radius:var(--r);
+  background:var(--panel);
+  padding:clamp(20px,4vw,28px);
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+
+/* ---------- Acoes ---------- */
+.acts{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;width:100%}
+/* mesmo material do botao da landing · grafite, luz de 1px no topo, sombra
+   curta e afundamento de 90ms. Aqui o fundo e escuro, entao a superficie
+   sobe um tom para nao sumir dentro do preto. */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--head);font-weight:600;font-size:16px;letter-spacing:-.01em;
+  padding:16px 30px;min-height:54px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.16);
+  text-decoration:none;cursor:pointer;color:#fff;
+  background:linear-gradient(180deg,#2C2C33,#1A1A1F);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),
+             0 1px 2px rgba(0,0,0,.5),
+             0 8px 20px -8px rgba(0,0,0,.7);
+  transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),
+             0 2px 4px rgba(0,0,0,.5),
+             0 12px 26px -10px rgba(0,0,0,.75);
+}
+.btn:active{
+  transform:scale(.985);transition-duration:.09s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 1px 2px rgba(0,0,0,.55);
+}
+.btn.ghost{
+  background:rgba(255,255,255,.05);color:var(--ink);border-color:var(--hair);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn.ghost:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
+.btn.ghost:active{transform:scale(.985);transition-duration:.09s}
+a:focus-visible,button:focus-visible{
+  outline:2px solid transparent;outline-offset:2px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 0 0 3px rgba(var(--crimson-rgb),.45);
+}
+
+/* ---------- Rodape ---------- */
+footer{
+  border-top:1px solid var(--hair);
+  padding:26px 0 34px;flex:0 0 auto;
+}
+footer .wrap{
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 16px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted-2);text-align:center;
+}
+footer .sep{opacity:.42}
+footer a{color:var(--muted-2);text-decoration:none;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+footer a:hover{color:var(--ink);border-color:var(--crimson)}
+footer a:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
+
+@media (max-width:400px){
+  .btn{width:100%;padding:15px 20px}
+}
+
+/* Movimento reduzido · o giro para e vira um anel estatico com o arco crimson.
+   Nao se usa o blanket de duracao .01ms aqui: com iteracao infinita ele viraria
+   um piscar violento em vez de acalmar. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition-duration:.01ms !important}
+  .spinner{animation:none}
+}
+</style>
+</head>
+<body data-state="boot">
+<div class="veil" aria-hidden="true"></div>
+
+<div class="stage">
+  <main>
+    <div class="wrap">
+      <img class="wm" src="assets/wordmark-white.png" width="1024" height="131" alt="Rastcar">
+      <!-- lockup do produto = wordmark + "· Inteligencia" (igual ao header do relatorio).
+           Repetir RASTCAR aqui empilharia a palavra duas vezes seguidas · o risco
+           crimson do .eyebrow ja faz o papel do separador. -->
+      <span class="eyebrow">Inteligência</span>
+
+      <!-- 1 · sem token na URL -->
+      <section class="state" id="st-notoken" hidden>
+        <h1>Link incompleto</h1>
+        <p class="lead">Este endereço chegou sem o código do seu relatório. Fale com a nossa equipe e resolvemos rápido.</p>
+        <div class="acts">
+          <a class="btn" href="https://wa.me/551231579090" target="_blank" rel="noopener">Falar com a Rastcar</a>
+        </div>
+      </section>
+
+      <!-- 2 · pagamento recebido, relatorio sendo preparado -->
+      <section class="state" id="st-working" hidden>
+        <h1>Pagamento recebido.</h1>
+        <div class="panel">
+          <span class="working"><span class="spinner" aria-hidden="true"></span>Preparando seu relatório</span>
+          <!-- nbsp em "até 1 dia útil" · no 320px o "1" ficaria orfao no fim da linha -->
+          <p class="note"><span class="cl">Cartão e Pix liberam em instantes ·</span> <span class="cl">Boleto libera na compensação, em&nbsp;até&nbsp;1&nbsp;dia&nbsp;útil</span></p>
+        </div>
+        <p class="fine">Pode deixar esta página aberta.</p>
+      </section>
+
+      <!-- 3 · pronto -->
+      <section class="state" id="st-ready" hidden>
+        <h1>Seu relatório está pronto.</h1>
+        <div class="acts">
+          <a class="btn" id="go" href="#" rel="noopener">Abrir meu relatório</a>
+        </div>
+        <p class="fine">Você também recebe o link por e-mail.</p>
+      </section>
+
+      <!-- 4 · janela de espera esgotada · estado permanente e digno -->
+      <section class="state" id="st-slow" hidden>
+        <h1>Tudo certo com seu pagamento.</h1>
+        <p class="lead">Assim que o relatório ficar pronto, o link chega no seu e-mail.</p>
+        <div class="acts">
+          <button class="btn" type="button" id="retry">Tentar de novo</button>
+          <a class="btn ghost" href="https://wa.me/551231579090" target="_blank" rel="noopener">Falar com a Rastcar</a>
+        </div>
+      </section>
+
+      <!-- leitor de tela acompanha a troca de estado sem depender do visual -->
+      <p class="sr" id="live" role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>CNPJ 10.142.559/0001-00</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="tel:+551231579090">(12) 3157-9090</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://rastcar.com.br" target="_blank" rel="noopener">rastcar.com.br</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var API      = 'https://rastcar.app.n8n.cloud/webhook/inteligencia-dados';
+  var RELATORIO= 'https://inteligencia.rastcar.com.br/';
+
+  var qs   = new URLSearchParams(location.search);
+  var tokenBruto = (qs.get('c') || '').trim();
+  /* o token nasce como rc-<32 hex>. So aceitamos esse alfabeto:
+     nada aqui vira HTML, mas um token torto so gera 404 eterno · melhor
+     tratar como link incompleto e mandar pro humano. */
+  var token = /^[A-Za-z0-9_-]{4,120}$/.test(tokenBruto) ? tokenBruto : '';
+
+  /* janela de espera · 5s de intervalo, 5 min de teto.
+     ?_t=fast encurta SO em teste automatizado, nunca em producao. */
+  var rapido   = qs.get('_t') === 'fast';
+  var INTERVALO= rapido ? 200   : 5000;
+  var TETO     = rapido ? 1400  : 5 * 60 * 1000;
+
+  var telas = {
+    notoken: document.getElementById('st-notoken'),
+    working: document.getElementById('st-working'),
+    ready:   document.getElementById('st-ready'),
+    slow:    document.getElementById('st-slow')
+  };
+  var live  = document.getElementById('live');
+  var go    = document.getElementById('go');
+  var retry = document.getElementById('retry');
+
+  function mostrar(nome, aviso){
+    for(var k in telas){ telas[k].hidden = (k !== nome); }
+    document.body.dataset.state = nome;
+    if(aviso) live.textContent = aviso;
+  }
+
+  retry.addEventListener('click', function(){ location.reload(); });
+
+  if(!token){
+    mostrar('notoken', 'Link incompleto.');
+    return;
+  }
+
+  var alvo  = API + '?c=' + encodeURIComponent(token);
+  var prazo = Date.now() + TETO;
+  var timer = null;
+
+  mostrar('working', 'Pagamento recebido. Preparando seu relatório.');
+
+  function pronto(){
+    if(timer){ clearTimeout(timer); timer = null; }
+    go.href = RELATORIO + '?c=' + encodeURIComponent(token);
+    mostrar('ready', 'Seu relatório está pronto.');
+  }
+
+  function desistir(){
+    if(timer){ clearTimeout(timer); timer = null; }
+    mostrar('slow', 'Tudo certo com seu pagamento. O link chega no seu e-mail.');
+  }
+
+  /* O corpo da resposta nunca e lido nem exibido: o fetch existe so pra
+     saber SE ficou pronto. 404 e 402 sao normais aqui (webhook ainda
+     processando, ou boleto aguardando compensacao) e mantem a espera. */
+  function bater(){
+    timer = null;
+    var vivo = true;
+    fetch(alvo, { cache:'no-store', credentials:'omit' })
+      .then(function(r){
+        if(r.status === 200){ vivo = false; pronto(); }
+      })
+      .catch(function(){ /* erro de rede conta como tentativa, nao quebra a tela */ })
+      .then(function(){
+        if(!vivo) return;
+        if(Date.now() >= prazo){ desistir(); return; }
+        timer = setTimeout(bater, INTERVALO);
+      });
+  }
+
+  bater();
+})();
+</script>
+</body>
+</html>
