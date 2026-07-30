@@ -13,15 +13,23 @@
   'use strict';
   var reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* 1 · claro por padrao ------------------------------------------- */
+  /* 1 · claro por padrao -------------------------------------------
+     Chave PROPRIA (`rc_proto_tema`): o preview divide a origem com o
+     relatorio ja publicado, entao um "modo escuro" clicado la abriria
+     o prototipo no escuro e mataria justamente o que ele mostra. */
+  var btn = document.getElementById('themeBtn');
   var salvo = null;
-  try{ salvo = localStorage.getItem('rc_int_tema'); }catch(e){}
+  try{ salvo = localStorage.getItem('rc_proto_tema'); }catch(e){}
   if(salvo !== 'escuro'){
     document.body.classList.add('light');
-    var btn = document.getElementById('themeBtn');
     if(btn) btn.textContent = 'Modo escuro';
     if(window.__bgRepaint) window.__bgRepaint();
   }
+  if(btn) btn.addEventListener('click', function(){
+    /* roda depois do handler do relatorio, entao a classe ja esta trocada */
+    try{ localStorage.setItem('rc_proto_tema',
+      document.body.classList.contains('light') ? 'claro' : 'escuro'); }catch(e){}
+  });
 
   /* 2 · a materia atras do vidro ----------------------------------- */
   if(!document.getElementById('protoOrbes')){
