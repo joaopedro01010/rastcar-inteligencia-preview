@@ -691,7 +691,8 @@ main section:empty{display:none}
      E o elemento que decide a conversao, entao ele e o objeto mais bem
      acabado da pagina. Grafite com material de verdade (nao retangulo
      chapado): gradiente vertical, luz especular de 1px na aresta de cima,
-     sombra de contato curta + difusa longa, e um brilho que varre no hover.
+     sombra de contato curta + difusa longa. Sem reflexo passando no hover
+     (pedido do Joao 30/07): o botao reage por elevacao e sombra, nao por brilho.
      Preto e branco de proposito · a cor viva ja e das etiquetas, o botao
      ganha peso pelo material, nao por competir em cor. */
   position:relative;overflow:hidden;isolation:isolate;
@@ -709,13 +710,6 @@ main section:empty{display:none}
     0 10px 22px -8px rgba(18,14,24,.34);
   transition:transform .22s var(--ease), box-shadow .22s var(--ease), filter .22s var(--ease);
 }
-/* brilho que varre a superficie no hover · o toque premium */
-.p-cta::before{
-  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(105deg, transparent 34%, rgba(255,255,255,.16) 48%, transparent 62%);
-  transform:translateX(-130%);
-  transition:transform .72s cubic-bezier(.22,1,.36,1);
-}
 .p-cta:hover{
   transform:translateY(-2px);
   box-shadow:
@@ -724,7 +718,6 @@ main section:empty{display:none}
     0 2px 4px rgba(18,14,24,.24),
     0 18px 38px -12px rgba(18,14,24,.42);
 }
-.p-cta:hover::before{transform:translateX(130%)}
 .p-cta:active{transform:translateY(0) scale(.986);transition-duration:.09s;filter:brightness(.94)}
 .p-cta:focus-visible{outline:0;box-shadow:
     inset 0 1px 0 rgba(255,255,255,.20),
@@ -739,16 +732,7 @@ main section:empty{display:none}
     0 14px 30px -10px rgba(18,14,24,.38);
 }
 @media (prefers-reduced-motion:reduce){
-  .p-cta::before{display:none}
   .p-cta:hover{transform:none}
-}
-.p-cta:active{
-  transform:scale(.985);transition-duration:.09s;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 1px 2px rgba(0,0,0,.20);
-}
-.p-cta:focus-visible{
-  outline:2px solid transparent;outline-offset:2px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 0 0 3px rgba(var(--crimson-rgb),.28);
 }
 /* forma de pagamento · a peca de 26/07 nao tinha esta linha.
    Altura reservada: sem ela a linha extra do Pix subia o botao do anual
