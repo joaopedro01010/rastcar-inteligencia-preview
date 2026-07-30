@@ -1,0 +1,251 @@
+/* =====================================================================
+   RELATORIO · TEMA DA LANDING  (PROTOTIPO, 30/07/2026)
+   Camada aplicada POR CIMA do relatorio real. Nada do index.html foi
+   reescrito: se o Joao aprovar, esta folha e o proto.js viram parte do
+   arquivo; se reprovar, some sem deixar rastro.
+
+   O QUE MUDA (e so isto):
+   1. CLARO POR PADRAO      · o escuro vira a opcao, nao o contrario
+   2. VIDRO DE VERDADE      · painel = Liquid Glass da Apple, 3 camadas
+   3. ORBES VIVOS ATRAS     · sem materia atras, vidro branco e invisivel
+   4. ZERO FIO DIVISORIO    · separa por respiro e sombra, nunca por linha
+   5. BOTOES ESCULPIDOS     · o mesmo material do "Escolher este plano"
+   O QUE NAO MUDA: uma virgula de copy, um numero, a ordem das secoes.
+   ===================================================================== */
+
+body.light{
+  --glass-b:  rgba(255,255,255,.72);
+  --glass-bg: linear-gradient(168deg, rgba(255,255,255,.70) 0%, rgba(255,255,255,.50) 54%, rgba(255,255,255,.58) 100%);
+  --glass-sh:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -1px 0 rgba(24,20,32,.045),
+    0 1px 2px rgba(24,20,32,.06),
+    0 18px 44px -16px rgba(24,20,32,.16);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --lime:#D1FE17;
+  --rosa:#E70055;
+}
+
+/* ---------------------------------------------------------------
+   1 · A MATERIA ATRAS  ·  o pano de fundo vivo da pagina inteira
+   Fica em position:fixed atras de tudo, com mascara que mata a luz
+   antes de qualquer aresta: orbe cortado na borda VIRA linha divisoria,
+   foi a licao que custou duas rodadas na landing.
+   --------------------------------------------------------------- */
+body.light #protoOrbes{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
+          mask-image:radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
+}
+body.light #protoOrbes i{
+  position:absolute;display:block;border-radius:50%;filter:blur(44px);will-change:transform;
+}
+body.light #protoOrbes i:nth-child(1){
+  width:46%;height:52%;left:-10%;top:8%;
+  background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.20), rgba(209,254,23,0) 74%);
+  animation:pOrb1 40s ease-in-out infinite alternate;
+}
+body.light #protoOrbes i:nth-child(2){
+  width:56%;height:56%;right:-14%;top:34%;
+  background:radial-gradient(circle at 50% 50%, rgba(255,0,91,.11), rgba(255,0,91,0) 76%);
+  animation:pOrb2 48s ease-in-out infinite alternate;
+}
+body.light #protoOrbes i:nth-child(3){
+  width:42%;height:52%;left:28%;bottom:-10%;
+  background:radial-gradient(circle at 50% 50%, rgba(200,20,48,.13), rgba(200,20,48,0) 74%);
+  animation:pOrb3 44s ease-in-out infinite alternate;
+}
+@keyframes pOrb1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(12vw,8vh,0) scale(1.16)}}
+@keyframes pOrb2{from{transform:translate3d(0,0,0) scale(1.08)}to{transform:translate3d(-10vw,-7vh,0) scale(.94)}}
+@keyframes pOrb3{from{transform:translate3d(0,0,0) scale(.96)}to{transform:translate3d(-8vw,-9vh,0) scale(1.18)}}
+@media (prefers-reduced-motion:reduce){body.light #protoOrbes i{animation:none}}
+
+/* o conteudo do relatorio sobe pra cima da luz */
+body.light header.hd,
+body.light nav.seg,
+body.light main,
+body.light footer.bot,
+body.light .fabs{position:relative;z-index:1}
+/* o veu escuro original nao tem funcao no claro */
+body.light .veil{opacity:.35}
+/* os "poros" do canvas sao brilho: no escuro sao cometas, sobre o branco
+   leem como sujeira na tela. No claro quem faz o fundo vivo sao os orbes. */
+body.light #bgv{display:none}
+
+/* ---------------------------------------------------------------
+   2 · ZERO FIO  ·  nenhuma linha divisoria em lugar nenhum
+   O relatorio separava tudo por hairline. Aqui a separacao passa a
+   ser respiro + sombra do vidro, igual a landing.
+   --------------------------------------------------------------- */
+body.light main section.block + section.block{border-top:0}
+body.light nav.seg{border-top:0;border-bottom:0}
+body.light footer.bot{border-top:0;margin-top:64px}
+body.light .sheet .drow{border-bottom:0}
+body.light .urow{border-bottom:0}
+body.light .bm{border-bottom:0}
+body.light .substats{background:transparent;border:0;gap:10px;overflow:visible}
+body.light .dgrid{background:transparent;border:0;gap:10px;overflow:visible}
+
+/* ---------------------------------------------------------------
+   3 · VIDRO  ·  todo painel do relatorio ganha o material dos planos
+   --------------------------------------------------------------- */
+body.light .dgrid > .dline,
+body.light .substats > *,
+body.light .acard,
+body.light .callout,
+body.light .hero-stat,
+body.light .sheet,
+body.light .km-tip,
+body.light .bm-read{
+  border:1px solid var(--glass-b);
+  border-radius:16px;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);backdrop-filter:blur(30px) saturate(200%);
+  box-shadow:var(--glass-sh);
+}
+/* as fileiras do ranking: cada uma e uma lamina, nao uma celula de tabela */
+body.light .dgrid > .dline{
+  border-radius:14px;
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease);
+}
+body.light .dgrid > .dline:hover{
+  background:var(--glass-bg);
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 2px 4px rgba(24,20,32,.07),
+    0 24px 52px -18px rgba(24,20,32,.20);
+}
+body.light .callout .bolt{background:linear-gradient(180deg,#F2144F,#E70055);box-shadow:none}
+body.light .urow,
+body.light .bm{
+  border:1px solid var(--glass-b);border-radius:16px;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);backdrop-filter:blur(30px) saturate(200%);
+  box-shadow:var(--glass-sh);
+  padding:16px 18px;margin-bottom:10px;
+}
+body.light #rzMap{border:1px solid var(--glass-b);box-shadow:var(--glass-sh)}
+
+/* ---------------------------------------------------------------
+   4 · CONTROLES DE VIDRO  ·  chips, filtros e cidades
+   --------------------------------------------------------------- */
+body.light .segset,
+body.light .mchips button,
+body.light .heat-cities .hc,
+body.light .map-tools button{
+  border:1px solid rgba(255,255,255,.80);
+  background:linear-gradient(168deg, rgba(255,255,255,.72), rgba(255,255,255,.52));
+  -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 6px 16px -8px rgba(24,20,32,.18);
+}
+/* estado ligado: a cor e SUPERFICIE com texto escuro em cima ·
+   lime como cor de TEXTO no claro da 1,4:1, ilegivel · licao da landing */
+body.light .mchips button.on{
+  color:#16161A;border-color:rgba(24,20,32,.14);
+  background:linear-gradient(180deg,#DAFF3A,#CBF70E);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 6px 16px -8px rgba(120,150,0,.42);
+}
+
+/* ---------------------------------------------------------------
+   5 · BOTOES ESCULPIDOS  ·  o mesmo material do "Escolher este plano"
+   Grafite com gradiente de 3 paradas, luz especular na aresta,
+   sombra de contato + difusa. Sem reflexo varrendo (pedido do Joao).
+   --------------------------------------------------------------- */
+body.light .pdfbtn,
+body.light .more{
+  color:#fff;
+  border:1px solid rgba(0,0,0,.92);border-radius:14px;
+  background:linear-gradient(180deg,#32323A 0%,#1E1E24 46%,#121216 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 1px 2px rgba(18,14,24,.22),
+    0 10px 22px -8px rgba(18,14,24,.34);
+  transition:transform .22s var(--ease), box-shadow .22s var(--ease), filter .22s var(--ease);
+}
+body.light .pdfbtn:hover,
+body.light .more:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 2px 4px rgba(18,14,24,.24),
+    0 18px 38px -12px rgba(18,14,24,.42);
+}
+body.light .pdfbtn:active,
+body.light .more:active{transform:translateY(0) scale(.986);transition-duration:.09s;filter:brightness(.94)}
+body.light .more{background-image:linear-gradient(180deg,#32323A 0%,#1E1E24 46%,#121216 100%)}
+
+/* o trocador de tema e ajuste, nao acao: fica de vidro, um degrau abaixo
+   do "Baixar PDF" · dois objetos com o mesmo acabamento competem */
+body.light .themebtn{
+  color:#3A3A42;
+  /* aresta de tinta, nao de luz: flutuando sobre um cartao branco, borda
+     branca some e o botao vira um borrao · isto e limite de objeto, nao fio */
+  border:1px solid rgba(24,20,32,.10);border-radius:14px;
+  background:linear-gradient(168deg, rgba(255,255,255,.74), rgba(255,255,255,.54));
+  -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 8px 20px -10px rgba(24,20,32,.28);
+  transition:transform .22s var(--ease), box-shadow .22s var(--ease), color .22s var(--ease);
+}
+body.light .themebtn:hover{
+  color:#16161A;transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 14px 28px -12px rgba(24,20,32,.34);
+}
+body.light .themebtn:active{transform:translateY(0) scale(.988);transition-duration:.09s}
+
+/* ---------------------------------------------------------------
+   6 · ETIQUETAS  ·  cor viva como SUPERFICIE, texto escuro por cima
+   --------------------------------------------------------------- */
+body.light .tag{
+  background:linear-gradient(180deg,#F2144F,#E70055);color:#fff;border:0;
+  box-shadow:0 6px 16px -8px rgba(231,0,85,.55);
+}
+body.light .tag.ghost{
+  background:linear-gradient(168deg, rgba(255,255,255,.72), rgba(255,255,255,.52));
+  color:#56565E;border:1px solid rgba(255,255,255,.80);box-shadow:none;
+}
+
+/* ---------------------------------------------------------------
+   7 · GOTA D'AGUA  ·  onda que nasce onde o dedo toca
+   Na landing a onda e LUZ, porque passa sobre uma cena escura. Aqui a
+   lamina ja e branca: luz sobre branco nao existe. Entao a onda e TINTA
+   — uma crista rosa com queda suave dos dois lados (crista dura vira
+   alvo de tiro, licao ja paga na landing).
+   --------------------------------------------------------------- */
+.proto-gota{
+  position:absolute;border-radius:50%;pointer-events:none;z-index:5;
+  transform:translate(-50%,-50%) scale(0);
+  background:radial-gradient(circle closest-side,
+    rgba(26,22,34,0)     0%,
+    rgba(26,22,34,.035) 26%,   /* crista 3 · a mais fraca, ja morrendo   */
+    rgba(255,255,255,.30) 31%,
+    rgba(26,22,34,0)    36%,
+    rgba(26,22,34,.085) 43%,   /* crista 2 · meia forca                  */
+    rgba(255,255,255,.42) 48%,
+    rgba(26,22,34,0)    54%,
+    rgba(26,22,34,.14)  59%,   /* crista 1 · a da frente, o vale escuro  */
+    rgba(231,0,85,.20)  63%,   /* fio crimson na crista · da o desenho   */
+    rgba(255,255,255,.55) 66%,
+    rgba(255,255,255,0) 74%,
+    rgba(26,22,34,0)   100%);
+  animation:protoGota .82s var(--ease) forwards;
+}
+@keyframes protoGota{
+  from{transform:translate(-50%,-50%) scale(0);opacity:.9}
+  to  {transform:translate(-50%,-50%) scale(1);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){.proto-gota{display:none}}
+body.light .dgrid > .dline,
+body.light .urow,
+body.light .acard{position:relative;overflow:hidden}
+
+/* ---------------------------------------------------------------
+   8 · CABECALHO  ·  a navegacao vira uma lamina flutuante
+   --------------------------------------------------------------- */
+body.light nav.seg{
+  -webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);
+  background:linear-gradient(180deg, rgba(250,250,248,.86), rgba(250,250,248,.66));
+  box-shadow:0 10px 30px -22px rgba(24,20,32,.40);
+}
