@@ -1019,6 +1019,24 @@ body.light .hm-cell.z{color:#4F4F57}
 body:not(.light) .pdfbtn{background:linear-gradient(96deg,#C81430,#DD1B34)}
 
 /* ---------------------------------------------------------------
+   9b · CARREGANDO / ERRO  ·  a tela de servico segue o tema
+   O caminho de erro nao passa pela troca de tema: ele abria PRETO numa
+   peca que hoje e clara. Quem chega nele e o cliente com assinatura
+   vencida ou com o link torto — e a pior hora pra peca parecer outra.
+   --------------------------------------------------------------- */
+.rc-ovl{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+  background:#0A0A0A;color:#fff;
+  font-family:var(--head),system-ui,sans-serif;font-weight:600;font-size:15px;letter-spacing:.03em;
+}
+body.light .rc-ovl{background:var(--bg);color:var(--ink)}
+.rc-ovl .k{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--crimson);margin-bottom:12px}
+body.light .rc-ovl .k{color:#C81430}
+.rc-ovl .t{font-family:var(--title);font-size:19px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.rc-ovl .s{font-weight:500;font-size:14px;color:var(--muted);letter-spacing:0;line-height:1.5}
+
+/* ---------------------------------------------------------------
    10 · OS CONTROLES SAEM DA FRENTE DA LEITURA
    Isto e uma peca de LER. Dois botoes fixos permanentes cobriam texto
    no celular e, na abertura, o "Baixar PDF" caia por cima da ultima
@@ -1993,8 +2011,11 @@ function __boot(){
   if(!c){ __boot(); return; }
   var API = 'https://rastcar.app.n8n.cloud/webhook/inteligencia-dados?c=' + encodeURIComponent(c);
   var ld = document.createElement('div');
-  ld.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0A0A0A;color:#fff;font:600 15px Archivo,system-ui,sans-serif;letter-spacing:.03em;z-index:9999';
+  ld.className = 'rc-ovl';
   ld.textContent = 'Carregando seu relatório…';
+  /* o tema so e aplicado no fim do script · aqui a tela de servico ja nasce
+     no tema certo, senao ela pisca preta antes de clarear */
+  try{ if(localStorage.getItem('rc_int_tema') !== 'escuro') document.body.classList.add('light'); }catch(e){ document.body.classList.add('light'); }
   document.body.appendChild(ld);
   fetch(API, { cache: 'no-store' })
     .then(function(r){ if(!r.ok){ var e = new Error('http ' + r.status); e.status = r.status; throw e; } return r.json(); })
@@ -2012,7 +2033,8 @@ function __boot(){
       var pago = err && err.status === 402;
       var titulo = pago ? 'Relatório indisponível no momento' : 'Não foi possível carregar este relatório';
       var apoio  = pago ? 'Fale com a Rastcar para reativar o acesso · <span style="white-space:nowrap">(12) 3157-9090</span>' : 'Confira se o link está completo e correto.';
-      ld.innerHTML = '<div style="text-align:center;max-width:440px;padding:24px"><div style="font-size:12px;letter-spacing:.22em;color:#FF2D4B;margin-bottom:12px">RASTCAR · INTELIGÊNCIA</div><div style="font-size:18px;font-weight:700;margin-bottom:8px">' + titulo + '</div><div style="color:#a99e90;font-size:14px">' + apoio + '</div></div>';
+      ld.innerHTML = '<div style="max-width:440px"><div class="k">RASTCAR · INTELIGÊNCIA</div>' +
+                     '<div class="t">' + titulo + '</div><div class="s">' + apoio + '</div></div>';
     });
 })();
 
