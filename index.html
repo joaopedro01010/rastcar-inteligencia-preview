@@ -1016,7 +1016,28 @@ body.light .hm-cell.z{color:#4F4F57}
 body:not(.light) .pdfbtn{background:linear-gradient(96deg,#C81430,#DD1B34)}
 
 /* ---------------------------------------------------------------
-   10 · PAPEL  ·  nada desta camada atravessa a impressao
+   10 · OS CONTROLES SAEM DA FRENTE DA LEITURA
+   Isto e uma peca de LER. Dois botoes fixos permanentes cobriam texto
+   no celular e, na abertura, o "Baixar PDF" caia por cima da ultima
+   linha do resumo. Entao: eles nascem escondidos (a capa e a primeira
+   impressao, e tambem a foto do produto na landing), somem enquanto a
+   pessoa desce e voltam quando ela para ou sobe. Alem disso o rodape
+   reserva a altura deles, pra ultima linha nunca ficar por baixo.
+   --------------------------------------------------------------- */
+.pdfbtn,.themebtn{transition:opacity .28s var(--ease), transform .28s var(--ease)}
+body.fabs-off .pdfbtn,
+body.fabs-off .themebtn{opacity:0;transform:translateY(14px);pointer-events:none}
+/* quem chega de teclado tem que conseguir alcancar */
+body.fabs-off .pdfbtn:focus-visible,
+body.fabs-off .themebtn:focus-visible{opacity:1;transform:none;pointer-events:auto}
+footer.bot{padding-bottom:104px}
+@media (prefers-reduced-motion:reduce){
+  .pdfbtn,.themebtn{transition:none}
+  body.fabs-off .pdfbtn,body.fabs-off .themebtn{transform:none}
+}
+
+/* ---------------------------------------------------------------
+   11 · PAPEL  ·  nada desta camada atravessa a impressao
    O tema de impressao ja reescreve as superficies com !important; o que
    ele nao previa e vidro (blur) e luz de fundo. Zeramos aqui.
    --------------------------------------------------------------- */
@@ -1031,6 +1052,9 @@ body:not(.light) .pdfbtn{background:linear-gradient(96deg,#C81430,#DD1B34)}
   /* o respiro de 8px e de tela · no papel ele empurrava 2 veiculos do
      ranking pra pagina seguinte sem ninguem ter escolhido isso */
   .rrow,.crow{margin-bottom:0 !important}
+  /* a reserva pros botoes flutuantes tambem e de tela · no papel viraria
+     uma pagina extra em branco */
+  footer.bot{padding-bottom:30px !important}
 }
 </style>
 </head>
@@ -2036,6 +2060,25 @@ function __boot(){
     g.style.top  = y + 'px';
     alvo.appendChild(g);
     g.addEventListener('animationend', function(){ g.remove(); });
+  }, {passive:true});
+})();
+
+/* ---------- Os controles saem da frente da leitura ----------
+   Nascem escondidos (a capa e a primeira impressao), somem enquanto a
+   pessoa desce e voltam quando ela para ou sobe. Ninguem baixa o PDF
+   antes de olhar o relatorio, entao esconder no topo nao custa nada. */
+(function(){
+  var corpo = document.body, ultimo = window.scrollY || 0, parada = 0;
+  function esconde(v){ corpo.classList.toggle('fabs-off', v); }
+  esconde(true);
+  window.addEventListener('scroll', function(){
+    var y = window.scrollY;
+    if(y < 40)               esconde(true);   /* de volta a capa */
+    else if(y > ultimo + 4)  esconde(true);   /* descendo: sai da frente */
+    else if(y < ultimo - 4)  esconde(false);  /* subindo: volta */
+    ultimo = y;
+    clearTimeout(parada);
+    parada = setTimeout(function(){ if(window.scrollY >= 40) esconde(false); }, 420);
   }, {passive:true});
 })();
 </script>
