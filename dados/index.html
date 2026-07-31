@@ -757,7 +757,14 @@ main section:empty{display:none}
    e os tres rodapes deixavam de fechar na mesma linha. */
 .p-pays{min-height:calc(var(--w) * .048)}
 /* Pix e o unico meio que so o anual tem · entra com peso e cor propria */
-.p-pay b{color:var(--good);font-weight:700;font-size:1.2em;letter-spacing:.05em}
+/* O lime desta peca e SUPERFICIE, nunca cor de texto · lime escrito em
+   fundo claro da 1,4:1 e some. O Pix ganha a MESMA pastilha lime das
+   etiquetas e das marcas de conferido. */
+.p-pay b{
+  color:#12140A;background:#D1FE17;font-weight:700;
+  padding:.16em .52em .12em;border-radius:999px;
+  letter-spacing:.06em;font-size:1em;
+}
 .p-pay{
   margin:calc(var(--w) * .020) 0 0;text-align:center;
   font-family:var(--card-mono);font-weight:500;
