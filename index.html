@@ -191,7 +191,7 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 /* stats secundários */
 .substats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);
   border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin-top:22px}
-.substats .s{background:rgba(10,7,10,.55);padding:16px 18px}
+.substats .s{padding:16px 18px}
 .substats .s .n{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:clamp(21px,3.4vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
 .substats .s .l{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-2);margin-top:6px}
 .narrativa{font-size:clamp(17px,2.5vw,21px);line-height:1.5;color:var(--ink);max-width:60ch;text-wrap:balance;margin:26px 0 0;font-weight:500}
@@ -297,7 +297,7 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 
 /* ---------- Vigilância ---------- */
 .vig-top{display:grid;grid-template-columns:auto 1fr;gap:38px;align-items:center;
-  background:var(--panel);border:1px solid var(--panel-b);border-radius:16px;padding:28px 30px}
+  border-radius:16px;padding:28px 30px}
 .ring{position:relative;width:168px;height:168px;flex:0 0 auto}
 .ring svg{width:168px;height:168px;transform:rotate(-90deg)}
 .ring .trk{fill:none;stroke:rgba(255,255,255,.08);stroke-width:11}
@@ -313,13 +313,13 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .indic .it b{font-family:var(--title);font-variant-numeric:tabular-nums;font-weight:700;font-size:1.08em;color:#fff}
 .anchor{margin:26px 0 6px;font-family:var(--title);font-size:clamp(19px,3vw,28px);font-weight:700;letter-spacing:-.005em;line-height:1.12;text-wrap:balance}
 .alerts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
-.acard{background:var(--panel);border:1px solid var(--panel-b);border-radius:12px;padding:18px 20px}
+.acard{border-radius:12px;padding:18px 20px}
 .acard .aq{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:34px;font-weight:700;letter-spacing:-.015em;color:#fff;line-height:1}
 .acard .at{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.35}
 
 /* ---------- Comportamento ---------- */
 .comp-grid{display:grid;grid-template-columns:220px 1fr;gap:26px;align-items:start}
-.gauge{background:var(--panel);border:1px solid var(--panel-b);border-radius:16px;padding:26px 22px;text-align:center}
+.gauge{border-radius:16px;padding:26px 22px;text-align:center}
 .gauge .gn{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:clamp(56px,9.4vw,78px);font-weight:700;letter-spacing:-.02em;line-height:1}
 .gauge .gl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:12px}
 .gauge .gbar{height:6px;background:rgba(255,255,255,.1);border-radius:4px;margin-top:18px;overflow:hidden}
@@ -360,7 +360,6 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 
 /* ---------- Footer ---------- */
 footer.bot{border-top:1px solid var(--hair);padding:30px 0;margin-top:40px;position:relative}
-footer.bot::before{content:"";position:absolute;top:-1px;left:0;width:120px;height:2px;background:linear-gradient(90deg,var(--crimson),transparent)}
 footer.bot .wrap{display:flex;flex-direction:column;gap:10px}
 footer.bot .slogan{font-size:15px;font-weight:600;letter-spacing:-.01em}
 footer.bot .f-line{font-family:var(--head);font-weight:500;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
@@ -385,18 +384,14 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .dgt{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--crimson);margin:0 0 14px;
   display:flex;align-items:center;gap:11px}
 .dgt::before{content:"";width:22px;height:1px;background:currentColor;opacity:.6;flex:0 0 auto}
-.dgrid{display:flex;flex-direction:column;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:14px;overflow:hidden}
-.dline{display:flex;align-items:baseline;gap:12px;padding:14px 18px;background:rgba(10,7,10,.55);text-decoration:none;transition:background .2s}
-.dline:hover{background:rgba(255,45,75,.07)}
+.dgrid{display:flex;flex-direction:column;border-radius:14px}
+.dline{display:flex;align-items:baseline;gap:12px;padding:14px 18px;text-decoration:none}
 .dline .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);flex:1 1 auto;min-width:0}
 .dline .v{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:19px;font-weight:700;color:var(--ink);white-space:nowrap}
 .dline .go{font-family:var(--head);color:var(--crimson);font-size:16px;flex:0 0 auto;align-self:center}
 .dline.act{flex-wrap:wrap}
 .dline.act .k{flex-basis:100%}
 .dline.act .v{white-space:normal;font-family:var(--head);font-size:14.5px;font-weight:500;line-height:1.4;flex:1 1 0;min-width:0}
-body.light .dgrid{background:rgba(0,0,0,.09);border-color:rgba(0,0,0,.10)}
-body.light .dline{background:#fff}
-body.light .dline:hover{background:rgba(224,30,55,.05)}
 
 /* ---------- Gráficos desenhados à mão (km/dia, calendário, benchmark, mapa de calor) ---------- */
 .km-cap{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:12px}
@@ -417,7 +412,7 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .km-peak b{display:block;font-family:var(--title);color:var(--magenta);font-weight:700;font-size:14px}
 .km-peak::after{content:"";display:block;width:1px;height:8px;background:var(--magenta);margin:3px auto 0;opacity:.7}
 /* tooltip por barra · hover no desktop, toque no mobile */
-.km-tip{position:absolute;top:-2px;transform:translate(-50%,-100%);font-family:var(--head);font-weight:500;font-size:12px;white-space:nowrap;color:var(--ink);background:var(--bg2);border:1px solid var(--panel-b);border-radius:8px;padding:5px 9px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:3}
+.km-tip{position:absolute;top:-2px;transform:translate(-50%,-100%);font-family:var(--head);font-weight:500;font-size:12px;white-space:nowrap;color:var(--ink);border-radius:8px;padding:5px 9px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:3}
 .km-tip.on{opacity:1}
 .km-tip b{font-family:var(--title);color:var(--magenta);font-weight:700;font-size:1.1em}
 .km-hint{display:block;margin-top:10px;font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted-2)}
@@ -433,8 +428,7 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .km-sw.pk{background:var(--magenta)}
 /* utilização · uma linha por veículo, número grande de dias + barrinha + quadradinhos */
 .km-sub{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted);margin:-4px 0 16px}
-.urow{padding:16px 0;border-bottom:1px solid var(--hair)}
-.urow:last-child{border-bottom:0}
+.urow{padding:16px 0}
 .uhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:9px}
 .uplate{font-family:var(--title);font-weight:700;font-size:15px;color:var(--ink);letter-spacing:.01em;white-space:nowrap}
 .udias{font-family:var(--head);font-weight:500;color:var(--muted);font-size:13px}
@@ -452,8 +446,7 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 .mnt-note{margin-top:12px}
 /* benchmark vs mercado */
 .bmlist{margin-top:8px}
-.bm{padding:20px 0;border-bottom:1px solid var(--hair)}
-.bm:last-child{border-bottom:0}
+.bm{padding:20px 0}
 .bm-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
 .bm-name{font-family:var(--head);font-weight:600;font-size:16px;color:var(--ink)}
 .bm-row{display:grid;grid-template-columns:132px 1fr 72px;gap:12px;align-items:center;margin-top:8px}
@@ -482,7 +475,6 @@ body.light .dline:hover{background:rgba(224,30,55,.05)}
 /* trilhos claros no modo claro (o crimson/verde dos preenchimentos é acento e não muda) */
 body.light .bbar{background:#E8E8E6}
 body.light .kmbase{stroke:rgba(0,0,0,.14)}
-body.light .km-tip{background:#fff;border-color:rgba(0,0,0,.16)}
 
 /* ---------- Mobile ---------- */
 @media (max-width:640px){
@@ -524,21 +516,13 @@ body.light .seal img.wm-print{display:block}
 body.light nav.seg{background:rgba(250,250,248,.86);border-top-color:rgba(0,0,0,.07);border-bottom-color:rgba(0,0,0,.07)}
 body.light nav.seg a.active{color:#C81430;border-color:rgba(200,20,48,.35);background:rgba(224,30,55,.08)}
 body.light .segset{background:#fff;border-color:rgba(0,0,0,.14)}
-body.light .substats{background:rgba(0,0,0,.09);border-color:rgba(0,0,0,.10)}
-body.light .substats .s{background:#fff}
-body.light .rrow{background:#fff;border-color:rgba(0,0,0,.07)}
-body.light .rrow:hover{border-color:rgba(224,30,55,.35)}
 body.light .bar{background:#E8E8E6}
-body.light .vig-top{background:#fff;border:1px solid #E8E8E6}
 body.light .ring .trk{stroke:#E8E8E6}
 body.light .client{color:#0A0A0A}
 body.light .seal-dados{box-shadow:inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(0,0,0,.85), 0 6px 16px rgba(20,10,14,.20)}
-body.light .acard{background:#fff;border:1px solid #E8E8E6}
 body.light .acard .aq{color:#16161A}
 body.light .indic .it b{color:#0A0A0A}
-body.light .gauge{background:#fff;border:1px solid #E8E8E6}
 body.light .gauge .gbar{background:#E8E8E6}
-body.light .crow{background:#fff;border-color:rgba(0,0,0,.06)}
 body.light .cs.good{color:#1C7A45;background:#E8F5EE}
 body.light .cs.mid{color:#16161A;background:#F1F1F1}
 body.light .cs.warn{color:#B5541C;background:#FBEEE6}
@@ -677,6 +661,376 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .reveal{opacity:1;transform:none;transition:none}
   .bar>i,.gauge .gbar>i,.bbar>i{transition:none}
   #rzArc{transition:none !important}
+}
+</style>
+<style>
+/* =====================================================================
+   RELATORIO · CAMADA DE MATERIAL  (aprovada pelo Joao em 30/07/2026)
+   Vale nos DOIS temas. O que ela muda:
+   1. CLARO POR PADRAO   · o escuro vira a opcao
+   2. VIDRO DE VERDADE   · painel = Liquid Glass da Apple, 3 camadas
+   3. MATERIA ATRAS      · sem nada atras, vidro nao tem o que refratar
+   4. ZERO FIO DIVISORIO · separa por respiro e sombra, nunca por linha
+   5. GOTA D'AGUA        · onda onde o dedo toca
+   6. NUMERO-HEROI SOLTO · o `.hero-stat` nao tem bloco atras (pedido do
+      Joao): o numero e o proprio destaque, moldura nele rouba forca
+   Nao muda: uma virgula de copy, um numero, a ordem das secoes.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------
+   0 · O MATERIAL DE CADA TEMA
+   Uma so folha serve aos dois: o que troca sao estas variaveis.
+   --------------------------------------------------------------- */
+body{
+  --ease:cubic-bezier(.22,1,.36,1);
+  --lime:#D1FE17;
+  --rosa:#E70055;
+  /* ESCURO · vidro fumê: o brilho mora na aresta de cima, nao na face */
+  --glass-b:  rgba(255,255,255,.10);
+  --glass-bg: linear-gradient(168deg, rgba(255,255,255,.062) 0%, rgba(255,255,255,.030) 54%, rgba(255,255,255,.048) 100%);
+  --glass-sh:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -1px 0 rgba(0,0,0,.42),
+    0 1px 2px rgba(0,0,0,.34),
+    0 20px 46px -18px rgba(0,0,0,.60);
+  --glass-sh-alta:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 2px 5px rgba(0,0,0,.38),
+    0 26px 56px -20px rgba(0,0,0,.70);
+}
+body.light{
+  /* CLARO · vidro leitoso da landing */
+  --glass-b:  rgba(255,255,255,.72);
+  --glass-bg: linear-gradient(168deg, rgba(255,255,255,.70) 0%, rgba(255,255,255,.50) 54%, rgba(255,255,255,.58) 100%);
+  --glass-sh:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -1px 0 rgba(24,20,32,.045),
+    0 1px 2px rgba(24,20,32,.06),
+    0 18px 44px -16px rgba(24,20,32,.16);
+  --glass-sh-alta:
+    inset 0 1px 0 rgba(255,255,255,.95),
+    0 2px 4px rgba(24,20,32,.07),
+    0 24px 52px -18px rgba(24,20,32,.20);
+}
+
+/* ---------------------------------------------------------------
+   1 · A MATERIA ATRAS  ·  pano de fundo vivo da pagina inteira
+   Mascara que mata a luz antes de qualquer aresta: orbe cortado na
+   borda VIRA linha divisoria (licao que custou duas rodadas na landing).
+   --------------------------------------------------------------- */
+#rcOrbes{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  -webkit-mask-image:radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
+          mask-image:radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
+}
+#rcOrbes i{position:absolute;display:block;border-radius:50%;filter:blur(44px);will-change:transform}
+/* no escuro sao BRASAS · o lime da landing sobre preto vira mancha alien */
+#rcOrbes i:nth-child(1){
+  width:46%;height:52%;left:-10%;top:8%;
+  background:radial-gradient(circle at 50% 50%, rgba(255,45,75,.10), rgba(255,45,75,0) 74%);
+  animation:rcOrb1 40s ease-in-out infinite alternate;
+}
+#rcOrbes i:nth-child(2){
+  width:56%;height:56%;right:-14%;top:34%;
+  background:radial-gradient(circle at 50% 50%, rgba(231,0,85,.085), rgba(231,0,85,0) 76%);
+  animation:rcOrb2 48s ease-in-out infinite alternate;
+}
+#rcOrbes i:nth-child(3){
+  width:42%;height:52%;left:28%;bottom:-10%;
+  background:radial-gradient(circle at 50% 50%, rgba(200,20,48,.10), rgba(200,20,48,0) 74%);
+  animation:rcOrb3 44s ease-in-out infinite alternate;
+}
+/* no claro entra o lime · e o que da o ar da landing */
+body.light #rcOrbes i:nth-child(1){background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.20), rgba(209,254,23,0) 74%)}
+body.light #rcOrbes i:nth-child(2){background:radial-gradient(circle at 50% 50%, rgba(255,0,91,.11), rgba(255,0,91,0) 76%)}
+body.light #rcOrbes i:nth-child(3){background:radial-gradient(circle at 50% 50%, rgba(200,20,48,.13), rgba(200,20,48,0) 74%)}
+@keyframes rcOrb1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(12vw,8vh,0) scale(1.16)}}
+@keyframes rcOrb2{from{transform:translate3d(0,0,0) scale(1.08)}to{transform:translate3d(-10vw,-7vh,0) scale(.94)}}
+@keyframes rcOrb3{from{transform:translate3d(0,0,0) scale(.96)}to{transform:translate3d(-8vw,-9vh,0) scale(1.18)}}
+/* mesma especificidade das regras que declaram a animacao (`:nth-child`),
+   senao o reduce perde a briga e a luz continua andando */
+@media (prefers-reduced-motion:reduce){
+  #rcOrbes i:nth-child(1),
+  #rcOrbes i:nth-child(2),
+  #rcOrbes i:nth-child(3){animation:none}
+}
+
+/* o conteudo sobe pra cima da luz · a `nav.seg` fica FORA desta lista:
+   ela ja e `position:sticky` com z-index 30, e trocar o position aqui
+   descolava a barra de secoes do topo na rolagem */
+header.hd, main, footer.bot, .fabs{position:relative;z-index:1}
+body.light .veil{opacity:.35}
+/* os "poros" do canvas sao cometas no escuro · sobre o branco leem como
+   sujeira na tela. No claro quem faz o fundo vivo sao os orbes. */
+body.light #bgv{display:none}
+
+/* ---------------------------------------------------------------
+   2 · ZERO FIO  ·  nenhuma linha divisoria, nos dois temas
+   --------------------------------------------------------------- */
+main section.block + section.block{border-top:0}
+nav.seg{border-top:0;border-bottom:0}
+footer.bot{border-top:0;margin-top:64px}
+.sheet .drow{border-bottom:0}
+.urow{border-bottom:0}
+.bm{border-bottom:0}
+.substats{background:transparent;border:0;gap:10px;overflow:visible}
+.dgrid{background:transparent;border:0;gap:10px;overflow:visible}
+
+/* ---------------------------------------------------------------
+   3 · VIDRO  ·  todo painel ganha o material dos planos da landing
+   --------------------------------------------------------------- */
+/* A `.sheet` (gaveta do veiculo) e o `.callout` ficam de fora de proposito:
+   a gaveta e modal colada nas bordas da tela (vidro nela deixa a pagina
+   atravessar e arredonda canto que encosta na aresta) e o callout ja tem
+   material proprio, com a barra rosa. */
+.dgrid > .dline,
+.substats > *,
+.acard,
+.gauge,
+.vig-top,
+.rrow,
+.crow,
+.km-tip,
+.bm-read{
+  border:1px solid var(--glass-b);
+  border-radius:16px;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);backdrop-filter:blur(30px) saturate(200%);
+  box-shadow:var(--glass-sh);
+}
+/* cada fileira e uma lamina, nao uma celula de tabela */
+.dgrid > .dline,
+.rrow,
+.crow{
+  border-radius:14px;
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease);
+}
+.rrow,.crow{margin-bottom:8px}
+.dgrid > .dline:hover,
+.rrow:hover,
+.crow:hover{
+  background:var(--glass-bg);
+  transform:translateY(-2px);
+  box-shadow:var(--glass-sh-alta);
+}
+/* Os hovers antigos pintavam um veu crimson POR CIMA do vidro. Pior: os
+   da `.rrow` usam a shorthand `background`, que zera a imagem do vidro —
+   entao a linha sob o foco do teclado ficava translucida e o orbe
+   atravessava por baixo. Duas listas do mesmo material reagem igual. */
+.crow:hover,
+.rrow:hover,
+.rrow:focus-visible{
+  background:var(--glass-bg);
+  border-color:var(--glass-b);
+}
+/* quem navega por teclado perdia o unico sinal de foco junto com o veu
+   crimson (a regra antiga trazia `outline:none` embutido) */
+.rrow:focus-visible,
+.crow:focus-visible,
+.dgrid > .dline:focus-visible{outline:2px solid var(--crimson);outline-offset:2px}
+body.light .callout .bolt{background:linear-gradient(180deg,#F2144F,#E70055);box-shadow:none}
+.urow,
+.bm{
+  border:1px solid var(--glass-b);border-radius:16px;
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(30px) saturate(200%);backdrop-filter:blur(30px) saturate(200%);
+  box-shadow:var(--glass-sh);
+  padding:16px 18px;margin-bottom:10px;
+}
+#rzMap{border:1px solid var(--glass-b);box-shadow:var(--glass-sh)}
+
+/* ---------------------------------------------------------------
+   4 · NUMERO-HEROI SOLTO  ·  pedido do Joao, vale nos dois temas
+   O `.hero-stat` (48.230 km · MET-4C22 · R$ 1.133) fica sem bloco
+   atras: no escuro ele ja era assim e e o que da a forca do numero.
+   --------------------------------------------------------------- */
+.hero-stat{
+  background:none;border:0;box-shadow:none;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+}
+
+/* ---------------------------------------------------------------
+   5 · CONTROLES DE VIDRO  ·  chips, filtros e cidades (so no claro:
+   no escuro os controles do relatorio ja tem o material certo)
+   --------------------------------------------------------------- */
+body.light .segset,
+body.light .mchips button,
+body.light .heat-cities .hc,
+body.light .map-tools button{
+  border:1px solid rgba(255,255,255,.80);
+  background:linear-gradient(168deg, rgba(255,255,255,.72), rgba(255,255,255,.52));
+  -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 6px 16px -8px rgba(24,20,32,.18);
+}
+/* estado ligado: a cor e SUPERFICIE com texto escuro em cima ·
+   lime como cor de TEXTO no claro da 1,4:1, ilegivel · licao da landing */
+body.light .mchips button.on{
+  color:#16161A;border-color:rgba(24,20,32,.14);
+  background:linear-gradient(180deg,#DAFF3A,#CBF70E);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 6px 16px -8px rgba(120,150,0,.42);
+}
+
+/* ---------------------------------------------------------------
+   6 · BOTOES ESCULPIDOS  ·  o material do "Escolher este plano"
+   So no claro: no escuro o "Baixar PDF" ja e crimson solido e grafite
+   sobre preto sumiria. Sem reflexo varrendo (pedido do Joao).
+   --------------------------------------------------------------- */
+body.light .pdfbtn,
+body.light .more{
+  color:#fff;
+  border:1px solid rgba(0,0,0,.92);border-radius:14px;
+  background:linear-gradient(180deg,#32323A 0%,#1E1E24 46%,#121216 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 1px 2px rgba(18,14,24,.22),
+    0 10px 22px -8px rgba(18,14,24,.34);
+  transition:transform .22s var(--ease), box-shadow .22s var(--ease), filter .22s var(--ease);
+}
+body.light .pdfbtn:hover,
+body.light .more:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 2px 4px rgba(18,14,24,.24),
+    0 18px 38px -12px rgba(18,14,24,.42);
+}
+body.light .pdfbtn:active,
+body.light .more:active{transform:translateY(0) scale(.986);transition-duration:.09s;filter:brightness(.94)}
+body.light .more{background-image:linear-gradient(180deg,#32323A 0%,#1E1E24 46%,#121216 100%)}
+
+/* o trocador de tema e ajuste, nao acao: fica de vidro, um degrau abaixo
+   do "Baixar PDF" · dois objetos com o mesmo acabamento competem */
+body.light .themebtn{
+  color:#3A3A42;
+  /* aresta de tinta, nao de luz: flutuando sobre um cartao branco, borda
+     branca some e o botao vira um borrao · isto e limite de objeto, nao fio */
+  border:1px solid rgba(24,20,32,.10);border-radius:14px;
+  /* quase opaco de proposito: ele flutua POR CIMA do corpo do texto, e
+     vidro fino ali deixa a frase atravessar e parecer defeito de tela */
+  background:linear-gradient(168deg, rgba(255,255,255,.97), rgba(255,255,255,.93));
+  -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 8px 20px -10px rgba(24,20,32,.28);
+  transition:transform .22s var(--ease), box-shadow .22s var(--ease), color .22s var(--ease);
+}
+body.light .themebtn:hover{
+  color:#16161A;transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 14px 28px -12px rgba(24,20,32,.34);
+}
+body.light .themebtn:active{transform:translateY(0) scale(.988);transition-duration:.09s}
+
+/* ---------------------------------------------------------------
+   7 · ETIQUETAS  ·  cor viva como SUPERFICIE, texto claro por cima
+   --------------------------------------------------------------- */
+body.light .tag{
+  background:linear-gradient(180deg,#F2144F,#E70055);color:#fff;border:0;
+  box-shadow:0 6px 16px -8px rgba(231,0,85,.55);
+}
+body.light .tag.ghost{
+  background:linear-gradient(168deg, rgba(255,255,255,.72), rgba(255,255,255,.52));
+  color:#56565E;border:1px solid rgba(255,255,255,.80);box-shadow:none;
+}
+
+/* ---------------------------------------------------------------
+   8 · GOTA D'AGUA  ·  onda que nasce onde o dedo toca
+   Tres cristas estreitas, nao um degrade largo. No CLARO quem desenha
+   a agua e a SOMBRA DO VALE (branco sobre branco some); no ESCURO e o
+   contrario: a crista e LUZ. O fio crimson da o desenho nos dois.
+   --------------------------------------------------------------- */
+.rc-gota{
+  position:absolute;border-radius:50%;pointer-events:none;z-index:5;
+  transform:translate(-50%,-50%) scale(0);
+  background:radial-gradient(circle closest-side,
+    rgba(255,255,255,0)    0%,
+    rgba(255,255,255,.045) 26%,
+    rgba(255,255,255,.10)  31%,
+    rgba(255,255,255,0)    36%,
+    rgba(255,255,255,.075) 43%,
+    rgba(255,255,255,.17)  48%,
+    rgba(255,255,255,0)    54%,
+    rgba(255,255,255,.10)  59%,
+    rgba(255,45,75,.30)    63%,
+    rgba(255,255,255,.26)  66%,
+    rgba(255,255,255,0)    74%);
+  animation:rcGota .82s var(--ease) forwards;
+}
+body.light .rc-gota{
+  background:radial-gradient(circle closest-side,
+    rgba(26,22,34,0)     0%,
+    rgba(26,22,34,.035) 26%,   /* crista 3 · a mais fraca, ja morrendo   */
+    rgba(255,255,255,.30) 31%,
+    rgba(26,22,34,0)    36%,
+    rgba(26,22,34,.085) 43%,   /* crista 2 · meia forca                  */
+    rgba(255,255,255,.42) 48%,
+    rgba(26,22,34,0)    54%,
+    rgba(26,22,34,.14)  59%,   /* crista 1 · a da frente, o vale escuro  */
+    rgba(231,0,85,.20)  63%,   /* fio crimson na crista · da o desenho   */
+    rgba(255,255,255,.55) 66%,
+    rgba(255,255,255,0) 74%,
+    rgba(26,22,34,0)   100%);
+}
+@keyframes rcGota{
+  from{transform:translate(-50%,-50%) scale(0);opacity:.9}
+  to  {transform:translate(-50%,-50%) scale(1);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){.rc-gota{display:none}}
+.dgrid > .dline, .urow, .acard, .rrow, .crow{position:relative;overflow:hidden}
+
+/* ---------------------------------------------------------------
+   9 · CABECALHO  ·  a navegacao vira uma lamina flutuante (no claro)
+   --------------------------------------------------------------- */
+/* O fundo e o blur moram num pseudo-elemento MASCARADO. Se ficassem na
+   propria nav, o blur terminaria numa aresta reta de ponta a ponta — que
+   e exatamente o fio divisorio que esta camada existe pra nao ter. */
+body.light nav.seg{background:transparent;box-shadow:none;isolation:isolate}
+body.light nav.seg::before{
+  content:"";position:absolute;inset:0 0 -22px 0;z-index:-1;pointer-events:none;
+  /* A lamina e OPACA na altura dos rotulos e so desvanece num rabo de
+     22px ABAIXO da barra. Desvanecer dentro dela deixava o grafico rolar
+     por baixo do texto; e cortar reto devolveria o fio divisorio. */
+  background:linear-gradient(180deg, rgba(250,250,248,.94) 0%, rgba(250,250,248,.94) 72%, rgba(250,250,248,0) 100%);
+  -webkit-backdrop-filter:blur(24px) saturate(190%);backdrop-filter:blur(24px) saturate(190%);
+  -webkit-mask-image:linear-gradient(180deg,#000 72%, transparent 100%);
+          mask-image:linear-gradient(180deg,#000 72%, transparent 100%);
+}
+
+/* ---------------------------------------------------------------
+   11 · LEGIBILIDADE NO CLARO
+   O claro deixou de ser opcao e virou o padrao, entao o que passava
+   por ser tema secundario agora precisa cumprir WCAG. O crimson de
+   TELA (#FF2D4B) da ~3,4:1 sobre o papel branco; a peca ja tinha o
+   tom certo pra texto no claro (#C81430, usado em `.anchor`).
+   --------------------------------------------------------------- */
+body.light .eyebrow,
+body.light .callout .ck,
+body.light .dgt,
+body.light .scr{color:#C81430}
+body.light .segset button[aria-pressed="true"]{background:linear-gradient(96deg,#A80D26,#C81430)}
+body.light .tag.warn,
+body.light .cs.warn{color:#8A3E10}
+/* o "·" do mapa de calor sobre a celula mais clara dava 3,5:1 */
+body.light .hm-cell.z{color:#4F4F57}
+/* o "Baixar PDF" no escuro dava 4,44:1 · o crimson de tela e claro demais
+   pra carregar texto branco em corpo pequeno */
+body:not(.light) .pdfbtn{background:linear-gradient(96deg,#C81430,#DD1B34)}
+
+/* ---------------------------------------------------------------
+   10 · PAPEL  ·  nada desta camada atravessa a impressao
+   O tema de impressao ja reescreve as superficies com !important; o que
+   ele nao previa e vidro (blur) e luz de fundo. Zeramos aqui.
+   --------------------------------------------------------------- */
+@media print{
+  #rcOrbes,.rc-gota{display:none !important}
+  .dgrid > .dline,.substats > *,.acard,.gauge,.vig-top,.rrow,.crow,.km-tip,.bm-read,
+  .urow,.bm,#rzMap,.segset,.mchips button,.heat-cities .hc,.map-tools button,.themebtn,
+  nav.seg::before{
+    -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+  }
+  .dgrid > .dline,.urow,.bm,.rrow,.crow{transform:none !important}
+  /* o respiro de 8px e de tela · no papel ele empurrava 2 veiculos do
+     ranking pra pagina seguinte sem ninguem ter escolhido isso */
+  .rrow,.crow{margin-bottom:0 !important}
 }
 </style>
 </head>
@@ -1623,19 +1977,66 @@ function __boot(){
     });
 })();
 
-// ---------- Modo claro / escuro (persistido; escuro e o padrao) ----------
+// ---------- Modo claro / escuro (persistido; CLARO e o padrao) ----------
 (function(){
   var btn = document.getElementById('themeBtn'); if(!btn) return;
-  function aplicar(claro){
+  function aplicar(claro, grava){
     document.body.classList.toggle('light', claro);
     btn.textContent = claro ? 'Modo escuro' : 'Modo claro';
-    try{ localStorage.setItem('rc_int_tema', claro ? 'claro' : 'escuro'); }catch(e){}
+    if(grava){ try{ localStorage.setItem('rc_int_tema', claro ? 'claro' : 'escuro'); }catch(e){} }
     if(window.__bgRepaint) window.__bgRepaint();
   }
   var salvo = null;
   try{ salvo = localStorage.getItem('rc_int_tema'); }catch(e){}
-  if(salvo === 'claro') aplicar(true);
-  btn.addEventListener('click', function(){ aplicar(!document.body.classList.contains('light')); });
+  aplicar(salvo !== 'escuro', false);   // so a escolha DELE vai pro armazenamento
+  btn.addEventListener('click', function(){ aplicar(!document.body.classList.contains('light'), true); });
+})();
+</script>
+<script>
+/* =====================================================================
+   RELATORIO · CAMADA DE MATERIAL (par do CSS)
+   1. MATERIA ATRAS · injeta os orbes; sem eles o vidro claro nao tem o
+      que refratar e some
+   2. GOTA D'AGUA   · onda de luz onde o dedo toca
+   (O tema claro por padrao mora na propria IIFE de tema do relatorio.)
+   ===================================================================== */
+(function(){
+  'use strict';
+
+  if(!document.getElementById('rcOrbes')){
+    var orbes = document.createElement('div');
+    orbes.id = 'rcOrbes';
+    orbes.setAttribute('aria-hidden','true');
+    orbes.innerHTML = '<i></i><i></i><i></i>';
+    document.body.insertBefore(orbes, document.body.firstChild);
+  }
+
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var ALVOS = '.dgrid > .dline, .urow, .acard, .rrow, .crow';
+  document.addEventListener('pointerdown', function(ev){
+    var alvo = ev.target && ev.target.closest ? ev.target.closest(ALVOS) : null;
+    if(!alvo) return;
+
+    var r = alvo.getBoundingClientRect();
+    var x = ev.clientX - r.left, y = ev.clientY - r.top;
+    /* Raio: o canto mais distante, MAS limitado pelo lado curto do elemento.
+       Numa fileira de 1370x96 a regra do canto daria r=1000 e a onda viraria
+       um lavado sobre a lamina inteira · limitada, ela le como gota mesmo. */
+    var canto = Math.max(
+      Math.hypot(x, y),            Math.hypot(r.width - x, y),
+      Math.hypot(x, r.height - y), Math.hypot(r.width - x, r.height - y)
+    );
+    var raio = Math.max(88, Math.min(canto, 2.4 * Math.min(r.width, r.height)));
+
+    var g = document.createElement('span');
+    g.className = 'rc-gota';
+    g.style.width = g.style.height = (raio * 2) + 'px';
+    g.style.left = x + 'px';
+    g.style.top  = y + 'px';
+    alvo.appendChild(g);
+    g.addEventListener('animationend', function(){ g.remove(); });
+  }, {passive:true});
 })();
 </script>
 </body>
