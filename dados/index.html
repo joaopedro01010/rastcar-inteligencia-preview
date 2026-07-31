@@ -264,8 +264,11 @@ img{max-width:100%}
    tras assume o centro. Zero scroll-jacking: o JS so LE o scroll.
    ============================================================ */
 #story{position:relative}
-/* 8 folhas x ~42vh · troca de capitulo com pouco movimento de roda */
-.story-track{position:relative;height:340vh}
+/* 8 folhas x 80vh · a troca de capitulo precisa de CURSO. Com 340vh cada
+   giro de trackpad consumia quase um capitulo inteiro: a cena pulava e dava
+   a sensacao de quebrada. Com 640vh, uma rolada avanca uma fracao do passo
+   e a folha tem tempo de virar. */
+.story-track{position:relative;height:640vh}
 .story-sticky{
   position:sticky;top:0;
   height:100vh;height:100svh;
@@ -427,28 +430,25 @@ main section:empty{display:none}
   padding:9px 13px 8px;border-radius:999px;
   max-width:100%;white-space:normal;
 }
-/* No celular a lista em coluna vira uma pilha morta · vira TRILHO horizontal
-   com duas fileiras que correm juntas, arrastavel com o dedo. Mesma leitura
-   do desktop, sem virar lista. */
+/* No celular: o valor e a QUANTIDADE, entao tudo tem que caber na tela de
+   uma vez. Trilho arrastavel escondia metade da lista atras de um gesto que
+   ninguem faz, e uma coluna unica vira pilha morta. Duas colunas mostram as
+   12 de um golpe, sem arrastar e sem balancar. */
 @media(max-width:760px){
   .chips{
-    display:grid;grid-auto-flow:column;grid-template-rows:repeat(2, auto);
-    grid-auto-columns:max-content;
-    gap:9px 9px;flex-wrap:nowrap;
-    overflow-x:auto;overscroll-behavior-x:contain;
-    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    /* sangra ate a borda e devolve o respiro por dentro · o trilho encosta na
-       margem da tela, que e o sinal de "tem mais para o lado" */
-    margin-left:calc(var(--pad) * -1);margin-right:calc(var(--pad) * -1);
-    padding:0 var(--pad) 4px;
-    /* a ultima etiqueta desvanece na borda, convidando a arrastar */
-    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 88%,transparent 100%);
-            mask-image:linear-gradient(90deg,#000 0,#000 88%,transparent 100%);
+    display:grid;grid-template-columns:1fr 1fr;
+    align-items:stretch;gap:8px;
   }
-  .chips::-webkit-scrollbar{display:none}
-  .chips li{scroll-snap-align:start}
-  .chips .tag{white-space:nowrap}
+  .chips li{display:flex}
+  .chips .tag{
+    width:100%;display:flex;align-items:center;
+    white-space:normal;text-align:left;
+    font-size:10.8px;letter-spacing:.06em;line-height:1.28;
+    padding:9px 11px;border-radius:13px;
+  }
+}
+@media(max-width:360px){
+  .chips .tag{font-size:10.2px;padding:8px 9px}
 }
 
 /* etiquetas · a de vidro e a solida */
@@ -858,10 +858,12 @@ main section:empty{display:none}
 }
 @media(max-width:1039px){
   .plans{--w:336px;max-width:540px;margin-left:auto;margin-right:auto;gap:16px}
-  /* no celular: anual primeiro, depois a frota maior, por ultimo a de entrada */
-  .plan--ano{order:1}
-  .plan[data-plano="mensal297"]{order:2}
-  .plan[data-plano="mensal149"]{order:3}
+  /* No celular a leitura e uma ESCADA, nao uma vitrine: 149 estabelece o
+     piso, 297 e a ancora alta e o ANUAL chega logo depois de alguem ter
+     lido "R$ 297 por mes" — ai 2.497 no ano le como queda, nao como
+     subida. Abrir pelo anual mostrava o maior numero da pagina sem nada
+     pra comparar, e terminava no cartao mais barato, que e o que fica na
+     memoria. A ordem do HTML ja e essa: nao mexer com `order`. */
   .plan{padding:22px}
   .p-cta{padding:15px 20px;font-size:15px;border-radius:12px}
 }
@@ -1729,12 +1731,32 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
     mede();
 
+    /* A cena PERSEGUE o scroll em vez de colar nele. Mapear scroll direto em
+       transform entrega no vidro toda a trepidacao do trackpad e do dedo; o
+       amortecimento e o que da peso de objeto — a folha continua o giro por
+       um instante depois que a roda parou, como massa de verdade.
+       O rAF so vive enquanto ha distancia a percorrer. */
+    var alvo = 0, atual = 0, rodando = false;
+    var ATRITO = 0.16, PARADO = 0.00035;
+    function anima(){
+      rodando = false;
+      if(!ativo) return;
+      var d = alvo - atual;
+      if(Math.abs(d) < PARADO){ atual = alvo; }
+      else { atual += d * ATRITO; puxa(); }
+      desenha(atual);
+    }
+    function puxa(){ if(!rodando){ rodando = true; requestAnimationFrame(anima); } }
+
     function frame(){
       ticking = false;
       if(!ativo) return;
       /* unica leitura de layout do quadro · daqui para baixo so escrita */
-      var p = cl01(-track.getBoundingClientRect().top/curso);
-      if(p === lastP) return;          /* a roda mexeu, o trilho nao · nada a escrever */
+      alvo = cl01(-track.getBoundingClientRect().top/curso);
+      puxa();
+    }
+    function desenha(p){
+      if(p === lastP) return;          /* nada mudou · nada a escrever */
       lastP = p;
 
       /* o deck inteiro gira do comeco ao fim · e o "produto preso girando" */
@@ -1818,13 +1840,17 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         /* will-change entra com a secao e sai com ela · fora de cena a
            pagina nao carrega camada de compositor nenhuma da cena 3D */
         document.body.classList.toggle('deck-live', ativo);
-        if(ativo){ mede(); lastP = -1; onScroll(); }
+        if(ativo){ mede(); lastP = -1;
+          /* entrando em cena a folha nasce ja na posicao certa · animar
+             desde o zero faria a pilha "correr atras" na frente do leitor */
+          alvo = atual = cl01(-track.getBoundingClientRect().top/curso);
+          desenha(atual); }
       },{rootMargin:'25% 0px'}).observe(track);
     } else {
       document.body.classList.add('deck-live');
     }
     window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', function(){ mede(); lastP = -1; onScroll(); }, {passive:true});
+    window.addEventListener('resize', function(){ mede(); lastP = -1; alvo = atual = cl01(-track.getBoundingClientRect().top/curso); desenha(atual); }, {passive:true});
 
     /* a cena NAO reage ao ponteiro · so ao scroll. Girar junto com o mouse
        dava sensacao de instabilidade e gastava quadro a toa. */

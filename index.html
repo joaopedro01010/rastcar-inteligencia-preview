@@ -724,20 +724,23 @@ body.light{
           mask-image:radial-gradient(120% 100% at 50% 40%, #000 55%, transparent 100%);
 }
 #rcOrbes i{position:absolute;display:block;border-radius:50%;filter:blur(44px);will-change:transform}
-/* no escuro sao BRASAS · o lime da landing sobre preto vira mancha alien */
+/* O ESCURO TEM A MESMA LUZ QUE O CLARO · so muda o corpo em que ela bate.
+   Sobre branco, alpha .20 ja pinta; sobre preto o mesmo alpha some, entao
+   aqui a luz e mais forte pra CHEGAR na mesma presenca (medida: media de
+   diferenca entre a pagina com e sem os orbes, ~2,3 nos dois temas). */
 #rcOrbes i:nth-child(1){
   width:46%;height:52%;left:-10%;top:8%;
-  background:radial-gradient(circle at 50% 50%, rgba(255,45,75,.10), rgba(255,45,75,0) 74%);
+  background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.075), rgba(209,254,23,0) 74%);
   animation:rcOrb1 40s ease-in-out infinite alternate;
 }
 #rcOrbes i:nth-child(2){
   width:56%;height:56%;right:-14%;top:34%;
-  background:radial-gradient(circle at 50% 50%, rgba(231,0,85,.085), rgba(231,0,85,0) 76%);
+  background:radial-gradient(circle at 50% 50%, rgba(255,0,91,.20), rgba(255,0,91,0) 76%);
   animation:rcOrb2 48s ease-in-out infinite alternate;
 }
 #rcOrbes i:nth-child(3){
   width:42%;height:52%;left:28%;bottom:-10%;
-  background:radial-gradient(circle at 50% 50%, rgba(200,20,48,.10), rgba(200,20,48,0) 74%);
+  background:radial-gradient(circle at 50% 50%, rgba(255,45,75,.22), rgba(255,45,75,0) 74%);
   animation:rcOrb3 44s ease-in-out infinite alternate;
 }
 /* no claro entra o lime · e o que da o ar da landing */
