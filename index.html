@@ -1796,15 +1796,31 @@ function __boot(){
     var sec=el('plano'); if(!sec) return;
     var c=D.comportamento||{}; var ec=D.economia||null;
     var itens=[];
-    var piores=(c.piores||[]).map(function(x){ return esc(x.placa); });
-    if(piores.length){ var ev=(c.piores||[]).reduce(function(acc,x){ return acc+(x.excessos||0); },0);
-      itens.push('Conversar com '+joinNat(piores)+' · concentram '+nf(ev)+' eventos de velocidade.'); }
-    var sub=(D.veiculos||[]).filter(function(v){ return v.ocioso; }).map(function(v){ return esc(v.placa); });
-    if(sub.length) itens.push('Reavaliar a escala de '+joinNat(sub)+' · capacidade parada é frota que você já pagou.');
+    /* PLANO, NAO DESPEJO. Numa frota de 212 veiculos, listar todos os que
+       precisam de acao gerava uma frase de 870 caracteres (49 placas) na
+       ultima secao do relatorio · o cliente le uma parede e nao age.
+       Acima de 3, a acao passa a dizer o TAMANHO do problema e por onde
+       comecar; a lista completa ja esta nas secoes acima. */
+    /* o identificador fica como o cliente cadastrou · "2188" e o numero de
+       frota, e e assim que ele chama o carro. Prefixar com "o veiculo"
+       gerava "comece por o veiculo 2187". */
+    function plano(arr){
+      var a = arr.map(function(x){ return esc(x); });
+      if(a.length <= 3) return {txt:joinNat(a), n:a.length};
+      return {txt:nf(a.length)+' veículos · comece por '+joinNat(a.slice(0,3)), n:a.length};
+    }
+    var piores=(c.piores||[]).map(function(x){ return x.placa; });
+    var ev=(c.piores||[]).reduce(function(acc,x){ return acc+(x.excessos||0); },0);
+    /* sem excesso nenhum a frase virava "concentram 0 eventos de velocidade" */
+    if(piores.length && ev>0){ var pl=plano(piores);
+      itens.push('Conversar com '+pl.txt+' · '+(pl.n===1?'concentra ':'concentram ')+nf(ev)+' eventos de velocidade.'); }
+    var sub=(D.veiculos||[]).filter(function(v){ return v.ocioso; }).map(function(v){ return v.placa; });
+    if(sub.length) itens.push('Reavaliar a escala de '+plano(sub).txt+' · capacidade parada é frota que você já pagou.');
     var bf=(D.vigilancia&&D.vigilancia.saude&&D.vigilancia.saude.bateria_fraca)||[];
-    if(bf.length) itens.push('Trocar a bateria do '+joinNat(bf.map(function(x){ return esc(x.placa); }))+' antes que vire pane na estrada.');
+    if(bf.length){ var pb=plano(bf.map(function(x){ return x.placa; }));
+      itens.push('Trocar a bateria '+(pb.n===1?'do ':'de ')+pb.txt+' antes que vire pane na estrada.'); }
     var mnt=(D.manutencao||[]);
-    if(mnt.length) itens.push('Agendar a revisão de '+joinNat(mnt.map(function(x){ return esc(x.placa); }))+' · cruzou marco de odômetro este mês.');
+    if(mnt.length) itens.push('Agendar a revisão de '+plano(mnt.map(function(x){ return x.placa; })).txt+' · cruzou marco de odômetro este mês.');
     if(ec) itens.push('Derrubar o motor parado em um terço · devolve na ordem de R$ '+
       Math.round(ec.horas_ociosas_mes*ec.premissa_litros_hora*ec.premissa_preco_litro/3).toLocaleString('pt-BR')+' por mês.');
     if(!itens.length){ sec.style.display='none'; return; }
@@ -1815,7 +1831,12 @@ function __boot(){
       '<div class="indics reveal" style="margin-top:6px">'+itens.map(function(t,i){
         return '<div class="indic'+(i===0?' p1':'')+'"><span class="dot"></span><span class="it">'+t+'</span>'+
                (i===0?'<span class="tag solid">Começar por aqui</span>':'')+'</div>'; }).join('')+'</div>'+
-      (sf?'<p class="anchor reveal grad" style="margin-top:24px">Meta: score da frota de '+sf+' para '+Math.min(100,sf+3)+'.</p>':'');
+      /* frota ja no teto pedia "de 100 para 100" · quem chegou la nao tem
+         para onde subir, tem o que sustentar */
+      (sf ? '<p class="anchor reveal grad" style="margin-top:24px">' +
+            (sf >= 98 ? 'Meta: manter o score da frota em ' + sf + '.'
+                      : 'Meta: score da frota de ' + sf + ' para ' + Math.min(100, sf+3) + '.') +
+            '</p>' : '');
     sec.innerHTML=h;
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
   })();
