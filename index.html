@@ -1819,7 +1819,16 @@ function __boot(){
     if(ec) row('#economia','Custo estimado do motor parado', 'R$ '+nf(Math.round(ec.horas_ociosas_mes*ec.premissa_litros_hora*ec.premissa_preco_litro)));
     var sfv=D.comportamento ? D.comportamento.score_frota : null;
     if(sfv!=null) row('#comportamento','Score de direção da frota', String(sfv), deltaChip(sfv, ANT&&ANT.score_frota, 'sobe-bom'));
-    if(D.manutencao && D.manutencao.length) row('#movimento','Revisão preventiva no radar', joinNat(D.manutencao.map(function(x){ return esc(x.placa); })));
+    /* O resumo e de UMA LINHA: com 212 veiculos, listar todas as revisoes
+       gera uma string de dezenas de placas que atravessa a lamina inteira
+       (na amostra so havia uma, entao nunca apareceu). Aqui vale a conta,
+       nao a lista: a lista completa esta na secao de manutencao. */
+    if(D.manutencao && D.manutencao.length){
+      var mnt = D.manutencao.map(function(x){ return esc(x.placa); });
+      row('#movimento','Revisão preventiva no radar',
+          mnt.length <= 2 ? joinNat(mnt)
+                          : mnt[0] + ' e mais ' + nf(mnt.length - 1) + ' veículos');
+    }
     var acao=document.querySelector('#plano .indic .it');
     if(acao) row('#plano','Primeira ação do mês que vem', esc(acao.textContent), '', true);
     if(rows.length<3) return; // com pouco dado a porta de entrada não ajuda
