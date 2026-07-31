@@ -552,7 +552,12 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .scr,.dline .go{display:none !important}
   html,body{background:#fff !important;color:#111 !important}
   /* esconde tudo que é interativo/animado */
-  #bgv,.veil,.pdfbtn,nav.seg,.controls,.more,.heat-wrap,.ovl,.sheet{display:none !important}
+  /* O mapa e Leaflet: tile externo e marcador em canvas, que no papel sai
+     furado ou nao sai. Ele cai. Mas ate 31/07 caia o `.heat-wrap` INTEIRO,
+     e dentro dele estao as CIDADES com os percentuais · quem imprimia perdia
+     o bloco de rotas por completo, nao so o desenho. Agora cai so o mapa e
+     a instrucao de toque, e a informacao fica. */
+  #bgv,.veil,.pdfbtn,nav.seg,.controls,.more,#rzMap,.map-tools,.mchips,.cap-toque,.ovl,.sheet{display:none !important}
   .stage{position:static}
   /* wordmark VERMELHA no papel (combina com o crimson no fundo branco) */
   .wm-screen{display:none !important}
@@ -627,7 +632,12 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   footer.bot .f-line{color:#5a5a5a !important}
   footer.bot b{color:#0A0A0A !important}
   /* quebras limpas + estados finais */
-  section.block,.vig-top,.comp-grid,.substats,.callout,.acard,.rrow,.crow,.block-head{break-inside:avoid;page-break-inside:avoid}
+  /* `section.block` SAIU desta lista: uma secao tem 1.500-2.200px e a pagina
+     util tem ~1.047px. Pedir para nao quebrar o que nao cabe nao impede a
+     quebra · so empurra a secao para a folha seguinte e deixa rabo em branco
+     na anterior. Quem precisa ficar inteiro sao os blocos internos, e o
+     `.block-head` garante que o titulo nao fica orfao no pe da pagina. */
+  .vig-top,.comp-grid,.substats,.callout,.acard,.rrow,.crow,.block-head{break-inside:avoid;page-break-inside:avoid}
   .reveal{opacity:1 !important;transform:none !important}
   .bar>i,.gauge .gbar>i,.bbar>i{width:var(--w,0) !important;transition:none !important}
   #rzArc{transition:none !important}
@@ -1406,7 +1416,7 @@ function __boot(){
       mntHtml()+
       ((D.rotas_calor&&D.rotas_calor.pontos&&D.rotas_calor.pontos.length)?(
         '<div class="heat-wrap reveal">'+
-          '<div class="heat-cap">Onde sua frota andou no mês · toque numa placa ou numa cidade</div>'+
+          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque"> · toque numa placa ou numa cidade</span></div>'+
           '<div id="rzMap" role="img" aria-label="Mapa com a posição dos veículos da frota na zona onde ficaram mais tempo"></div>'+
           ((D.rotas_calor.cidades&&D.rotas_calor.cidades.length)?('<div class="heat-cities">'+
             D.rotas_calor.cidades.map(function(c){ return '<span class="hc"><b>'+esc(c.nome)+'</b> '+c.pct+'%</span>'; }).join('')+

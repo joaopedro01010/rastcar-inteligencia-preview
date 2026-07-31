@@ -875,13 +875,23 @@ main section:empty{display:none}
   margin:22px 0 0;text-align:center;
 }
 
-@media(min-width:1040px){
-  .plans{grid-template-columns:1fr 1fr 1.1007fr;align-items:stretch}
+/* Com o 4o cartao (71+) a vitrine so cabe em tela larga: a secao ganha uma
+   wrap propria de 1240px e o cartao volta a ~269px, perto dos 310px de
+   quando eram 3. Como TODO o desenho interno e calculado sobre --w, e a
+   fracao que muda (.3119 -> .2339), nao uma pilha de tamanhos soltos.
+   Abaixo de 1280 a leitura vira a escada de uma coluna, que ja era a
+   aprovada no celular. */
+@media(min-width:1280px){
+  #planos .wrap{max-width:1240px}
+  .plans{
+    --w:calc((min(100vw, 1240px) - 2 * var(--pad)) * .2339);
+    grid-template-columns:1fr 1fr 1fr 1.1007fr;align-items:stretch;
+  }
   .plan--ano{margin-top:calc(var(--w) * -.0273)}
   /* ancora de uma linha subia o botao do cartao do meio · piso comum */
   .p-anchor{min-height:2.7em}
 }
-@media(max-width:1039px){
+@media(max-width:1279px){
   .plans{--w:336px;max-width:540px;margin-left:auto;margin-right:auto;gap:16px}
   /* No celular a leitura e uma ESCADA, nao uma vitrine: 149 estabelece o
      piso, 297 e a ancora alta e o ANUAL chega logo depois de alguem ter
@@ -1131,6 +1141,33 @@ body.tot-clear .tot-bar{transform:translateY(100%);opacity:0;pointer-events:none
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
 }
 .p-anchor.why{color:var(--crimson);font-weight:600}
+/* Cartao desligado · ate 31/07 so os mensais podiam apagar, entao o desligado
+   do ANUAL entrava com a vitrine toda acesa: pilula lime "Economize", riscado
+   rosa, checks e selo do Pix. Um cartao indisponivel que grita oferta e pior
+   que um cartao ausente · aqui ele vira cinza por inteiro. */
+.plan.off .p-pay b{background:rgba(22,22,26,.06);color:var(--muted-3)}
+.plan.off .p-save{
+  background:rgba(22,22,26,.06);color:var(--muted-3);box-shadow:none;
+}
+.plan.off .p-was{color:var(--muted-3)}
+.plan.off .p-off{color:var(--muted-3)}
+.plan.off .p-list .ck{background:rgba(22,22,26,.06)}
+.plan.off .p-list .ck::after{opacity:.45}
+
+/* condicao do anual (ate 70 veiculos) · mora dentro do p-sub, meio tom
+   abaixo: e regra, nao promessa, entao nao pode competir com a frase. */
+.p-cond{display:block;color:var(--muted-2);font-size:.92em;margin-top:.28em}
+.plan.off .p-cond{color:var(--muted-3)}
+
+/* saida humana do cartao desligado · frota grande nao compra anual por
+   botao, fala com vendedor. So aparece quando a regra desliga o cartao. */
+.p-wa{
+  display:inline-block;margin-top:calc(var(--w) * .030);
+  font-family:var(--card-body);font-weight:600;font-size:calc(var(--w) * .0400);
+  color:var(--crimson);text-decoration:none;border-bottom:1px solid currentColor;
+  pointer-events:auto;
+}
+.p-wa:hover{color:var(--crimson-2)}
 
 /* ---------- Rodape ---------- */
 footer{
@@ -1258,7 +1295,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       </div>
     </section>
 
-    <!-- os 3 cartoes de plano · reconstrucao da peca aprovada, em claro -->
+    <!-- os 4 cartoes de plano · reconstrucao da peca aprovada, em claro -->
     <section id="planos" aria-label="Planos">
       <div class="orbes" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="wrap">
@@ -1295,9 +1332,9 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
               <h3 class="p-name">Mensal</h3>
-              <span class="p-chip"><span>Acima de 20 veículos</span></span>
+              <span class="p-chip"><span>21 a 70 veículos</span></span>
             </div>
-            <p class="p-sub">Para frotas maiores</p>
+            <p class="p-sub">Para frotas de 21 a 70 veículos</p>
             <p class="p-price"><span class="p-val">R$ 297</span><span class="p-per">/mês</span></p>
             <hr class="p-div">
             <ul class="p-list">
@@ -1316,6 +1353,37 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             </div>
           </article>
 
+          <!-- faixa nova · 71+ veiculos. O corte saiu de medicao da base:
+               entre 61 e 70 veiculos nao existe UM cliente, entao 71 nao
+               empurra ninguem para cima. WhatsApp ja incluso porque frota
+               desse porte tem gestor que le no celular, nao na caixa de
+               entrada. Pix NAO entra aqui: assinatura recorrente nao aceita
+               Pix no Brasil (so Pix Automatico, liberacao a parte). -->
+          <article class="plan rv" data-plano="mensal590" style="--d:.19s">
+            <span class="p-tick" aria-hidden="true"></span>
+            <div class="p-head">
+              <h3 class="p-name">Mensal</h3>
+              <span class="p-chip"><span>A partir de 71 veículos</span></span>
+            </div>
+            <p class="p-sub">Para frotas grandes</p>
+            <p class="p-price"><span class="p-val">R$ 590</span><span class="p-per">/mês</span></p>
+            <hr class="p-div">
+            <ul class="p-list">
+              <li><span class="ck" aria-hidden="true"></span><span>Relatório executivo completo, com score</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>Mapa da frota por cidade</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>Comparação com o mês anterior</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>Benchmark do seu porte</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>Plano de ação mensal</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>1 WhatsApp e e-mail já incluídos</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>Sem limite de veículos</span></li>
+            </ul>
+            <div class="p-foot">
+              <p class="p-anchor">Toda a frota no mesmo estudo, do primeiro ao último veículo.</p>
+              <button class="p-cta" type="button" aria-pressed="false">Escolher este plano</button>
+              <div class="p-pays"><p class="p-pay">Cartão e boleto</p></div>
+            </div>
+          </article>
+
           <article class="plan plan--ano rv" data-plano="anual" style="--d:.26s">
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
@@ -1323,7 +1391,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <span class="p-chip p-chip--best"><span>Melhor valor</span></span>
               <span class="p-chip p-chip--off"><span>30% OFF</span></span>
             </div>
-            <p class="p-sub">O ano inteiro pelo preço de hoje.</p>
+            <p class="p-sub">O ano inteiro pelo preço de hoje. <span class="p-cond">Para frotas de até 70 veículos.</span></p>
             <p class="p-price">
               <span class="p-was"><span class="sr-only">De </span>R$ 3.564</span>
               <span class="p-val"><span class="sr-only">por </span>R$ 2.497</span><span class="p-per">/ano</span>
@@ -1997,14 +2065,25 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   var API_CHECKOUT = 'https://rastcar.app.n8n.cloud/webhook/inteligencia-checkout';
   var ZAP_RASTCAR  = '551231579090';
 
-  var PRECO = {mensal149:149, mensal297:297, anual:2497};
+  var PRECO = {mensal149:149, mensal297:297, mensal590:590, anual:2497};
   var NOME  = {
     mensal149:'Mensal · até 20 veículos',
-    mensal297:'Mensal · acima de 20 veículos',
+    mensal297:'Mensal · 21 a 70 veículos',
+    mensal590:'Mensal · a partir de 71 veículos',
     anual:'Anual · 12 meses'
   };
+  /* Os dois cortes da regua. 70 saiu de medicao da base (2.843 veiculos,
+     417 clientes): entre 61 e 70 nao existe UM cliente, entao o corte nao
+     empurra ninguem. Acima dele o anual sai do botao e vai para o vendedor,
+     senao uma frota de 400 compraria o anual de 2.497 (R$ 208/mes) e o
+     plano de 590 nunca seria vendido. */
   var LIMITE_149 = 20;
+  var LIMITE_297 = 70;
   var MOTIVO_149 = 'Indisponível para frotas acima de 20 veículos.';
+  var MOTIVO_297 = 'Indisponível para frotas acima de 70 veículos.';
+  var MOTIVO_590 = 'Para frotas a partir de 71 veículos.';
+  var MOTIVO_ANO = 'Acima de 70 veículos o anual é fechado com a gente.';
+  var ZAP_ANUAL_GRANDE = 'Olá! Minha frota passa de 70 veículos e quero o Rastcar Inteligência no plano anual.';
 
   var $ = function(id){ return document.getElementById(id); };
 
@@ -2025,6 +2104,8 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   var cards = [].slice.call(document.querySelectorAll('.plan[data-plano]'));
   var card149 = document.querySelector('.plan[data-plano="mensal149"]');
   var card297 = document.querySelector('.plan[data-plano="mensal297"]');
+  var card590 = document.querySelector('.plan[data-plano="mensal590"]');
+  var cardAno = document.querySelector('.plan[data-plano="anual"]');
 
   /* planoAutomatico · a selecao atual veio da regra de porte, nao do usuario.
      So o que a regra escolheu pode ser desfeito por ela depois. */
@@ -2126,16 +2207,33 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     window.__plano = card.getAttribute('data-plano');
     atualiza();
   }
-  function desliga(card){
-    if(!card || card.classList.contains('off')) return;
+  /* desliga(card, motivo, zapMsg) · o motivo entra no lugar da ancora e,
+     quando existe zapMsg, o cartao ganha a saida humana (o anual da frota
+     grande nao morre, muda de balcao). */
+  function desliga(card, motivo, zapMsg){
+    if(!card) return;
     var a = card.querySelector('.p-anchor');
     if(a){
       if(!a.getAttribute('data-orig')) a.setAttribute('data-orig', a.textContent);
-      a.textContent = MOTIVO_149;
+      a.textContent = motivo || MOTIVO_149;
       a.classList.add('why');
     }
     var b = card.querySelector('.p-cta');
     if(b){ b.disabled = true; b.setAttribute('aria-pressed','false'); }
+    var foot = card.querySelector('.p-foot');
+    var link = card.querySelector('.p-wa');
+    if(zapMsg && foot && !link){
+      link = document.createElement('a');
+      link.className = 'p-wa';
+      link.target = '_blank'; link.rel = 'noopener';
+      link.textContent = 'Falar no WhatsApp';
+      link.href = wa(zapMsg);
+      /* entra ANTES do botao morto · a leitura e motivo -> saida, nao
+         motivo -> botao que nao clica -> saida */
+      if(b) foot.insertBefore(link, b); else foot.appendChild(link);
+    } else if(!zapMsg && link){
+      link.parentNode.removeChild(link);
+    }
     card.classList.add('off');
     card.classList.remove('sel');
   }
@@ -2149,39 +2247,50 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
     var b = card.querySelector('.p-cta');
     if(b) b.disabled = false;
+    var link = card.querySelector('.p-wa');
+    if(link) link.parentNode.removeChild(link);
     card.classList.remove('off');
   }
 
-  /* aplica a regra do porte da frota · devolve a linha de aviso, se houver */
+  /* aplica a regra do porte da frota · tres faixas e o portao do anual.
+     Escolha MANUAL do usuario nunca e sobrescrita, com uma excecao: se o
+     cartao que ele escolheu ficou indisponivel para o porte dele, a
+     migracao e obrigatoria (senao daria para pagar 2.497 com 400 veiculos). */
   function regraFrota(n){
-    if(n > LIMITE_149){
-      var migrou = window.__plano === 'mensal149';
-      desliga(card149);
-      if(migrou || !window.__plano){
-        seleciona(card297);
-        st.planoAutomatico = true;
-        txt(aviso, migrou
-          ? 'Sua frota passa de 20 veículos · deixamos o plano de frotas maiores selecionado.'
-          : 'Sugerimos o plano de frotas maiores para o seu porte · você pode trocar nos cartões acima.');
-      } else {
-        txt(aviso, '');
-        atualiza();
-      }
+    var grande = n > LIMITE_297;              /* 71+  */
+    var media  = !grande && n > LIMITE_149;   /* 21-70 */
+
+    if(grande){
+      desliga(card149, MOTIVO_149);
+      desliga(card297, MOTIVO_297);
+      religa(card590);
+      desliga(cardAno, MOTIVO_ANO, ZAP_ANUAL_GRANDE);
     } else {
-      religa(card149);
-      /* desfaz SO a migracao imposta por uma frota grande anterior ·
-         escolha manual do usuario nunca e sobrescrita */
-      var voltou = st.planoAutomatico && !!window.__plano && window.__plano !== 'mensal149';
-      if(voltou || !window.__plano){
-        seleciona(card149);
-        st.planoAutomatico = true;
-        txt(aviso, voltou
-          ? 'Sua frota cabe no plano de até 20 veículos · deixamos ele selecionado.'
-          : 'Sugerimos o plano mensal de até 20 veículos · você pode trocar nos cartões acima.');
-      } else {
-        txt(aviso, '');
-        atualiza();
-      }
+      religa(cardAno);
+      religa(card297);
+      desliga(card590, MOTIVO_590);
+      if(media) desliga(card149, MOTIVO_149); else religa(card149);
+    }
+
+    var p = window.__plano || '';
+    var atual = p ? document.querySelector('.plan[data-plano="' + p + '"]') : null;
+    var caiu  = !!atual && atual.classList.contains('off');
+    var alvo  = grande ? card590 : (media ? card297 : card149);
+
+    if(!p || caiu || st.planoAutomatico){
+      seleciona(alvo);
+      st.planoAutomatico = true;
+      txt(aviso, grande
+        ? (caiu ? 'Sua frota passa de 70 veículos · deixamos o plano de frotas grandes selecionado. O anual dessa faixa é fechado com a gente.'
+                : 'Sugerimos o plano de frotas grandes para o seu porte · o anual dessa faixa é fechado com a gente.')
+        : media
+        ? (caiu ? 'Sua frota passa de 20 veículos · deixamos o plano de 21 a 70 veículos selecionado.'
+                : 'Sugerimos o plano de 21 a 70 veículos para o seu porte · você pode trocar nos cartões acima.')
+        : (caiu ? 'Sua frota cabe no plano de até 20 veículos · deixamos ele selecionado.'
+                : 'Sugerimos o plano mensal de até 20 veículos · você pode trocar nos cartões acima.'));
+    } else {
+      txt(aviso, '');
+      atualiza();
     }
   }
 
@@ -2191,18 +2300,21 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   function atualiza(){
     var p = window.__plano || '';
     var anual = p === 'anual';
+    /* o plano de 590 ja vem com 1 WhatsApp, como o anual · nos dois o
+       toggle de R$ 15 nao existe, e o campo do numero e obrigatorio */
+    var zapIncluso = anual || p === 'mensal590';
 
-    swWrap.hidden = !p || anual;
-    if(anual) sw.checked = false;
+    swWrap.hidden = !p || zapIncluso;
+    if(zapIncluso) sw.checked = false;
 
-    var precisaZap = !!p && (anual || sw.checked);
+    var precisaZap = !!p && (zapIncluso || sw.checked);
     zapWrap.hidden = !precisaZap;
-    zapHint.textContent = anual
+    zapHint.textContent = zapIncluso
       ? 'É onde seu relatório chega todo mês.'
       : 'O relatório também vai para este número todo mês.';
 
     var base  = p ? PRECO[p] : 0;
-    var extra = (p && !anual && sw.checked) ? 15 : 0;
+    var extra = (p && !zapIncluso && sw.checked) ? 15 : 0;
     var total = base + extra;
 
     var nome = p ? NOME[p] : 'Nenhum plano escolhido';
@@ -2365,12 +2477,22 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     var e = String((r.json && r.json.erro) || '').toLowerCase();
 
     if(r.status === 422){
-      /* corrida rara: a frota cresceu entre a prova e o pagamento */
-      st.veiculos = LIMITE_149 + 1;
-      desliga(card149);
-      seleciona(card297);
-      txt(ePay,'Sua frota passa de 20 veículos · deixamos o plano de frotas maiores selecionado. Confira o total e siga.');
-      bPay.focus();
+      /* corrida rara: a frota mudou de faixa entre a prova e o pagamento.
+         Quem tem o numero certo agora e o servidor · se ele mandar, a regra
+         inteira roda de novo com ele; sem numero, nao invento faixa e mando
+         localizar de novo (errar a faixa aqui vende o plano errado). */
+      var nSrv = Number(r.json && r.json.veiculos);
+      if(nSrv > 0){
+        st.veiculos = nSrv;
+        regraFrota(nSrv);
+        txt(ePay,'Sua frota agora tem ' + nSrv + (nSrv === 1 ? ' veículo' : ' veículos') +
+                 ' · ajustamos o plano para essa faixa. Confira o total e siga.');
+        bPay.focus();
+      } else {
+        limpaProva();
+        txt(eCnpj,'A frota mudou de tamanho · localize de novo para seguir.');
+        iCnpj.focus();
+      }
       return;
     }
     if(r.status === 404){
