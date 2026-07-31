@@ -1421,7 +1421,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
           </fieldset>
 
-          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe · cartão e boleto, e Pix no plano anual. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
+          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe · cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
           <p class="buy-legal">Assinatura digital da Rastcar · CNPJ 10.142.559/0001-00</p>
         </form>
       </div>
@@ -2208,12 +2208,9 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
 
     /* Pix so no anual · assinatura mensal recorrente nao aceita Pix no Brasil.
-       Nunca prometer Pix no mensal, aqui nem em lugar nenhum da pagina.
-       ANTES DE ESCOLHER, porem, some justamente a informacao que ajuda a
-       vender o anual · entao o estado neutro diz onde o Pix existe. */
+       Nunca prometer Pix no mensal, aqui nem em lugar nenhum da pagina. */
     txt(trust, 'Pagamento processado pelo Stripe · ' +
-               (!p ? 'cartão e boleto, e Pix no plano anual'
-                   : (anual ? 'cartão, boleto e Pix' : 'cartão e boleto')) +
+               (anual ? 'cartão, boleto e Pix' : 'cartão e boleto') +
                '. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.');
 
     barra();
