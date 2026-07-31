@@ -763,9 +763,9 @@ body.light #rcOrbes i:nth-child(3){background:radial-gradient(circle at 50% 50%,
    descolava a barra de secoes do topo na rolagem */
 header.hd, main, footer.bot, .fabs{position:relative;z-index:1}
 body.light .veil{opacity:.35}
-/* os "poros" do canvas sao cometas no escuro · sobre o branco leem como
-   sujeira na tela. No claro quem faz o fundo vivo sao os orbes. */
-body.light #bgv{display:none}
+/* os "poros" do canvas saem dos DOIS temas · quem faz o fundo vivo agora
+   sao os orbes, e o fundo do escuro tem que ser o MESMO do claro */
+#bgv{display:none}
 
 /* ---------------------------------------------------------------
    2 · ZERO FIO  ·  nenhuma linha divisoria, nos dois temas
@@ -1934,6 +1934,9 @@ function __boot(){
   // ---------- Fundo vivo · rotas GPS (sutil) ----------
   (function(){
     var cv=el('bgv'); if(!cv) return;
+    /* o fundo vivo passou a ser os orbes · sem esta saida o canvas seguiria
+       pintando um quadro por vez atras de um `display:none` */
+    return;
     var ctx=cv.getContext('2d'), W=0,H=0,DPR=1, raf=null;
     var routes=[
       {y:0.16,amp:0.05,ph:0.4,sp:0.045,off:0.10},

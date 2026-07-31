@@ -278,9 +278,9 @@ img{max-width:100%}
 .story-grid{position:relative;display:grid;gap:22px;grid-template-columns:1fr}
 
 /* --- texto do capitulo --- */
-.story-asides{position:relative;min-height:150px;z-index:3}
+.story-asides{position:relative;display:grid;grid-template-rows:auto auto;align-content:start;z-index:3}
 .as{
-  position:absolute;left:0;right:0;top:0;
+  grid-row:1;grid-column:1;
   opacity:0;transform:translate3d(0,12px,0);
 }
 .as.off{visibility:hidden}
@@ -352,18 +352,18 @@ body.deck-live .chap:not(.off){will-change:transform,opacity}
 .as .toque::before{content:"";width:16px;height:1px;background:var(--crimson);opacity:.8;flex:0 0 auto}
 
 /* passos do capitulo · fio que preenche, ancorado no pe da coluna de texto */
-.rf-ticks{position:absolute;left:0;bottom:0;display:flex;gap:5px}
+.rf-ticks{grid-row:2;grid-column:1;display:flex;gap:5px;margin-top:16px}
 .rf-ticks i{width:16px;height:2px;border-radius:2px;background:rgba(0,0,0,.13);transition:background .35s var(--ease)}
 .rf-ticks i.on{background:var(--crimson)}
 
 @media(min-width:900px){
   .story-grid{grid-template-columns:clamp(228px,22vw,282px) 1fr;gap:clamp(22px,3.4vw,42px);align-items:center}
-  .story-asides{min-height:230px}
+  .story-asides{min-height:230px;align-content:center}
   .deck-stage{height:min(74svh,540px)}
 }
 @media(max-width:899px){
   .story-grid{gap:16px}
-  .story-asides{min-height:158px}
+  .story-asides{min-height:0}
   .deck-stage{height:min(48svh,340px)}
   .as h2{font-size:17px}
   .as p{font-size:13px}
@@ -545,6 +545,24 @@ main section:empty{display:none}
 @media(hover:hover) and (pointer:fine){
   .plan:hover::before{opacity:1}
   .plan{perspective:900px}
+}
+/* ---------- a entrada dos planos ----------
+   E o unico momento em que a pagina APRESENTA o produto, entao o cartao
+   nao so sobe: ele se RESOLVE. Nasce fora de foco, um pouco menor e um
+   pouco baixo, e assenta. Desfoque que some le como profundidade de campo
+   (a peca entrando no plano focal), nao como truque de transicao. O
+   transform dura mais que a opacidade de proposito: o cartao ainda esta
+   assentando quando ja esta legivel, e e isso que da a sensacao de peso. */
+@media (prefers-reduced-motion:no-preference){
+  .plan.rv{
+    transform:translate3d(0,34px,0) scale(.958);
+    filter:blur(8px);
+    transition:opacity .8s var(--ease),
+               transform 1.15s var(--ease),
+               filter .72s var(--ease);
+  }
+  .plan.rv:not(.in){will-change:transform,filter,opacity}
+  .plan.rv.in{transform:none;filter:blur(0)}
 }
 .plan.sel{border-color:var(--crimson);box-shadow:0 0 0 1px var(--crimson), var(--sh-2)}
 .plan--ano{
@@ -1241,7 +1259,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         <p class="sec-sub rv" style="--d:.06s">Você escolhe aqui e ativa em dois passos, logo abaixo.</p>
         <div class="plans" data-plans>
 
-          <article class="plan rv" data-plano="mensal149" style="--d:.06s">
+          <article class="plan rv" data-plano="mensal149" style="--d:0s">
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
               <h3 class="p-name">Mensal</h3>
@@ -1266,7 +1284,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             </div>
           </article>
 
-          <article class="plan rv" data-plano="mensal297" style="--d:.12s">
+          <article class="plan rv" data-plano="mensal297" style="--d:.13s">
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
               <h3 class="p-name">Mensal</h3>
@@ -1291,7 +1309,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             </div>
           </article>
 
-          <article class="plan plan--ano rv" data-plano="anual" style="--d:.18s">
+          <article class="plan plan--ano rv" data-plano="anual" style="--d:.26s">
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
               <h3 class="p-name">Anual</h3>
@@ -1303,7 +1321,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <span class="p-was"><span class="sr-only">De </span>R$ 3.564</span>
               <span class="p-val"><span class="sr-only">por </span>R$ 2.497</span><span class="p-per">/ano</span>
             </p>
-            <p class="p-eq">pagamento anual · equivale a R$ 208 por mês</p>
+            <p class="p-eq">pagamento anual · menos de R$ 7 por dia</p>
             <p class="p-save">Economize R$ 1.067 <span class="un">no ano</span></p>
             <p class="p-off">30% de desconto sobre o mensal</p>
             <hr class="p-div">
@@ -1403,7 +1421,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
           </fieldset>
 
-          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe · cartão e boleto. O relatório chega no e-mail que você informar, todo mês.</p>
+          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe · cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
           <p class="buy-legal">Assinatura digital da Rastcar · CNPJ 10.142.559/0001-00</p>
         </form>
       </div>
@@ -1789,7 +1807,11 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
           var g = -d;
           tz = 230*g; ty = 62*g; tx = -104*g; ry2 = -26*g;
           sc = 1 + .13*g;
-          op = Math.max(0, 1 - 2.4*g);
+          /* a folha que sai APAGA antes de terminar a viagem · com o fade
+             lento, dois textos ficavam legiveis ao mesmo tempo e um lia por
+             cima do outro no meio da troca, que e o que dava a sensacao de
+             cena quebrada. Ela ainda voa, mas ja como vulto. */
+          op = Math.max(0, 1 - 3.4*g);
         }
         /* NADA de blur/sombra por quadro: profundidade sai de transform e
            opacity, que o compositor resolve sozinho. Filtro por frame era o
@@ -2182,14 +2204,14 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
     txt(resPlano, nome); txt(totV, valor); txt(totU, unid);
     txt(totDet, extra ? (brl(base) + ' + ' + brl(extra) + ' WhatsApp')
-                      : (anual ? 'equivale a R$ 208 por mês' : ''));
+                      : (anual ? 'menos de R$ 7 por dia' : ''));
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
 
     /* Pix so no anual · assinatura mensal recorrente nao aceita Pix no Brasil.
        Nunca prometer Pix no mensal, aqui nem em lugar nenhum da pagina. */
     txt(trust, 'Pagamento processado pelo Stripe · ' +
                (anual ? 'cartão, boleto e Pix' : 'cartão e boleto') +
-               '. O relatório chega no e-mail que você informar, todo mês.');
+               '. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.');
 
     barra();
   }
