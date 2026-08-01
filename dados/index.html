@@ -1159,16 +1159,6 @@ body.tot-clear .tot-bar{transform:translateY(100%);opacity:0;pointer-events:none
 .p-cond{display:block;color:var(--muted-2);font-size:.92em;margin-top:.28em}
 .plan.off .p-cond{color:var(--muted-3)}
 
-/* saida humana do cartao desligado · frota grande nao compra anual por
-   botao, fala com vendedor. So aparece quando a regra desliga o cartao. */
-.p-wa{
-  display:inline-block;margin-top:calc(var(--w) * .030);
-  font-family:var(--card-body);font-weight:600;font-size:calc(var(--w) * .0400);
-  color:var(--crimson);text-decoration:none;border-bottom:1px solid currentColor;
-  pointer-events:auto;
-}
-.p-wa:hover{color:var(--crimson-2)}
-
 /* ---------- Rodape ---------- */
 footer{
   padding:44px 0 40px;margin-top:8px;
@@ -1384,6 +1374,12 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             </div>
           </article>
 
+          <!-- O cartao anual tem DUAS faces: ate 70 veiculos (2.497, o anual
+               do 297) e a partir de 71 (4.950, o anual do 590: 12x590 = 7.080
+               com 30% de desconto). A face grande NUNCA aparece sem prova:
+               so quem localizou a frota por CNPJ e tem 71+ ve o 4.950 - e a
+               troca e feita por morfaAnual() no script do funil. O HTML fica
+               sempre na face de ate 70, que e a da pagina sem prova. -->
           <article class="plan plan--ano rv" data-plano="anual" style="--d:.26s">
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
@@ -1409,6 +1405,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <li><span class="ck" aria-hidden="true"></span><span>Comparação com o mês anterior</span></li>
               <li><span class="ck" aria-hidden="true"></span><span>Benchmark do seu porte</span></li>
               <li><span class="ck" aria-hidden="true"></span><span>Plano de ação mensal</span></li>
+              <li data-so-grande hidden><span class="ck" aria-hidden="true"></span><span>Sem limite de veículos</span></li>
             </ul>
             <div class="p-foot">
               <p class="p-anchor">Doze estudos completos da frota. Pagamento anual, e o assunto está resolvido pelos 12 meses.</p>
@@ -2065,25 +2062,25 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   var API_CHECKOUT = 'https://rastcar.app.n8n.cloud/webhook/inteligencia-checkout';
   var ZAP_RASTCAR  = '551231579090';
 
-  var PRECO = {mensal149:149, mensal297:297, mensal590:590, anual:2497};
+  var PRECO = {mensal149:149, mensal297:297, mensal590:590, anual:2497, anual590:4950};
   var NOME  = {
     mensal149:'Mensal · até 20 veículos',
     mensal297:'Mensal · 21 a 70 veículos',
     mensal590:'Mensal · a partir de 71 veículos',
-    anual:'Anual · 12 meses'
+    anual:'Anual · 12 meses',
+    anual590:'Anual · a partir de 71 veículos'
   };
   /* Os dois cortes da regua. 70 saiu de medicao da base (2.843 veiculos,
      417 clientes): entre 61 e 70 nao existe UM cliente, entao o corte nao
-     empurra ninguem. Acima dele o anual sai do botao e vai para o vendedor,
-     senao uma frota de 400 compraria o anual de 2.497 (R$ 208/mes) e o
-     plano de 590 nunca seria vendido. */
+     empurra ninguem. Acima dele o cartao anual MORFA para a face da faixa
+     grande (4.950 = 12x590 com 30% de desconto), senao uma frota de 400
+     compraria o anual de 2.497 (R$ 208/mes) e o plano de 590 nunca seria
+     vendido. A face grande so existe DEPOIS da prova por CNPJ. */
   var LIMITE_149 = 20;
   var LIMITE_297 = 70;
   var MOTIVO_149 = 'Indisponível para frotas acima de 20 veículos.';
   var MOTIVO_297 = 'Indisponível para frotas acima de 70 veículos.';
   var MOTIVO_590 = 'Para frotas a partir de 71 veículos.';
-  var MOTIVO_ANO = 'Acima de 70 veículos o anual é fechado com a gente.';
-  var ZAP_ANUAL_GRANDE = 'Olá! Minha frota passa de 70 veículos e quero o Rastcar Inteligência no plano anual.';
 
   var $ = function(id){ return document.getElementById(id); };
 
@@ -2207,10 +2204,8 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     window.__plano = card.getAttribute('data-plano');
     atualiza();
   }
-  /* desliga(card, motivo, zapMsg) · o motivo entra no lugar da ancora e,
-     quando existe zapMsg, o cartao ganha a saida humana (o anual da frota
-     grande nao morre, muda de balcao). */
-  function desliga(card, motivo, zapMsg){
+  /* desliga(card, motivo) · o motivo entra no lugar da ancora. */
+  function desliga(card, motivo){
     if(!card) return;
     var a = card.querySelector('.p-anchor');
     if(a){
@@ -2220,20 +2215,6 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
     var b = card.querySelector('.p-cta');
     if(b){ b.disabled = true; b.setAttribute('aria-pressed','false'); }
-    var foot = card.querySelector('.p-foot');
-    var link = card.querySelector('.p-wa');
-    if(zapMsg && foot && !link){
-      link = document.createElement('a');
-      link.className = 'p-wa';
-      link.target = '_blank'; link.rel = 'noopener';
-      link.textContent = 'Falar no WhatsApp';
-      link.href = wa(zapMsg);
-      /* entra ANTES do botao morto · a leitura e motivo -> saida, nao
-         motivo -> botao que nao clica -> saida */
-      if(b) foot.insertBefore(link, b); else foot.appendChild(link);
-    } else if(!zapMsg && link){
-      link.parentNode.removeChild(link);
-    }
     card.classList.add('off');
     card.classList.remove('sel');
   }
@@ -2247,26 +2228,72 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
     var b = card.querySelector('.p-cta');
     if(b) b.disabled = false;
-    var link = card.querySelector('.p-wa');
-    if(link) link.parentNode.removeChild(link);
     card.classList.remove('off');
   }
 
-  /* aplica a regra do porte da frota · tres faixas e o portao do anual.
-     Escolha MANUAL do usuario nunca e sobrescrita, com uma excecao: se o
-     cartao que ele escolheu ficou indisponivel para o porte dele, a
-     migracao e obrigatoria (senao daria para pagar 2.497 com 400 veiculos). */
+  /* ---------- as duas faces do cartao anual ----------
+     ate 70 = o anual do 297 (2.497, de 3.564) · 71+ = o anual do 590
+     (4.950, de 7.080 = 12x590; desconto real de 30,1%, a etiqueta de
+     30% OFF vale nas duas faces). A face grande so aparece com prova:
+     quem nao localizou a frota ve a pagina inteira na face de ate 70. */
+  var ANO_FACE = {
+    norm:{
+      chave:'anual',
+      cond:'Para frotas de até 70 veículos.',
+      was:'<span class="sr-only">De </span>R$ 3.564',
+      val:'<span class="sr-only">por </span>R$ 2.497',
+      eq:'pagamento anual · menos de R$ 7 por dia',
+      save:'Economize R$ 1.067 <span class="un">no ano</span>',
+      anchor:'Doze estudos completos da frota. Pagamento anual, e o assunto está resolvido pelos 12 meses.'
+    },
+    grande:{
+      chave:'anual590',
+      cond:'Para frotas a partir de 71 veículos.',
+      was:'<span class="sr-only">De </span>R$ 7.080',
+      val:'<span class="sr-only">por </span>R$ 4.950',
+      eq:'pagamento anual · menos de R$ 14 por dia',
+      save:'Economize R$ 2.130 <span class="un">no ano</span>',
+      anchor:'Doze estudos da frota inteira, sem limite de veículos. Um pagamento no ano, e o assunto está resolvido.'
+    }
+  };
+  function morfaAnual(grande){
+    if(!cardAno) return;
+    var f = grande ? ANO_FACE.grande : ANO_FACE.norm;
+    if(cardAno.getAttribute('data-plano') === f.chave) return;
+    cardAno.setAttribute('data-plano', f.chave);
+    txt(cardAno.querySelector('.p-cond'), f.cond);
+    cardAno.querySelector('.p-was').innerHTML = f.was;
+    cardAno.querySelector('.p-val').innerHTML = f.val;
+    txt(cardAno.querySelector('.p-eq'), f.eq);
+    cardAno.querySelector('.p-save').innerHTML = f.save;
+    var a = cardAno.querySelector('.p-anchor');
+    if(a){ a.textContent = f.anchor; a.setAttribute('data-orig', f.anchor); }
+    [].slice.call(cardAno.querySelectorAll('[data-so-grande]')).forEach(function(li){
+      li.hidden = !grande;
+    });
+    /* a selecao acompanha a face · se o anual estava escolhido, continua
+       escolhido na face nova, com a chave e o preco novos */
+    var outra = grande ? 'anual' : 'anual590';
+    if(window.__plano === outra) window.__plano = f.chave;
+  }
+
+  /* aplica a regra do porte da frota · tres faixas e as duas faces do anual.
+     Escolha MANUAL do usuario nunca e sobrescrita, com duas excecoes: se o
+     cartao que ele escolheu ficou indisponivel para o porte dele, a migracao
+     e obrigatoria (senao daria para pagar 149 com 400 veiculos); e se ele
+     tinha escolhido o anual, a face certa do porte assume o preco (senao
+     daria para pagar 2.497 com 400 veiculos). */
   function regraFrota(n){
     var grande = n > LIMITE_297;              /* 71+  */
     var media  = !grande && n > LIMITE_149;   /* 21-70 */
+    var pAntes = window.__plano || '';
 
+    morfaAnual(grande);
     if(grande){
       desliga(card149, MOTIVO_149);
       desliga(card297, MOTIVO_297);
       religa(card590);
-      desliga(cardAno, MOTIVO_ANO, ZAP_ANUAL_GRANDE);
     } else {
-      religa(cardAno);
       religa(card297);
       desliga(card590, MOTIVO_590);
       if(media) desliga(card149, MOTIVO_149); else religa(card149);
@@ -2274,22 +2301,27 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
     var p = window.__plano || '';
     var atual = p ? document.querySelector('.plan[data-plano="' + p + '"]') : null;
-    var caiu  = !!atual && atual.classList.contains('off');
+    var caiu  = !!p && (!atual || atual.classList.contains('off'));
     var alvo  = grande ? card590 : (media ? card297 : card149);
 
     if(!p || caiu || st.planoAutomatico){
       seleciona(alvo);
       st.planoAutomatico = true;
       txt(aviso, grande
-        ? (caiu ? 'Sua frota passa de 70 veículos · deixamos o plano de frotas grandes selecionado. O anual dessa faixa é fechado com a gente.'
-                : 'Sugerimos o plano de frotas grandes para o seu porte · o anual dessa faixa é fechado com a gente.')
+        ? (caiu ? 'Sua frota passa de 70 veículos · deixamos o plano de frotas grandes selecionado. O anual dessa faixa também está liberado.'
+                : 'Sugerimos o plano de frotas grandes para o seu porte · o anual dessa faixa também está liberado.')
         : media
         ? (caiu ? 'Sua frota passa de 20 veículos · deixamos o plano de 21 a 70 veículos selecionado.'
                 : 'Sugerimos o plano de 21 a 70 veículos para o seu porte · você pode trocar nos cartões acima.')
         : (caiu ? 'Sua frota cabe no plano de até 20 veículos · deixamos ele selecionado.'
                 : 'Sugerimos o plano mensal de até 20 veículos · você pode trocar nos cartões acima.'));
     } else {
-      txt(aviso, '');
+      /* escolha manual mantida · se a face do anual trocou por baixo dela,
+         avisa o preco novo em vez de trocar em silencio */
+      txt(aviso, p !== pAntes
+        ? (grande ? 'Sua frota passa de 70 veículos · o anual ajustou para essa faixa: R$ 4.950 no ano, com os mesmos 30% OFF.'
+                  : 'Sua frota cabe na faixa de até 70 veículos · o anual voltou para R$ 2.497 no ano.')
+        : '');
       atualiza();
     }
   }
@@ -2299,8 +2331,8 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
   function atualiza(){
     var p = window.__plano || '';
-    var anual = p === 'anual';
-    /* o plano de 590 ja vem com 1 WhatsApp, como o anual · nos dois o
+    var anual = p === 'anual' || p === 'anual590';
+    /* o plano de 590 ja vem com 1 WhatsApp, como os anuais · neles o
        toggle de R$ 15 nao existe, e o campo do numero e obrigatorio */
     var zapIncluso = anual || p === 'mensal590';
 
@@ -2323,7 +2355,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
     txt(resPlano, nome); txt(totV, valor); txt(totU, unid);
     txt(totDet, extra ? (brl(base) + ' + ' + brl(extra) + ' WhatsApp')
-                      : (anual ? 'menos de R$ 7 por dia' : ''));
+                      : (anual ? (p === 'anual590' ? 'menos de R$ 14 por dia' : 'menos de R$ 7 por dia') : ''));
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
 
     /* Pix so no anual · assinatura mensal recorrente nao aceita Pix no Brasil.
@@ -2454,7 +2486,9 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
     iZap.removeAttribute('aria-invalid');
 
-    var corpo = {plano:p, cnpj:st.cnpj, email:mail, zap_addon: (p !== 'anual' && sw.checked)};
+    /* zap_addon so existe onde o WhatsApp nao vem incluso (mensais 149/297) */
+    var zapJa = (p === 'anual' || p === 'anual590' || p === 'mensal590');
+    var corpo = {plano:p, cnpj:st.cnpj, email:mail, zap_addon: (!zapJa && sw.checked)};
     if(precisaZap) corpo.whatsapp = '55' + zapD;
 
     ocupado(bPay, true, 'Preparando seu pagamento…');
