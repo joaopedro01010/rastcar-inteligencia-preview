@@ -1016,40 +1016,101 @@ main section:empty{display:none}
 }
 .btn--ghost:active{transform:scale(.985);transition-duration:.09s}
 
-/* --- prova --- */
-.prova{margin:20px 0 0}
+/* --- localizador · mora DENTRO da ilha dos planos, antes dos cartoes.
+   Largura contida: e um instrumento, nao uma secao. --- */
+.loc{margin:30px 0 6px;max-width:640px}
+.loc .fnote{max-width:52ch}
+
+/* --- prova · o momento em que a pagina reconhece o cliente.
+   Vidro sobre os orbes (a mesma materia dos cartoes), check que se
+   desenha, numero-heroi em D-DIN que CONTA ate o total. A entrada se
+   resolve como a dos cartoes: o transform dura mais que a opacidade,
+   e dai vem a sensacao de peso. --- */
+.prova{margin:18px 0 0}
 .prova:empty{display:none}
 .prova-box{
-  border:1px solid rgba(var(--crimson-rgb),.28);border-radius:16px;
-  padding:clamp(15px,2.6vw,22px);
-  background:linear-gradient(135deg,rgba(var(--crimson-rgb),.09),rgba(255,255,255,.75));
-  box-shadow:0 10px 30px rgba(var(--crimson-rgb),.08);
+  position:relative;
+  border:1px solid var(--glass-bd);border-radius:18px;
+  padding:clamp(18px,3vw,26px);
+  background:linear-gradient(168deg,rgba(255,255,255,.82),rgba(255,255,255,.55));
+  -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
+  box-shadow:var(--sh-1);
+  overflow:hidden;
+}
+/* fio especular no topo · nasce e morre antes das quinas, como nos cartoes */
+.prova-box::after{
+  content:"";position:absolute;top:0;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.98) 30%,rgba(255,255,255,.9) 70%,transparent);
+}
+@media (prefers-reduced-motion:no-preference){
+  .prova-box{animation:prova-op .5s var(--ease) both, prova-tr .95s var(--ease) both}
+  @keyframes prova-op{from{opacity:0}to{opacity:1}}
+  @keyframes prova-tr{
+    from{transform:translateY(14px) scale(.977);filter:blur(8px)}
+    to{transform:none;filter:blur(0)}
+  }
+}
+.prova-top{display:flex;align-items:center;gap:9px;margin:0}
+.prova-ck{
+  width:21px;height:21px;flex:0 0 auto;border-radius:50%;
+  background:rgba(var(--crimson-rgb),.10);padding:4.5px;box-sizing:border-box;
+}
+.prova-ck path{
+  fill:none;stroke:var(--crimson);stroke-width:3.4;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+@media (prefers-reduced-motion:no-preference){
+  .prova-ck path{stroke-dasharray:26;stroke-dashoffset:26;animation:prova-ck .5s var(--ease) .4s forwards}
+  @keyframes prova-ck{to{stroke-dashoffset:0}}
 }
 .prova-l{
-  margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--muted-2);
+  margin:0;font-family:var(--mono);font-weight:600;font-size:10.5px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);
 }
 .prova-n{
-  margin:8px 0 0;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 10px;
+  margin:14px 0 0;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px;
   font-family:var(--title);font-weight:700;font-variant-numeric:tabular-nums;
-  font-size:clamp(34px,7.4vw,58px);line-height:.95;letter-spacing:-.02em;
-  color:var(--crimson);
+  font-size:clamp(44px,8.6vw,72px);line-height:.92;letter-spacing:-.02em;
+  color:var(--ink);
 }
 .prova-n .u{
-  font-family:var(--mono);font-weight:500;font-size:clamp(11px,1.6vw,15px);
-  letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  font-family:var(--mono);font-weight:500;font-size:clamp(11px,1.6vw,14px);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
 }
-.prova-c{margin:10px 0 0;font-size:clamp(13px,1.7vw,15.5px);line-height:1.4;color:var(--ink)}
+.prova-c{
+  margin:12px 0 0;font-family:var(--head);
+  font-size:clamp(13px,1.7vw,15.5px);line-height:1.45;color:var(--muted);
+}
 .prova-c b{
   font-family:var(--title);font-weight:700;text-transform:uppercase;
-  letter-spacing:-.005em;color:var(--ink);
+  letter-spacing:.005em;color:var(--ink);
+}
+/* enquanto consulta · a resposta nasce no lugar onde vai ficar */
+.prova-busy{
+  margin:0;display:flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-weight:500;font-size:11px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);
+}
+.prova-busy .d{display:inline-flex;gap:3.5px}
+.prova-busy .d i{width:4px;height:4px;border-radius:50%;background:var(--crimson);opacity:.25}
+@media (prefers-reduced-motion:no-preference){
+  .prova-busy .d i{animation:prova-dot 1s var(--ease) infinite}
+  .prova-busy .d i:nth-child(2){animation-delay:.16s}
+  .prova-busy .d i:nth-child(3){animation-delay:.32s}
+  @keyframes prova-dot{0%,100%{opacity:.25}40%{opacity:1}}
 }
 .prova-box--lead{
   border-color:var(--hair);
-  background:rgba(255,255,255,.78);box-shadow:0 10px 30px rgba(22,18,28,.07);
+  background:linear-gradient(168deg,rgba(255,255,255,.8),rgba(255,255,255,.6));
 }
 .prova-t{margin:0;font-size:clamp(14px,1.8vw,16px);line-height:1.45;color:var(--ink);max-width:46ch}
 .prova-box--lead .btn{margin-top:16px}
+
+/* --- espera da ativacao · ocupa o lugar do formulario ate a prova --- */
+.buy-espera{margin:0;font-size:clamp(14px,1.8vw,16px);line-height:1.5;color:var(--muted)}
+.buy-espera a{color:var(--crimson);font-weight:600;text-decoration:none;border-bottom:1px solid currentColor}
+.buy-espera a:hover{color:var(--crimson-2)}
+.buy-espera a:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
 
 /* --- interruptor do WhatsApp --- */
 .sw-row{display:flex;align-items:center;gap:12px;margin-top:4px}
@@ -1290,7 +1351,26 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       <div class="orbes" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="wrap">
         <h2 class="sec-h rv">Escolha o seu plano</h2>
-        <p class="sec-sub rv" style="--d:.06s">Você escolhe aqui e ativa em dois passos, logo abaixo.</p>
+        <p class="sec-sub rv" style="--d:.06s">Comece pelo CNPJ · localizamos sua frota na base da Rastcar e os planos se ajustam ao porte dela.</p>
+
+        <!-- localizador · o CNPJ vem ANTES dos cartoes de proposito: a prova
+             ajusta a vitrine (faixa certa e a face certa do anual) antes da
+             escolha. Com ele depois dos cartoes, a pessoa concluia com o
+             mensal sugerido sem voltar pra ver o anual da faixa dela. -->
+        <div class="loc rv" id="loc" style="--d:.1s">
+          <label class="fl" for="f-cnpj">CNPJ da empresa</label>
+          <div class="frow">
+            <input class="fi" id="f-cnpj" name="cnpj" type="text"
+                   inputmode="numeric" autocomplete="off" autocorrect="off"
+                   spellcheck="false" maxlength="18"
+                   placeholder="00.000.000/0000-00" aria-describedby="e-cnpj">
+            <button class="btn" type="button" id="btn-frota">Localizar minha frota</button>
+          </div>
+          <p class="ferr" id="e-cnpj" aria-live="polite"></p>
+          <div class="prova" id="prova" aria-live="polite"></div>
+          <p class="fnote" id="buy-aviso" aria-live="polite"></p>
+        </div>
+
         <div class="plans" data-plans>
 
           <article class="plan rv" data-plano="mensal149" style="--d:0s">
@@ -1423,28 +1503,15 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     <section id="comprar" aria-label="Assinar">
       <div class="wrap">
         <span class="eyebrow rv">Assinatura</span>
-        <h2 class="sec-h rv" style="--d:.06s">Encontre sua frota</h2>
-        <p class="buy-lead rv" style="--d:.1s">Informe o CNPJ da empresa. Localizamos os veículos na base da Rastcar e o seu primeiro relatório já sai com a frota inteira, sem você digitar placa nenhuma.</p>
+        <h2 class="sec-h rv" style="--d:.06s">Ative sua assinatura</h2>
+        <p class="buy-lead rv" style="--d:.1s">Diga para onde vai o relatório e conclua no pagamento seguro. O primeiro estudo já sai com a frota inteira, sem você digitar placa nenhuma.</p>
 
         <form class="buy rv" id="buy-form" novalidate autocomplete="off" style="--d:.14s">
 
-          <!-- passo 1 · CNPJ -->
-          <fieldset class="step">
-            <legend class="sr-only">CNPJ da empresa</legend>
-            <label class="fl" for="f-cnpj">CNPJ da empresa</label>
-            <div class="frow">
-              <input class="fi" id="f-cnpj" name="cnpj" type="text"
-                     inputmode="numeric" autocomplete="off" autocorrect="off"
-                     spellcheck="false" maxlength="18"
-                     placeholder="00.000.000/0000-00" aria-describedby="e-cnpj">
-              <button class="btn" type="button" id="btn-frota">Localizar minha frota</button>
-            </div>
-            <p class="ferr" id="e-cnpj" aria-live="polite"></p>
-            <div class="prova" id="prova" aria-live="polite"></div>
-            <p class="fnote" id="buy-aviso" aria-live="polite"></p>
-          </fieldset>
+          <!-- espera · aparece enquanto a frota nao foi localizada -->
+          <p class="buy-espera" id="buy-espera">Sua ativação abre aqui assim que a frota for localizada. <a href="#planos" id="ir-cnpj">Digitar o CNPJ</a></p>
 
-          <!-- passo 2 · dados · so aparece depois da prova -->
+          <!-- passo de dados · so aparece depois da prova -->
           <fieldset class="step" id="step-dados" hidden>
             <legend class="sr-only">Seus dados</legend>
             <h3 class="step-h">Para onde vai o relatório</h3>
@@ -2312,9 +2379,9 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
                 : 'Sugerimos o plano de frotas grandes para o seu porte · o anual dessa faixa também está liberado.')
         : media
         ? (caiu ? 'Sua frota passa de 20 veículos · deixamos o plano de 21 a 70 veículos selecionado.'
-                : 'Sugerimos o plano de 21 a 70 veículos para o seu porte · você pode trocar nos cartões acima.')
+                : 'Sugerimos o plano de 21 a 70 veículos para o seu porte · você pode trocar nos cartões abaixo.')
         : (caiu ? 'Sua frota cabe no plano de até 20 veículos · deixamos ele selecionado.'
-                : 'Sugerimos o plano mensal de até 20 veículos · você pode trocar nos cartões acima.'));
+                : 'Sugerimos o plano mensal de até 20 veículos · você pode trocar nos cartões abaixo.'));
     } else {
       /* escolha manual mantida · se a face do anual trocou por baixo dela,
          avisa o preco novo em vez de trocar em silencio */
@@ -2372,12 +2439,24 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   }
 
   /* ---------- passo 1 · localizar a frota ---------- */
+  var espera = $('buy-espera');
+  function sincronizaEspera(){ if(espera) espera.hidden = !passo2.hidden; }
+
   function limpaProva(){
     st.provado = false;
     prova.innerHTML = '';
     passo2.hidden = true;
+    sincronizaEspera();
     txt(aviso, '');
     barra();
+  }
+
+  function blocoBusy(){
+    prova.innerHTML =
+      '<div class="prova-box prova-box--busy">' +
+        '<p class="prova-busy">Consultando a base Rastcar' +
+        '<span class="d" aria-hidden="true"><i></i><i></i><i></i></span></p>' +
+      '</div>';
   }
 
   function blocoLead(){
@@ -2390,14 +2469,36 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       '</div>';
   }
 
+  /* o numero-heroi CONTA ate o total da frota · e o instante de "a pagina
+     me conhece". Movimento reduzido cai direto no valor final. */
+  function contaAte(el, n){
+    var fmt = function(v){ try{ return v.toLocaleString('pt-BR'); }catch(e){ return String(v); } };
+    var mr = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if(mr || !window.requestAnimationFrame || n <= 1){ el.textContent = fmt(n); return; }
+    var t0 = null, dur = 900;
+    el.textContent = '0';
+    function passo(t){
+      if(t0 === null) t0 = t;
+      var p = Math.min(1, (t - t0) / dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(n * e));
+      if(p < 1) requestAnimationFrame(passo);
+    }
+    requestAnimationFrame(passo);
+  }
+
   function blocoProva(n, nome){
     prova.innerHTML =
-      '<div class="prova-box">' +
-        '<p class="prova-l">Encontramos</p>' +
-        '<p class="prova-n"><span>' + n + '</span><span class="u">' + (n === 1 ? 'veículo' : 'veículos') + '</span></p>' +
+      '<div class="prova-box" role="status">' +
+        '<p class="prova-top">' +
+          '<svg class="prova-ck" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.8l5.2 5.2L19.5 6.5"/></svg>' +
+          '<span class="prova-l">Frota localizada</span>' +
+        '</p>' +
+        '<p class="prova-n"><span class="nv"></span><span class="u">' + (n === 1 ? 'veículo' : 'veículos') + '</span></p>' +
         '<p class="prova-c">na frota de <b></b></p>' +
       '</div>';
     prova.querySelector('.prova-c b').textContent = nome || 'sua empresa';
+    contaAte(prova.querySelector('.nv'), n);
   }
 
   function erroRede(alvo){
@@ -2418,6 +2519,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     iCnpj.removeAttribute('aria-invalid');
 
     ocupado(bFrota, true, 'Verificando sua frota…');
+    blocoBusy();
     post(API_FROTA, {cnpj:c}, 15000).then(function(r){
       ocupado(bFrota, false);
       if(r.status === 429){ limpaProva(); txt(eCnpj,'Muitas tentativas · aguarde alguns minutos.'); return; }
@@ -2430,8 +2532,10 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         blocoProva(n, st.nome);
         regraFrota(n);
         passo2.hidden = false;
+        sincronizaEspera();
         atualiza();
-        iMail.focus();
+        /* sem focus no e-mail: ele fica depois dos cartoes e o salto de
+           viewport pularia justamente a vitrine que acabou de se ajustar */
       } else {
         limpaProva();
         blocoLead();
@@ -2463,7 +2567,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       return;
     }
     if(!st.provado || st.cnpj !== iCnpj.value.replace(/\D/g,'')){
-      txt(ePay,'Localize sua frota pelo CNPJ antes de seguir.');
+      txt(ePay,'Localize sua frota pelo CNPJ, nos planos acima, antes de seguir.');
       iCnpj.focus();
       return;
     }
@@ -2586,6 +2690,17 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   });
   bPay.addEventListener('click', pagar);
   form.addEventListener('submit', function(e){ e.preventDefault(); });
+
+  /* atalho da espera · leva a pessoa de volta ao campo do CNPJ */
+  var irCnpj = $('ir-cnpj');
+  if(irCnpj){
+    irCnpj.addEventListener('click', function(e){
+      e.preventDefault();
+      try{ iCnpj.scrollIntoView({behavior:'smooth', block:'center'}); }catch(err){ iCnpj.scrollIntoView(); }
+      iCnpj.focus({preventScroll:true});
+    });
+  }
+  sincronizaEspera();
 
   /* cartao desligado nao seleciona · o guarda roda na captura,
      antes do clique chegar ao seletor de plano */
