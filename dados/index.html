@@ -912,6 +912,10 @@ main section:empty{display:none}
    ============================================================ */
 [hidden]{display:none !important}
 #comprar{padding-top:var(--sp-sec);padding-bottom:clamp(46px,8vw,88px)}
+/* enquadramento do scroll programatico (Escolher este plano -> ativacao):
+   a margem NEGATIVA desconta parte do respiro gigante da secao, senao o
+   titulo chega la embaixo e a "moldura" vira pagina em branco */
+#comprar{scroll-margin-top:clamp(-96px,-8vw,-48px)}
 .buy-lead{
   margin:14px 0 0;max-width:52ch;color:var(--muted);
   font-size:clamp(14px,1.7vw,16.5px);line-height:1.5;
@@ -1050,13 +1054,16 @@ main section:empty{display:none}
     to{transform:none;filter:blur(0)}
   }
 }
+/* verde de SUCESSO (pedido do Joao: "verdinho de certinho", nao o crimson).
+   O texto usa #19793A · o verde mais claro da familia que passa 4,5:1
+   sobre o vidro (medido); o check e grafico grosso, pode ser mais vivo. */
 .prova-top{display:flex;align-items:center;gap:9px;margin:0}
 .prova-ck{
   width:21px;height:21px;flex:0 0 auto;border-radius:50%;
-  background:rgba(var(--crimson-rgb),.10);padding:4.5px;box-sizing:border-box;
+  background:rgba(52,199,89,.16);padding:4.5px;box-sizing:border-box;
 }
 .prova-ck path{
-  fill:none;stroke:var(--crimson);stroke-width:3.4;
+  fill:none;stroke:#1F8C43;stroke-width:3.4;
   stroke-linecap:round;stroke-linejoin:round;
 }
 @media (prefers-reduced-motion:no-preference){
@@ -1065,7 +1072,7 @@ main section:empty{display:none}
 }
 .prova-l{
   margin:0;font-family:var(--mono);font-weight:600;font-size:10.5px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);
+  letter-spacing:.18em;text-transform:uppercase;color:#19793A;
 }
 .prova-n{
   margin:14px 0 0;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px;
@@ -2318,7 +2325,11 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       cond:'Para frotas a partir de 71 veículos.',
       was:'<span class="sr-only">De </span>R$ 7.080',
       val:'<span class="sr-only">por </span>R$ 4.950',
-      eq:'pagamento anual · menos de R$ 14 por dia',
+      /* equivalente mensal SO nesta face: ao lado do 590/mes ele le como
+         queda. Na face de 2.497 o equivalente (208) expunha o furo logico
+         contra o plano de 149 · la segue o preco por dia. "pagamento anual"
+         abre a frase de proposito: nenhum anual e parcelado. */
+      eq:'pagamento anual · equivale a R$ 412,50 por mês',
       save:'Economize R$ 2.130 <span class="un">no ano</span>',
       anchor:'Doze estudos da frota inteira, sem limite de veículos. Um pagamento no ano, e o assunto está resolvido.'
     }
@@ -2422,7 +2433,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
     txt(resPlano, nome); txt(totV, valor); txt(totU, unid);
     txt(totDet, extra ? (brl(base) + ' + ' + brl(extra) + ' WhatsApp')
-                      : (anual ? (p === 'anual590' ? 'menos de R$ 14 por dia' : 'menos de R$ 7 por dia') : ''));
+                      : (anual ? (p === 'anual590' ? 'pagamento anual · equivale a R$ 412,50 por mês' : 'menos de R$ 7 por dia') : ''));
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
 
     /* Pix so no anual · assinatura mensal recorrente nao aceita Pix no Brasil.
@@ -2716,6 +2727,20 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         st.planoAutomatico = false;   /* escolha do usuario · a regra nao mexe mais */
         txt(aviso,'');
         atualiza();
+        /* o BOTAO do cartao e compromisso · leva direto pro proximo passo,
+           ja enquadrado. Clique no corpo do cartao so seleciona (a pessoa
+           pode estar comparando). Sem prova, o proximo passo e o CNPJ. */
+        if(e.target.closest && e.target.closest('.p-cta')){
+          var mr = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+          var comp = mr ? 'auto' : 'smooth';
+          if(!passo2.hidden){
+            var sec = document.getElementById('comprar');
+            if(sec){ try{ sec.scrollIntoView({behavior:comp, block:'start'}); }catch(err){ sec.scrollIntoView(); } }
+          } else {
+            try{ iCnpj.scrollIntoView({behavior:comp, block:'center'}); }catch(err){ iCnpj.scrollIntoView(); }
+            iCnpj.focus({preventScroll:true});
+          }
+        }
       }
     });
   }
