@@ -912,10 +912,6 @@ main section:empty{display:none}
    ============================================================ */
 [hidden]{display:none !important}
 #comprar{padding-top:var(--sp-sec);padding-bottom:clamp(46px,8vw,88px)}
-/* enquadramento do scroll programatico (Escolher este plano -> ativacao):
-   a margem NEGATIVA desconta parte do respiro gigante da secao, senao o
-   titulo chega la embaixo e a "moldura" vira pagina em branco */
-#comprar{scroll-margin-top:clamp(-96px,-8vw,-48px)}
 .buy-lead{
   margin:14px 0 0;max-width:52ch;color:var(--muted);
   font-size:clamp(14px,1.7vw,16.5px);line-height:1.5;
@@ -2703,6 +2699,29 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   bPay.addEventListener('click', pagar);
   form.addEventListener('submit', function(e){ e.preventDefault(); });
 
+  /* enquadra a ativacao na tela: se o conteudo (titulo ate o rodape do
+     formulario) cabe inteiro, centraliza com folga IGUAL em cima e embaixo ·
+     moldura proporcional, nao alinhamento de topo. Se nao cabe (tela baixa,
+     celular), o titulo fica no topo com respiro fixo e o resto se alcanca
+     rolando. Medido sobre o .wrap, nunca sobre a secao: o padding gigante
+     dela entraria na conta e empurraria o conteudo pra fora do centro. */
+  function enquadraAtivacao(comp){
+    var sec = document.getElementById('comprar');
+    var alvoEl = sec ? sec.querySelector('.wrap') : null;
+    if(!alvoEl) return;
+    var r = alvoEl.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var topo;
+    if(r.height <= vh - 56){
+      topo = window.scrollY + r.top - (vh - r.height) / 2;
+    } else {
+      topo = window.scrollY + r.top - 48;
+    }
+    topo = Math.max(0, topo);
+    try{ window.scrollTo({top: topo, behavior: comp}); }
+    catch(err){ window.scrollTo(0, topo); }
+  }
+
   /* atalho da espera · leva a pessoa de volta ao campo do CNPJ */
   var irCnpj = $('ir-cnpj');
   if(irCnpj){
@@ -2735,8 +2754,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
           var mr = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
           var comp = mr ? 'auto' : 'smooth';
           if(!passo2.hidden){
-            var sec = document.getElementById('comprar');
-            if(sec){ try{ sec.scrollIntoView({behavior:comp, block:'start'}); }catch(err){ sec.scrollIntoView(); } }
+            enquadraAtivacao(comp);
           } else {
             try{ iCnpj.scrollIntoView({behavior:comp, block:'center'}); }catch(err){ iCnpj.scrollIntoView(); }
             iCnpj.focus({preventScroll:true});
