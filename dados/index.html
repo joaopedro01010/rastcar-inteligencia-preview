@@ -1126,16 +1126,16 @@ main section:empty{display:none}
   background:rgba(255,255,255,.72);border:1px solid var(--hair);border-radius:12px;cursor:pointer;
   transition:color .2s var(--ease),border-color .2s var(--ease);
 }
-.xdel:hover{color:var(--crimson);border-color:var(--crimson)}
-.xdel:focus-visible{outline:2px solid var(--crimson);outline-offset:2px}
+.xdel:hover{color:var(--ink);border-color:rgba(22,22,26,.55)}
+.xdel:focus-visible{outline:2px solid rgba(22,22,26,.55);outline-offset:2px}
 .add-mail{
   display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:0;
   font-family:var(--head);font-weight:600;font-size:14px;color:var(--ink);
   background:none;border:0;border-bottom:1px solid var(--hair);cursor:pointer;
   transition:color .2s var(--ease),border-color .2s var(--ease);
 }
-.add-mail:hover{color:var(--crimson);border-color:var(--crimson)}
-.add-mail:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
+.add-mail:hover{border-color:rgba(22,22,26,.55)}
+.add-mail:focus-visible{outline:2px solid rgba(22,22,26,.55);outline-offset:3px}
 .add-mail .pr{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted)}
 
 /* --- interruptor do WhatsApp --- */
@@ -1156,7 +1156,7 @@ main section:empty{display:none}
 .sw:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
 .sw-lb{font-size:14.5px;line-height:1.35;color:var(--ink);cursor:pointer}
 .sw-lb .sep{color:var(--muted-2);margin:0 2px}
-.sw-lb .pr{color:var(--crimson);font-weight:600}
+.sw-lb .pr{color:var(--ink);font-weight:600}
 
 /* --- resumo e total --- */
 .tot{
@@ -1291,7 +1291,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
           <span class="eyebrow rv" style="--d:.08s">Inteligência</span>
           <h1 class="rv" style="--d:.14s">Dados. O ativo mais valioso do mundo.</h1>
           <p class="support rv" style="--d:.22s">O relatório executivo completo da sua frota, <b>pronto todo mês</b>. Sai do que os rastreadores já registram hoje · você não instala nada, não muda nada na operação.</p>
-          <p class="hero-mini rv" style="--d:.3s">Assinatura digital da Rastcar · pagamento pelo Stripe</p>
+          <p class="hero-mini rv" style="--d:.3s">Assinatura digital da Rastcar, pagamento seguro</p>
 </div>
         <div class="hero-art rv" style="--d:.16s" aria-hidden="true">
           <div class="ha-tilt" data-tilt>
@@ -1588,7 +1588,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
           </fieldset>
 
-          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe, com cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
+          <p class="buy-trust" id="buy-trust">Pagamento seguro, com cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
         </form>
       </div>
     </section>
@@ -2515,7 +2515,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
     /* Pix so no anual · assinatura mensal recorrente nao aceita Pix no Brasil.
        Nunca prometer Pix no mensal, aqui nem em lugar nenhum da pagina. */
-    txt(trust, 'Pagamento processado pelo Stripe, com ' +
+    txt(trust, 'Pagamento seguro, com ' +
                (anual ? 'cartão, boleto e Pix' : 'cartão e boleto') +
                '. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.');
 
