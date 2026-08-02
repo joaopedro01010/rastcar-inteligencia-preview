@@ -950,9 +950,11 @@ main section:empty{display:none}
   transition:border-color .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease);
 }
 .fi::placeholder{color:#8C8C93}
-.fi:focus{outline:none;border-color:var(--crimson);background:#fff;box-shadow:0 0 0 4px rgba(var(--crimson-rgb),.10)}
-.fi:focus-visible{outline:2px solid var(--crimson);outline-offset:2px}
-.fi[aria-invalid="true"]{border-color:var(--crimson)}
+/* foco NEUTRO (grafite), nunca vermelho: vermelho em campo de texto le como
+   erro antes de a pessoa errar. O crimson e exclusivo do aria-invalid. */
+.fi:focus{outline:none;border-color:rgba(22,22,26,.55);background:#fff;box-shadow:0 0 0 4px rgba(22,22,26,.08)}
+.fi:focus-visible{outline:none}
+.fi[aria-invalid="true"]{border-color:var(--crimson);box-shadow:0 0 0 4px rgba(var(--crimson-rgb),.10)}
 .fhint{margin:8px 0 0;font-size:12.5px;line-height:1.4;color:var(--muted-2)}
 .ferr{margin:9px 0 0;font-size:13px;line-height:1.4;color:var(--crimson);font-weight:600}
 .ferr:empty{display:none}
@@ -1412,7 +1414,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <li class="add"><span class="pl" aria-hidden="true">+</span><span>WhatsApp · R$ 15/mês</span></li>
             </ul>
             <div class="p-foot">
-              <p class="p-anchor">No anual, com 30% OFF, o ano inteiro sai por menos.</p>
+              <p class="p-anchor">No anual, com 36% OFF, o ano inteiro sai por menos.</p>
               <button class="p-cta" type="button" aria-pressed="false">Escolher este plano</button>
               <div class="p-pays"><p class="p-pay">Cartão e boleto</p></div>
             </div>
@@ -1474,27 +1476,29 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             </div>
           </article>
 
-          <!-- O cartao anual tem DUAS faces: ate 70 veiculos (2.497, o anual
-               do 297) e a partir de 71 (4.950, o anual do 590: 12x590 = 7.080
-               com 30% de desconto). A face grande NUNCA aparece sem prova:
-               so quem localizou a frota por CNPJ e tem 71+ ve o 4.950 - e a
-               troca e feita por morfaAnual() no script do funil. O HTML fica
-               sempre na face de ate 70, que e a da pagina sem prova. -->
+          <!-- O cartao anual tem DUAS faces: ate 70 veiculos (2.497) e a
+               partir de 71 (4.950). O riscado e a economia comparam com o
+               MENSAL EQUIVALENTE DE MESMO PACOTE (o anual inclui 1 WhatsApp
+               e 2 e-mails): ate 70 = 297+15+15 = 327/mes -> 3.924 (36,4%,
+               etiqueta 36); 71+ = 590+15 = 605/mes -> 7.260 (31,8%,
+               etiqueta 31). Percentual sempre ARREDONDADO PRA BAIXO. A face
+               grande NUNCA aparece sem prova: so quem localizou a frota por
+               CNPJ e tem 71+ ve o 4.950 - troca via morfaAnual(). -->
           <article class="plan plan--ano rv" data-plano="anual" style="--d:.26s">
             <span class="p-tick" aria-hidden="true"></span>
             <div class="p-head">
               <h3 class="p-name">Anual</h3>
               <span class="p-chip p-chip--best"><span>Melhor valor</span></span>
-              <span class="p-chip p-chip--off"><span>30% OFF</span></span>
+              <span class="p-chip p-chip--off"><span>36% OFF</span></span>
             </div>
             <p class="p-sub">O ano inteiro pelo preço de hoje. <span class="p-cond">Para frotas de até 70 veículos.</span></p>
             <p class="p-price">
-              <span class="p-was"><span class="sr-only">De </span>R$ 3.564</span>
+              <span class="p-was"><span class="sr-only">De </span>R$ 3.924</span>
               <span class="p-val"><span class="sr-only">por </span>R$ 2.497</span><span class="p-per">/ano</span>
             </p>
             <p class="p-eq">pagamento anual à vista, menos de R$ 7 por dia</p>
-            <p class="p-save">À vista, economize R$ 1.067 <span class="un">no ano</span></p>
-            <p class="p-off">30% de desconto por pagar à vista</p>
+            <p class="p-save">À vista, economize R$ 1.427 <span class="un">no ano</span></p>
+            <p class="p-off">36% de desconto por pagar à vista</p>
             <hr class="p-div">
             <ul class="p-list">
               <li><span class="ck" aria-hidden="true"></span><span>12 relatórios no ano, um por mês</span></li>
@@ -2163,9 +2167,9 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   /* Os dois cortes da regua. 70 saiu de medicao da base (2.843 veiculos,
      417 clientes): entre 61 e 70 nao existe UM cliente, entao o corte nao
      empurra ninguem. Acima dele o cartao anual MORFA para a face da faixa
-     grande (4.950 = 12x590 com 30% de desconto), senao uma frota de 400
-     compraria o anual de 2.497 (R$ 208/mes) e o plano de 590 nunca seria
-     vendido. A face grande so existe DEPOIS da prova por CNPJ. */
+     grande (4.950), senao uma frota de 400 compraria o anual de 2.497
+     (R$ 208/mes) e o plano de 590 nunca seria vendido. A face grande so
+     existe DEPOIS da prova por CNPJ. */
   var LIMITE_149 = 20;
   var LIMITE_297 = 70;
   var MOTIVO_149 = 'Indisponível para frotas acima de 20 veículos.';
@@ -2323,24 +2327,29 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   }
 
   /* ---------- as duas faces do cartao anual ----------
-     ate 70 = o anual do 297 (2.497, de 3.564) · 71+ = o anual do 590
-     (4.950, de 7.080 = 12x590; desconto real de 30,1%, a etiqueta de
-     30% OFF vale nas duas faces). A face grande so aparece com prova:
-     quem nao localizou a frota ve a pagina inteira na face de ate 70. */
+     O riscado e a economia comparam com o MENSAL EQUIVALENTE DE MESMO
+     PACOTE (o anual inclui 1 WhatsApp e 2 e-mails): ate 70 = 297+15+15 =
+     327/mes -> 3.924 no ano (36,4% de desconto, etiqueta 36) · 71+ =
+     590+15 = 605/mes -> 7.260 (31,8%, etiqueta 31). O percentual e SEMPRE
+     arredondado pra baixo: nunca prometer mais que o real. A face grande
+     so aparece com prova: sem CNPJ, a pagina fica na face de ate 70. */
   var ANO_FACE = {
     norm:{
       chave:'anual',
       cond:'Para frotas de até 70 veículos.',
-      was:'<span class="sr-only">De </span>R$ 3.564',
+      chip:'36% OFF',
+      was:'<span class="sr-only">De </span>R$ 3.924',
       val:'<span class="sr-only">por </span>R$ 2.497',
       eq:'pagamento anual à vista, menos de R$ 7 por dia',
-      save:'À vista, economize R$ 1.067 <span class="un">no ano</span>',
+      save:'À vista, economize R$ 1.427 <span class="un">no ano</span>',
+      off:'36% de desconto por pagar à vista',
       anchor:'Doze estudos completos da frota. Pagamento anual, e o assunto está resolvido pelos 12 meses.'
     },
     grande:{
       chave:'anual590',
       cond:'Para frotas a partir de 71 veículos.',
-      was:'<span class="sr-only">De </span>R$ 7.080',
+      chip:'31% OFF',
+      was:'<span class="sr-only">De </span>R$ 7.260',
       val:'<span class="sr-only">por </span>R$ 4.950',
       /* equivalente mensal SO nesta face: ao lado do 590/mes ele le como
          queda. Na face de 2.497 o equivalente (208) expunha o furo logico
@@ -2348,7 +2357,8 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
          equivalente e no desconto de proposito: nenhum anual e parcelado, e
          o desconto e apresentado como o premio de pagar uma vez so. */
       eq:'pagamento anual à vista, equivale a R$ 412,50 por mês',
-      save:'À vista, economize R$ 2.130 <span class="un">no ano</span>',
+      save:'À vista, economize R$ 2.310 <span class="un">no ano</span>',
+      off:'31% de desconto por pagar à vista',
       anchor:'Doze estudos da frota inteira, sem limite de veículos. Um pagamento no ano, e o assunto está resolvido.'
     }
   };
@@ -2358,10 +2368,12 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     if(cardAno.getAttribute('data-plano') === f.chave) return;
     cardAno.setAttribute('data-plano', f.chave);
     txt(cardAno.querySelector('.p-cond'), f.cond);
+    txt(cardAno.querySelector('.p-chip--off span'), f.chip);
     cardAno.querySelector('.p-was').innerHTML = f.was;
     cardAno.querySelector('.p-val').innerHTML = f.val;
     txt(cardAno.querySelector('.p-eq'), f.eq);
     cardAno.querySelector('.p-save').innerHTML = f.save;
+    txt(cardAno.querySelector('.p-off'), f.off);
     var a = cardAno.querySelector('.p-anchor');
     if(a){ a.textContent = f.anchor; a.setAttribute('data-orig', f.anchor); }
     [].slice.call(cardAno.querySelectorAll('[data-so-grande]')).forEach(function(li){
@@ -2415,7 +2427,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       /* escolha manual mantida · se a face do anual trocou por baixo dela,
          avisa o preco novo em vez de trocar em silencio */
       txt(aviso, p !== pAntes
-        ? (grande ? 'Sua frota passa de 70 veículos. O anual ajustou para essa faixa: R$ 4.950 no ano, com os mesmos 30% OFF.'
+        ? (grande ? 'Sua frota passa de 70 veículos. O anual ajustou para essa faixa: R$ 4.950 no ano, à vista.'
                   : 'Sua frota cabe na faixa de até 70 veículos. O anual voltou para R$ 2.497 no ano.')
         : '');
       atualiza();
