@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rastcar Inteligência · Relatório da frota</title>
+<title>Rastcar Inteligência. Relatório da frota</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="O estudo completo da frota, pronto todo mês: quilometragem, ociosidade, alertas e comportamento, reunidos e analisados.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Rastcar">
-<meta property="og:title" content="Rastcar Inteligência · Relatório da frota">
+<meta property="og:title" content="Rastcar Inteligência. Relatório da frota">
 <meta property="og:description" content="O estudo completo da frota, pronto todo mês: quilometragem, ociosidade, alertas e comportamento, reunidos e analisados.">
 <meta property="og:image" content="https://joaopedro01010.github.io/rastcar-inteligencia-preview/assets/og-inteligencia.jpg">
 <meta property="og:image:width" content="2400">
@@ -16,7 +16,7 @@
 <meta property="og:url" content="https://joaopedro01010.github.io/rastcar-inteligencia-preview/">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Rastcar Inteligência · Relatório da frota">
+<meta name="twitter:title" content="Rastcar Inteligência. Relatório da frota">
 <meta name="twitter:description" content="O estudo completo da frota, pronto todo mês: quilometragem, ociosidade, alertas e comportamento, reunidos e analisados.">
 <meta name="twitter:image" content="https://joaopedro01010.github.io/rastcar-inteligencia-preview/assets/og-inteligencia-wide.jpg">
 <meta name="theme-color" content="#080608">
@@ -105,7 +105,6 @@ header.top .wrap{display:flex;flex-direction:column;gap:14px}
 .seal{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
 .seal img.wm{width:clamp(158px,30vw,184px);height:auto;display:block}
 .seal img.wm-print{display:none}
-.seal .sx{color:var(--crimson);font-size:19px;line-height:1;opacity:.85}
 .seal .eyebrow{font-size:11px}
 
 /* ---------- Selo DADOS · a etiqueta da família, em metal (estático, sem ornamento) ---------- */
@@ -1091,7 +1090,7 @@ footer.bot{padding-bottom:104px}
 <canvas id="bgv" aria-hidden="true"></canvas>
 <div class="veil" aria-hidden="true"></div>
 
-<button class="pdfbtn" type="button" onclick="window.print()" title="Abre o diálogo de impressão · escolha Salvar como PDF" aria-label="Baixar relatório em PDF · abre o diálogo de impressão, escolha Salvar como PDF"><span class="pi" aria-hidden="true"></span>Baixar PDF</button>
+<button class="pdfbtn" type="button" onclick="window.print()" title="Abre o diálogo de impressão, escolha Salvar como PDF" aria-label="Baixar relatório em PDF, abre o diálogo de impressão, escolha Salvar como PDF"><span class="pi" aria-hidden="true"></span>Baixar PDF</button>
 <button class="themebtn" type="button" id="themeBtn" aria-label="Alternar entre modo escuro e claro">Modo claro</button>
 
 <div class="stage">
@@ -1100,7 +1099,6 @@ footer.bot{padding-bottom:104px}
     <div class="seal">
       <img class="wm wm-screen" src="assets/wordmark-white.png" alt="Rastcar">
       <img class="wm wm-print" src="assets/wordmark-red.png" alt="Rastcar">
-      <span class="sx" aria-hidden="true">·</span>
       <span class="eyebrow">Inteligência</span>
       <span class="seal-dados"><span>Dados</span></span>
       <span class="tag solid" id="hdBadge" hidden>Amostra</span>
@@ -1129,7 +1127,7 @@ footer.bot{padding-bottom:104px}
   <div class="wrap">
     <div class="slogan"><span class="grad">Dados.</span> O ativo mais valioso do mundo.</div>
     <div class="f-line"><span>CNPJ 10.142.559/0001-00</span><span>(12) 3157-9090</span><span>rastcar.com.br</span></div>
-    <div class="f-line"><span>Cobertura nacional e América Latina · desde 2004</span></div>
+    <div class="f-line"><span>Cobertura nacional e América Latina, desde 2004</span></div>
   </div>
 </footer>
 </div>
@@ -1149,8 +1147,9 @@ function __boot(){
   function el(id){ return document.getElementById(id); }
   // callout de insight · "o que isso diz" (régua bordô à esquerda, discreto)
   function insightHtml(texto){
+    /* payload do Builder pode trazer " · " como separador de frase, aqui vira virgula */
     return '<div class="callout insight reveal"><span class="bolt"></span><div>'+
-           '<span class="ck">O que isso diz</span><span class="ct">'+esc(texto)+'</span></div></div>';
+           '<span class="ck">O que isso diz</span><span class="ct">'+esc(String(texto||'').replace(/ · /g,', '))+'</span></div></div>';
   }
   // junta placas em linguagem natural: "A", "A e B", "A, B e C"
   function joinNat(arr){
@@ -1164,7 +1163,7 @@ function __boot(){
   function deltaChip(atual, ant, modo){
     if(!ANT || ant==null || !isFinite(ant) || ant===0) return '';
     var p = Math.round((atual/ant - 1) * 100);
-    var rot = ANT.periodo ? ' vs ' + ANT.periodo.toLowerCase() : ' vs mês anterior';
+    var rot = ANT.periodo ? ' vs ' + ANT.periodo.toLowerCase().replace('·','de') : ' vs mês anterior';
     if(p===0) return '<span class="dlt neu">= '+rot.trim()+'</span>';
     var sobe = p>0;
     var cls = modo==='neutro' ? 'neu' : ((modo==='sobe-bom')===sobe ? 'good' : 'bad');
@@ -1229,7 +1228,7 @@ function __boot(){
   var cli = el('hdClient');
   if(cli){ cli.textContent = D.cliente || 'Sua frota'; }
   var meta = el('hdMeta');
-  if(meta){ meta.innerHTML = '<span>Relatório executivo</span><span>'+(D.frota||0)+' veículos</span><span>'+esc(D.periodo)+'</span>'; }
+  if(meta){ meta.innerHTML = '<span>Relatório executivo</span><span>'+(D.frota||0)+' veículos</span><span>'+esc((D.periodo||'').replace('·','de'))+'</span>'; }
 
   // ---------- Nav de segmentos + scrollspy ----------
   (function(){
@@ -1252,9 +1251,9 @@ function __boot(){
     var r=D.resumo; if(!r) return;
     var mes=(D.periodo||'').split('·')[0].trim();
     var h=''+
-      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['resumo']+' · Resumo do mês</span>'+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['resumo']+' Resumo do mês</span>'+
         '<h2>O panorama de '+esc(mes)+'</h2>'+
-        '<p class="sub">O essencial primeiro · o detalhe está nas seções a seguir.</p></div>'+
+        '<p class="sub">O essencial primeiro, o detalhe está nas seções a seguir.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad" id="hzKm">0</span>'+
         '<span class="cap"><span class="u">km rodados no mês '+deltaChip(r.km_mes, ANT&&ANT.km_mes, 'neutro')+'</span><span class="lbl">frota sob monitoramento contínuo</span></span></div>'+
       '<div class="substats reveal">'+
@@ -1314,10 +1313,10 @@ function __boot(){
     var medFds=fds.length?Math.round(fds.reduce(function(s,x){return s+(x.km||0);},0)/fds.length):0;
     var fdsFrase='';
     if(fds.length){ var rr=medUtil?medFds/medUtil:0;
-      fdsFrase = rr<0.30 ? ' · fins de semana quase parados'
-        : rr<0.70 ? ' · fins de semana em ritmo menor'
-        : ' · fins de semana também rodando forte'; }
-    var conc='Média de '+nf(medUtil)+' km por dia útil · pico de '+nf(peak.km)+' km em '+pkTxt+fdsFrase+'.';
+      fdsFrase = rr<0.30 ? ', fins de semana quase parados'
+        : rr<0.70 ? ', fins de semana em ritmo menor'
+        : ', fins de semana também rodando forte'; }
+    var conc='Média de '+nf(medUtil)+' km por dia útil, pico de '+nf(peak.km)+' km em '+pkTxt+fdsFrase+'.';
     return '<div class="kmwrap reveal">'+
       '<div class="km-cap">Quanto sua frota rodou por dia</div>'+
       '<div class="kmchart">'+
@@ -1345,7 +1344,7 @@ function __boot(){
   function utilRowHtml(u,pv,nd){
     var dr=utilDias(u,pv), pct=Math.round(dr/nd*100), low=dr<nd*0.5;
     var cells=(pv.mapa||[]).map(function(v,i){
-      return '<span class="ucell'+(v?' on':'')+'" title="'+esc(u.dias[i]||'')+(v?' · rodou':' · parado')+'"></span>';
+      return '<span class="ucell'+(v?' on':'')+'" title="'+esc(u.dias[i]||'')+(v?', rodou':', parado')+'"></span>';
     }).join('');
     return '<div class="urow">'+
       '<div class="uhead"><span class="uplate">'+esc(pv.placa)+'</span>'+
@@ -1361,11 +1360,11 @@ function __boot(){
     // conclusão considera a frota INTEIRA, não só as 5 mostradas
     var sub=u.por_placa.filter(function(pv){ return utilDias(u,pv)<nd*0.5; }).length;
     var conc = sub===0
-      ? 'Todos os veículos rodaram mais da metade dos dias · a frota está bem aproveitada.'
-      : (sub+' '+(sub===1?'veículo rodou':'veículos rodaram')+' menos da metade dos dias · veículo parado é custo fixo sem retorno.');
+      ? 'Todos os veículos rodaram mais da metade dos dias, a frota está bem aproveitada.'
+      : (sub+' '+(sub===1?'veículo rodou':'veículos rodaram')+' menos da metade dos dias, veículo parado é custo fixo sem retorno.');
     return '<div class="utilwrap reveal">'+
       '<div class="km-cap">Quantos dias cada veículo rodou</div>'+
-      '<p class="km-sub">Do menos rodado ao mais rodado · os que menos giraram aparecem primeiro.</p>'+
+      '<p class="km-sub">Do menos rodado ao mais rodado, os que menos giraram aparecem primeiro.</p>'+
       '<div id="utilRows"></div>'+
       '<div id="utilMoreWrap"></div>'+
       '<div class="km-leg"><span class="ucell on ulg"></span>quadrado aceso = rodou no dia<span class="ucell ulg"></span>vazio = parado</div>'+
@@ -1376,13 +1375,13 @@ function __boot(){
   function mntHtml(){
     var m=(D.manutencao||[]); if(!m.length) return '';
     return '<div class="mnt-wrap reveal">'+
-      '<p class="alerts-cap">Revisão preventiva · pela quilometragem</p>'+
+      '<p class="alerts-cap">Revisão preventiva, pela quilometragem</p>'+
       '<div class="alerts">'+m.map(function(x){
         return '<div class="acard"><div class="aq mono">'+esc(x.placa)+'</div>'+
-          '<div class="at">passou dos '+nf(x.marco)+' km neste mês · programe a revisão</div>'+
-          '<div class="at mnt-odo">Odômetro · '+nf(x.odometro)+' km</div></div>';
+          '<div class="at">passou dos '+nf(x.marco)+' km neste mês, programe a revisão</div>'+
+          '<div class="at mnt-odo">Odômetro: '+nf(x.odometro)+' km</div></div>';
       }).join('')+'</div>'+
-      '<p class="note reveal mnt-note">Premissa · marco de revisão a cada 10.000 km. É um lembrete de agenda, não um diagnóstico mecânico.</p>'+
+      '<p class="note reveal mnt-note">Premissa: marco de revisão a cada 10.000 km. É um lembrete de agenda, não um diagnóstico mecânico.</p>'+
     '</div>';
   }
   (function(){
@@ -1391,14 +1390,14 @@ function __boot(){
     var idle = veiculos.filter(function(v){return v.ocioso;});
     var idlePlacas = idle.map(function(v){return v.placa;});
     var insMov = idle.length
-      ? (idle.length+' '+(idle.length===1?'veículo rodou':'veículos rodaram')+' bem abaixo da frota este mês ('+joinNat(idlePlacas)+') · reavaliar a escala pode liberar capacidade sem aumentar a frota.')
-      : 'Toda a frota rodou dentro do esperado este mês · nenhum veículo ficou subutilizado.';
+      ? (idle.length+' '+(idle.length===1?'veículo rodou':'veículos rodaram')+' bem abaixo da frota este mês ('+joinNat(idlePlacas)+'), reavaliar a escala pode liberar capacidade sem aumentar a frota.')
+      : 'Toda a frota rodou dentro do esperado este mês, nenhum veículo ficou subutilizado.';
     var h=''+
-      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['movimento']+' · Frota em movimento</span>'+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['movimento']+' Frota em movimento</span>'+
         '<h2>Quem mais trabalhou no mês</h2>'+
         '<p class="sub scr">Toque num veículo para ver a ficha completa.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad">'+esc(top1.placa)+'</span>'+
-        '<span class="cap"><span class="u">'+esc(top1.modelo)+'</span><span class="lbl">o mais rodado · '+nf(top1.km)+' km</span></span></div>'+
+        '<span class="cap"><span class="u">'+esc(top1.modelo)+'</span><span class="lbl">o mais rodado, '+nf(top1.km)+' km</span></span></div>'+
       '<div class="controls reveal">'+
         '<div class="segset" id="mvMetric" role="group" aria-label="Métrica do ranking">'+
           '<button data-m="km" aria-pressed="true">Km</button><button data-m="horas" aria-pressed="false">Horas</button></div>'+
@@ -1414,7 +1413,7 @@ function __boot(){
       mntHtml()+
       ((D.rotas_calor&&D.rotas_calor.pontos&&D.rotas_calor.pontos.length)?(
         '<div class="heat-wrap reveal">'+
-          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque"> · toque numa placa ou numa cidade</span></div>'+
+          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque">, toque numa placa ou numa cidade</span></div>'+
           '<div id="rzMap" role="img" aria-label="Mapa com a posição dos veículos da frota na zona onde ficaram mais tempo"></div>'+
           ((D.rotas_calor.cidades&&D.rotas_calor.cidades.length)?('<div class="heat-cities">'+
             D.rotas_calor.cidades.map(function(c){ return '<span class="hc"><b>'+esc(c.nome)+'</b> '+c.pct+'%</span>'; }).join('')+
@@ -1450,7 +1449,7 @@ function __boot(){
       else { Array.prototype.forEach.call(rank.querySelectorAll('.bar>i'),function(i){ i.style.width=i.style.getPropertyValue('--w'); }); }
       var mw=el('mvMoreWrap');
       if(!showAll && arr.length>5){
-        mw.innerHTML='<button class="more" id="mvMore">Ver todos os '+arr.length+' veículos · expandir</button>';
+        mw.innerHTML='<button class="more" id="mvMore">Ver todos os '+arr.length+' veículos, expandir</button>';
         el('mvMore').addEventListener('click',function(){ mv.expanded=true; renderRank(); });
       } else if(mv.filter!=='ociosos' && mv.expanded && arr.length>5){
         mw.innerHTML='<button class="more" id="mvLess">Mostrar só o topo</button>';
@@ -1467,7 +1466,7 @@ function __boot(){
       el('utilRows').innerHTML=shown.map(function(pv){ return utilRowHtml(uU,pv,uNd); }).join('');
       var mw=el('utilMoreWrap');
       if(!showAll && uLista.length>5){
-        mw.innerHTML='<button class="more" id="utilMore">Ver todos os '+uLista.length+' veículos · expandir</button>';
+        mw.innerHTML='<button class="more" id="utilMore">Ver todos os '+uLista.length+' veículos, expandir</button>';
         el('utilMore').addEventListener('click',function(){ util.expanded=true; renderUtil(); });
       } else if(util.expanded && uLista.length>5){
         mw.innerHTML='<button class="more" id="utilLess">Mostrar só os 5 primeiros</button>';
@@ -1488,7 +1487,7 @@ function __boot(){
         var idx=Math.floor(((clientX-r.left)/r.width)*n);
         if(idx<0) idx=0; if(idx>=n) idx=n-1;
         var x=arr[idx]; if(!x) return;
-        tip.innerHTML='<b>'+fmtD(x.d)+'</b> · '+nf(x.km||0)+' km';
+        tip.innerHTML='<b>'+fmtD(x.d)+'</b>, '+nf(x.km||0)+' km';
         tip.style.left=(((idx+0.5)/n)*100).toFixed(2)+'%';
         // aparece logo acima do TOPO da barra do dia (perto de onde o olho está), não num topo fixo
         var H=44, base=H-1, topPad=3, yTop=base-((x.km||0)/kmMax)*(base-topPad);
@@ -1531,8 +1530,8 @@ function __boot(){
     var sec=el('benchmark'); if(!sec || !temBench) return;
     var bm=D.benchmark;
     var sub = bm.frotas_no_porte!=null
-      ? 'Comparado com '+nf(bm.frotas_no_porte)+' frotas de '+esc(bm.porte||'seu porte')+' · dados anônimos da carteira Rastcar.'
-      : 'Comparado com frotas do seu porte · dados anônimos da carteira Rastcar.';
+      ? 'Comparado com '+nf(bm.frotas_no_porte)+' frotas de '+esc(bm.porte||'seu porte')+', dados anônimos da carteira Rastcar.'
+      : 'Comparado com frotas do seu porte, dados anônimos da carteira Rastcar.';
     var linhas=bm.metricas.map(function(m){
       var melhor=(m.melhor_e||m['melhor_é']||'maior');
       var voce=Number(m.voce), media=Number(m.media);
@@ -1547,8 +1546,8 @@ function __boot(){
       var read = absp===0
         ? 'Sua frota está na média do seu porte em '+nomeL+'.'
         : (better
-            ? 'Sua frota está '+absp+'% melhor que a média do seu porte em '+nomeL+' · esse é um ponto forte.'
-            : 'Sua frota está '+absp+'% pior que a média do seu porte em '+nomeL+' · <a href="#plano">o plano do próximo mês ataca isso</a>.');
+            ? 'Sua frota está '+absp+'% melhor que a média do seu porte em '+nomeL+', esse é um ponto forte.'
+            : 'Sua frota está '+absp+'% pior que a média do seu porte em '+nomeL+', <a href="#plano">o plano do próximo mês ataca isso</a>.');
       var wYou=Math.max(4,Math.round(voce/max*100)), wAvg=Math.max(4,Math.round(media/max*100));
       return '<div class="bm">'+
         '<div class="bm-head"><span class="bm-name">'+esc(m.nome)+'</span>'+chip+'</div>'+
@@ -1557,7 +1556,7 @@ function __boot(){
         '<p class="bm-read">'+read+'</p>'+
       '</div>';
     }).join('');
-    sec.innerHTML='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['benchmark']+' · Sua frota vs o mercado</span>'+
+    sec.innerHTML='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['benchmark']+' Sua frota vs o mercado</span>'+
         '<h2>Onde você está no seu porte</h2><p class="sub">'+sub+'</p></div>'+
       '<div class="bmlist reveal">'+linhas+'</div>';
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
@@ -1586,13 +1585,13 @@ function __boot(){
       corpo+='<div class="hm-day">'+(dias[d]||('D'+d))+'</div>';
       for(var k=0;k<4;k++){
         var val=grid[d][k];
-        if(val<=0){ corpo+='<div class="hm-cell z" title="'+(dias[d]||'')+' · '+periodos[k][0]+' · 0 alertas">·</div>'; }
+        if(val<=0){ corpo+='<div class="hm-cell z" title="'+(dias[d]||'')+', '+periodos[k][0]+', 0 alertas">·</div>'; }
         else { var op=(0.14+0.5*(val/max)).toFixed(2);
-          corpo+='<div class="hm-cell" style="background:rgba(255,45,75,'+op+')" title="'+(dias[d]||'')+' · '+periodos[k][0]+' · '+val+' alertas">'+val+'</div>'; }
+          corpo+='<div class="hm-cell" style="background:rgba(255,45,75,'+op+')" title="'+(dias[d]||'')+', '+periodos[k][0]+', '+val+' alertas">'+val+'</div>'; }
       }
     }
-    var read='Seu risco se concentra na '+periodos[mj][0].toLowerCase()+' de '+diasFull[mi]+' · é quando vale reforçar a atenção.';
-    return '<p class="alerts-cap reveal">Quando os alertas acontecem · por período do dia</p>'+
+    var read='Seu risco se concentra na '+periodos[mj][0].toLowerCase()+' de '+diasFull[mi]+', é quando vale reforçar a atenção.';
+    return '<p class="alerts-cap reveal">Quando os alertas acontecem, por período do dia</p>'+
       '<div class="hm-wrap reveal"><div class="hmgrid">'+head+corpo+'</div>'+
         '<div class="hm-leg"><span>menos</span><span class="hm-ramp"></span><span>mais</span></div></div>'+
       insightHtml(read);
@@ -1604,7 +1603,7 @@ function __boot(){
       : Number(pct).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';
     var sinalTxt=v.sinal_qualidade_pct==null ? '—' : v.sinal_qualidade_pct+'%';
     var h=''+
-      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['vigilancia']+' · Vigilância ativa</span>'+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['vigilancia']+' Vigilância ativa</span>'+
         '<h2>O escudo que rodou o mês inteiro</h2></div>'+
       '<div class="vig-top reveal"><div class="ring">'+
         '<svg viewBox="0 0 168 168" aria-hidden="true"><defs><linearGradient id="gArc" x1="0" y1="0" x2="1" y2="1">'+
@@ -1624,23 +1623,23 @@ function __boot(){
       v.alertas.forEach(function(a){ totalAlertas += (a.qtd||0); });
       h+='<p class="alerts-cap reveal">O que a central 24h viu e tratou</p>'+
          '<div class="alerts reveal">'+v.alertas.map(function(a){
-        var pl=(a.placas&&a.placas.length)?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+a.placas.map(esc).join(' · ')+'</div>':'';
+        var pl=(a.placas&&a.placas.length)?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+a.placas.map(esc).join(', ')+'</div>':'';
         return '<div class="acard"><div class="aq mono">'+nf(a.qtd)+'</div><div class="at">'+esc(a.tipo)+'</div>'+pl+'</div>';
       }).join('')+'</div>'+
-      insightHtml('A central 24h tratou '+nf(totalAlertas)+' alertas neste mês · cada um é um olho que você não precisou ter.');
+      insightHtml('A central 24h tratou '+nf(totalAlertas)+' alertas neste mês, cada um é um olho que você não precisou ter.');
     }
     var sd2=v.saude;
     if(sd2){
       var bf=(sd2.bateria_fraca||[]);
-      h+='<p class="alerts-cap reveal">Saúde da frota · lida pelo rastreador</p>'+
+      h+='<p class="alerts-cap reveal">Saúde da frota, lida pelo rastreador</p>'+
         '<div class="alerts reveal">'+
           '<div class="acard"><div class="aq mono">'+sd2.comunicando+'/'+sd2.comunicando_total+'</div><div class="at">Rastreadores comunicando</div></div>'+
           '<div class="acard"><div class="aq mono">'+bf.length+'</div><div class="at">Bateria de veículo fraca</div>'+
             (bf.length?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+
-              bf.map(function(x){ return esc(x.placa)+' · '+String(x.volts).replace('.',',')+' V'; }).join(' · ')+'</div>':'')+'</div>'+
+              bf.map(function(x){ return esc(x.placa)+', '+String(x.volts).replace('.',',')+' V'; }).join('  ')+'</div>':'')+'</div>'+
           '<div class="acard"><div class="aq mono">'+(sd2.violacoes||0)+'</div><div class="at">Violações de equipamento</div></div>'+
         '</div>'+
-        '<p class="note reveal" style="margin-top:12px">A tensão é da bateria do próprio veículo, medida pelo rastreador · bateria caindo é aviso antes da pane, não depois.</p>';
+        '<p class="note reveal" style="margin-top:12px">A tensão é da bateria do próprio veículo, medida pelo rastreador, bateria caindo é aviso antes da pane, não depois.</p>';
     }
     h+=heatAlertasHtml(D.heat_alertas);
     var sec=el('vigilancia'); sec.innerHTML=h;
@@ -1667,16 +1666,16 @@ function __boot(){
     }).join(''); }
     var sf=c.score_frota||0;
     var nAtencao=(c.piores||[]).length;
-    var insComp='Os eventos de velocidade se concentram em '+nAtencao+' '+(nAtencao===1?'veículo':'veículos')+' · uma conversa com esses condutores tende a subir o score e reduzir o risco na estrada.';
+    var insComp='Os eventos de velocidade se concentram em '+nAtencao+' '+(nAtencao===1?'veículo':'veículos')+', uma conversa com esses condutores tende a subir o score e reduzir o risco na estrada.';
     var h=''+
-      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['comportamento']+' · Comportamento &amp; risco</span>'+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['comportamento']+' Comportamento &amp; risco</span>'+
         '<h2>Como sua frota dirige</h2>'+
-        '<p class="sub">Score geral primeiro<span class="scr"> · toque num veículo para o detalhe</span>.</p></div>'+
+        '<p class="sub">Score geral primeiro<span class="scr">, toque num veículo para o detalhe</span>.</p></div>'+
       '<div class="controls reveal"><span class="ctl-label">Ver</span>'+
         '<div class="segset" id="cpFilter" role="group" aria-label="Filtro de comportamento">'+
           '<button data-f="tudo" aria-pressed="true">Tudo</button><button data-f="atencao" aria-pressed="false">Só atenção</button></div></div>'+
       '<div class="comp-grid reveal">'+
-        '<div class="gauge"><div class="gn grad" id="rzScore">0</div><div class="gl">Score da frota · 0 a 100 '+deltaChip(sf, ANT&&ANT.score_frota, 'sobe-bom')+'</div>'+
+        '<div class="gauge"><div class="gn grad" id="rzScore">0</div><div class="gl">Score da frota, 0 a 100 '+deltaChip(sf, ANT&&ANT.score_frota, 'sobe-bom')+'</div>'+
           '<div class="gbar"><i style="--w:'+Math.max(0,Math.min(100,sf))+'%"></i></div></div>'+
         '<div id="cpCols"></div></div>'+
       insightHtml(insComp);
@@ -1686,7 +1685,7 @@ function __boot(){
     function renderCols(){
       var cols=el('cpCols');
       if(cp.filter==='atencao'){
-        cols.innerHTML='<div class="col attn"><h3>Atenção · precisam de olhar</h3>'+rowsHtml(c.piores)+'</div>';
+        cols.innerHTML='<div class="col attn"><h3>Atenção, precisam de olhar</h3>'+rowsHtml(c.piores)+'</div>';
       } else {
         cols.innerHTML='<div class="cols"><div class="col attn"><h3>Atenção</h3>'+rowsHtml(c.piores)+'</div>'+
           '<div class="col dest"><h3>Destaque</h3>'+rowsHtml(c.melhores)+'</div></div>';
@@ -1716,27 +1715,27 @@ function __boot(){
     var litros=Math.round(ec.horas_ociosas_mes*ec.premissa_litros_hora);
     var reais=litros*ec.premissa_preco_litro;
     var reaisTxt='R$ '+reais.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
-    var insEc='Reduzir o motor parado em um terço devolve na ordem de R$ '+
-      Math.round(reais/3).toLocaleString('pt-BR')+' por mês · a conversa certa com a equipe paga o monitoramento sozinha.';
+    var insEc='Cortar um terço desse desperdício devolve na ordem de R$ '+
+      Math.round(reais/3).toLocaleString('pt-BR')+' por mês, a conversa certa com a equipe paga o monitoramento sozinha.';
     var h=''+
-      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['economia']+' · Economia operacional</span>'+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['economia']+' Economia operacional</span>'+
         '<h2>Economia e gastos da operação</h2>'+
-        '<p class="sub">Motor ligado sem rodar é o custo mais fácil de recuperar.</p></div>'+
+        '<p class="sub">O desperdício da operação, convertido em reais e pronto para cortar.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad" id="ecR">0</span>'+
         '<span class="cap"><span class="u">custo estimado do tempo ocioso no mês</span>'+
-        '<span class="lbl">estimativa sobre horas medidas · premissas abaixo</span></span></div>'+
+        '<span class="lbl">estimativa sobre horas medidas, premissas abaixo</span></span></div>'+
       '<div class="substats reveal">'+
-        '<div class="s"><div class="n mono" id="ecH">0</div><div class="l">Horas de motor parado · medido '+deltaChip(ec.horas_ociosas_mes, ANT&&ANT.horas_ociosas_mes, 'desce-bom')+'</div></div>'+
+        '<div class="s"><div class="n mono" id="ecH">0</div><div class="l">Horas de motor parado, medido '+deltaChip(ec.horas_ociosas_mes, ANT&&ANT.horas_ociosas_mes, 'desce-bom')+'</div></div>'+
         '<div class="s"><div class="n mono" id="ecL">0</div><div class="l">Litros estimados em marcha lenta</div></div>'+
-        '<div class="s"><div class="n mono" id="ecV">0</div><div class="l">Eventos de velocidade · medido</div></div>'+
+        '<div class="s"><div class="n mono" id="ecV">0</div><div class="l">Eventos de velocidade, medido</div></div>'+
       '</div>'+
       (function(){
         if(!ec.por_veiculo||!ec.por_veiculo.length) return '';
-        return '<p class="alerts-cap reveal">Quem mais queima parado · custo estimado no mês</p>'+
+        return '<p class="alerts-cap reveal">Onde o dinheiro está vazando, custo estimado no mês</p>'+
           '<div class="alerts reveal">'+ec.por_veiculo.map(function(x){
             var r=Math.round(x.horas*ec.premissa_litros_hora*ec.premissa_preco_litro);
             return '<div class="acard"><div class="aq mono">R$ '+r.toLocaleString('pt-BR')+'</div>'+
-                   '<div class="at">'+esc(x.placa)+' · '+nf(x.horas)+' h de motor parado</div></div>';
+                   '<div class="at">'+esc(x.placa)+', '+nf(x.horas)+' h de motor parado</div></div>';
           }).join('')+'</div>';
       })()+
       (function(){
@@ -1744,12 +1743,12 @@ function __boot(){
         if(!sub.length) return '';
         return '<p class="note reveal" style="margin-top:14px">E os que quase não rodaram: '+
           joinNat(sub.map(function(v){ return esc(v.placa)+' ('+nf(v.km)+' km)'; }))+
-          ' · ativo parado segue custando seguro, documento e depreciação.</p>';
+          ', ativo parado segue custando seguro, documento e depreciação.</p>';
       })()+
       '<p class="note reveal" style="margin-top:14px">Como calculamos: '+nf(ec.horas_ociosas_mes)+' h de motor ligado parado (medidas pelo rastreador) × '+
         String(ec.premissa_litros_hora).replace('.',',')+' L/h de marcha lenta × R$ '+
         ec.premissa_preco_litro.toLocaleString('pt-BR',{minimumFractionDigits:2})+' por litro. '+
-        'O valor em reais é estimativa · a Rastcar não mede o tanque.</p>'+
+        'O valor em reais é uma estimativa com premissas declaradas.</p>'+
       insightHtml(insEc);
     var sec=el('economia'); sec.innerHTML=h;
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
@@ -1781,7 +1780,7 @@ function __boot(){
     if(v.zona) h+=drow('Onde ficou mais tempo', esc(v.zona), true);
     if(cmp){ h+=drow('Score de comportamento', String(cmp.score), true)+
       drow('Eventos de velocidade', nf(cmp.excessos)); }
-    else { h+='<p class="note">Comportamento por veículo · detalhado na próxima leitura mensal.</p>'; }
+    else { h+='<p class="note">Comportamento por veículo, detalhado na próxima leitura mensal.</p>'; }
     h+='<p class="note">Dados de telemetria e rastreamento sob monitoramento 24h.</p>';
     sheet.innerHTML=h; sheet.hidden=false;
     lastFocus=document.activeElement;
@@ -1815,27 +1814,27 @@ function __boot(){
     function plano(arr){
       var a = arr.map(function(x){ return esc(x); });
       if(a.length <= 3) return {txt:joinNat(a), n:a.length};
-      return {txt:nf(a.length)+' veículos · comece por '+joinNat(a.slice(0,3)), n:a.length};
+      return {txt:nf(a.length)+' veículos, comece por '+joinNat(a.slice(0,3)), n:a.length};
     }
     var piores=(c.piores||[]).map(function(x){ return x.placa; });
     var ev=(c.piores||[]).reduce(function(acc,x){ return acc+(x.excessos||0); },0);
     /* sem excesso nenhum a frase virava "concentram 0 eventos de velocidade" */
     if(piores.length && ev>0){ var pl=plano(piores);
-      itens.push('Conversar com '+pl.txt+' · '+(pl.n===1?'concentra ':'concentram ')+nf(ev)+' eventos de velocidade.'); }
+      itens.push('Conversar com '+pl.txt+', '+(pl.n===1?'concentra ':'concentram ')+nf(ev)+' eventos de velocidade.'); }
     var sub=(D.veiculos||[]).filter(function(v){ return v.ocioso; }).map(function(v){ return v.placa; });
-    if(sub.length) itens.push('Reavaliar a escala de '+plano(sub).txt+' · capacidade parada é frota que você já pagou.');
+    if(sub.length) itens.push('Reavaliar a escala de '+plano(sub).txt+', capacidade parada é frota que você já pagou.');
     var bf=(D.vigilancia&&D.vigilancia.saude&&D.vigilancia.saude.bateria_fraca)||[];
     if(bf.length){ var pb=plano(bf.map(function(x){ return x.placa; }));
       itens.push('Trocar a bateria '+(pb.n===1?'do ':'de ')+pb.txt+' antes que vire pane na estrada.'); }
     var mnt=(D.manutencao||[]);
-    if(mnt.length) itens.push('Agendar a revisão de '+plano(mnt.map(function(x){ return x.placa; })).txt+' · cruzou marco de odômetro este mês.');
-    if(ec) itens.push('Derrubar o motor parado em um terço · devolve na ordem de R$ '+
+    if(mnt.length) itens.push('Agendar a revisão de '+plano(mnt.map(function(x){ return x.placa; })).txt+', cruzou marco de odômetro este mês.');
+    if(ec) itens.push('Derrubar o custo do tempo ocioso em um terço, devolve na ordem de R$ '+
       Math.round(ec.horas_ociosas_mes*ec.premissa_litros_hora*ec.premissa_preco_litro/3).toLocaleString('pt-BR')+' por mês.');
     if(!itens.length){ sec.style.display='none'; return; }
     var sf=c.score_frota||0;
-    var h='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['plano']+' · O plano</span>'+
+    var h='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['plano']+' O plano</span>'+
       '<h2>O que fazer no próximo mês</h2>'+
-      '<p class="sub">Movimentos práticos · o próximo relatório mostra o efeito.</p></div>'+
+      '<p class="sub">Movimentos práticos, o próximo relatório mostra o efeito.</p></div>'+
       '<div class="indics reveal" style="margin-top:6px">'+itens.map(function(t,i){
         return '<div class="indic'+(i===0?' p1':'')+'"><span class="dot"></span><span class="it">'+t+'</span>'+
                (i===0?'<span class="tag solid">Começar por aqui</span>':'')+'</div>'; }).join('')+'</div>'+
@@ -1880,7 +1879,7 @@ function __boot(){
     if(acao) row('#plano','Primeira ação do mês que vem', esc(acao.textContent), '', true);
     if(rows.length<3) return; // com pouco dado a porta de entrada não ajuda
     var sec=document.createElement('section'); sec.className='block dg'; sec.id='mes30';
-    sec.innerHTML='<p class="dgt reveal">O mês em 30 segundos<span class="scr"> · toque para ir à seção</span></p>'+
+    sec.innerHTML='<p class="dgt reveal">O mês em 30 segundos<span class="scr">, toque para ir à seção</span></p>'+
       '<div class="dgrid reveal">'+rows.join('')+'</div>';
     mn.insertBefore(sec, mn.firstElementChild);
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
@@ -1911,7 +1910,7 @@ function __boot(){
             marcadores[v.placa]=L.circleMarker([v.pos.lat,v.pos.lng],{radius:isTouch?8:6,color:'#FF2D4B',weight:2,
               fillColor:'#FF4FA0',fillOpacity:.9})
              .addTo(m)
-             .bindTooltip('<b>'+esc(v.placa)+'</b> · '+esc(v.modelo)+'<br>'+nf(v.km)+' km · '+nf(v.horas)+' h · '+esc(v.zona||''),
+             .bindTooltip('<b>'+esc(v.placa)+'</b>, '+esc(v.modelo)+'<br>'+nf(v.km)+' km, '+nf(v.horas)+' h, '+esc(v.zona||''),
                {direction:'top',offset:[0,-6],opacity:1})
              .on('click',function(){ openDetail(v.placa); });
           });
@@ -2061,8 +2060,8 @@ function __boot(){
     .catch(function(err){
       var pago = err && err.status === 402;
       var titulo = pago ? 'Relatório indisponível no momento' : 'Não foi possível carregar este relatório';
-      var apoio  = pago ? 'Fale com a Rastcar para reativar o acesso · <span style="white-space:nowrap">(12) 3157-9090</span>' : 'Confira se o link está completo e correto.';
-      ld.innerHTML = '<div style="max-width:440px"><div class="k">RASTCAR · INTELIGÊNCIA</div>' +
+      var apoio  = pago ? 'Fale com a Rastcar para reativar o acesso, <span style="white-space:nowrap">(12) 3157-9090</span>' : 'Confira se o link está completo e correto.';
+      ld.innerHTML = '<div style="max-width:440px"><div class="k">RASTCAR INTELIGÊNCIA</div>' +
                      '<div class="t">' + titulo + '</div><div class="s">' + apoio + '</div></div>';
     });
 })();

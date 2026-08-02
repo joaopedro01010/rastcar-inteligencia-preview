@@ -15,7 +15,7 @@ window.RC_DADOS = {
     horas_operacao: 2114,
     disponibilidade_pct: 99.6,
     narrativa: "Sua frota rodou 48.230 km em julho sob monitoramento contínuo. A operação se manteve estável, com 99,6% de disponibilidade de cobertura e o destaque abaixo.",
-    destaque: "O veículo MET-4C22 rodou 40% acima da média da frota · vale checar rota e escala."
+    destaque: "O veículo MET-4C22 rodou 40% acima da média da frota, vale checar rota e escala."
   },
 
   // Mês anterior (para as setas de evolução). Sem este bloco, nenhuma seta aparece.
