@@ -1115,6 +1115,27 @@ main section:empty{display:none}
 .buy-espera a:hover{color:var(--crimson-2)}
 .buy-espera a:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
 
+/* --- e-mails extras --- */
+.xmail{display:flex;gap:10px;margin-top:12px;align-items:center}
+.xmail .fi{flex:1;min-width:0}
+.xdel{
+  flex:0 0 auto;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--head);font-weight:600;font-size:20px;line-height:1;color:var(--muted);
+  background:rgba(255,255,255,.72);border:1px solid var(--hair);border-radius:12px;cursor:pointer;
+  transition:color .2s var(--ease),border-color .2s var(--ease);
+}
+.xdel:hover{color:var(--crimson);border-color:var(--crimson)}
+.xdel:focus-visible{outline:2px solid var(--crimson);outline-offset:2px}
+.add-mail{
+  display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:0;
+  font-family:var(--head);font-weight:600;font-size:14px;color:var(--ink);
+  background:none;border:0;border-bottom:1px solid var(--hair);cursor:pointer;
+  transition:color .2s var(--ease),border-color .2s var(--ease);
+}
+.add-mail:hover{color:var(--crimson);border-color:var(--crimson)}
+.add-mail:focus-visible{outline:2px solid var(--crimson);outline-offset:3px}
+.add-mail .pr{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted)}
+
 /* --- interruptor do WhatsApp --- */
 .sw-row{display:flex;align-items:center;gap:12px;margin-top:4px}
 .sw{
@@ -1162,10 +1183,6 @@ main section:empty{display:none}
 .pay-fb:empty{display:none}
 
 .buy-trust{margin:18px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
-.buy-legal{
-  margin:9px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--muted-2);line-height:1.7;
-}
 
 /* --- total fixo no rodape · so no celular, so com o formulario a vista --- */
 .tot-bar{
@@ -1527,6 +1544,10 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
                        spellcheck="false" placeholder="voce@empresa.com.br"
                        aria-describedby="e-email">
                 <p class="ferr" id="e-email" aria-live="polite"></p>
+                <!-- e-mails extras: cada um soma no total (15/mes nos mensais,
+                     180/ano nos anuais). Ate 4 alem do principal. -->
+                <div id="emails-extras"></div>
+                <button class="add-mail" type="button" id="btn-mais-email">Adicionar outro e-mail <span class="pr" id="mais-email-pr">· R$ 15/mês</span></button>
               </div>
               <div id="zap-wrap" hidden>
                 <label class="fl" for="f-zap">WhatsApp</label>
@@ -1564,7 +1585,6 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
           </fieldset>
 
           <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe, com cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
-          <p class="buy-legal">Assinatura digital da Rastcar · CNPJ 10.142.559/0001-00</p>
         </form>
       </div>
     </section>
@@ -2162,6 +2182,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   var passo2 = $('step-dados');
   var iMail = $('f-email'), eMail = $('e-email');
   var swWrap = $('zap-toggle-wrap'), sw = $('f-zap-add');
+  var xWrap = $('emails-extras'), bMaisEmail = $('btn-mais-email'), maisEmailPr = $('mais-email-pr');
   var zapWrap = $('zap-wrap'), iZap = $('f-zap'), eZap = $('e-zap'), zapHint = $('zap-hint');
   var resPlano = $('res-plano'), totV = $('tot-v'), totU = $('tot-u'), totDet = $('tot-det');
   var barP = $('bar-p'), barV = $('bar-v'), barU = $('bar-u');
@@ -2401,6 +2422,39 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
   }
 
+  /* ---------- e-mails extras ----------
+     Cada e-mail alem do principal soma no total: R$ 15/mes nos mensais e
+     R$ 180/ano nos anuais (a mesma regra, anualizada, porque o pagamento
+     anual e a vista). Ate 4 extras. Linha vazia nao cobra e nao trava. */
+  var MAX_EMAILS_EXTRAS = 4;
+  function extrasEmails(){
+    return [].slice.call(xWrap.querySelectorAll('input')).map(function(i){
+      return i.value.trim();
+    }).filter(Boolean);
+  }
+  function addEmailRow(){
+    if(xWrap.children.length >= MAX_EMAILS_EXTRAS) return;
+    var row = document.createElement('div');
+    row.className = 'xmail';
+    var inp = document.createElement('input');
+    inp.className = 'fi'; inp.type = 'email';
+    inp.setAttribute('inputmode','email'); inp.setAttribute('autocapitalize','off');
+    inp.setAttribute('spellcheck','false');
+    inp.placeholder = 'outro@empresa.com.br';
+    inp.setAttribute('aria-label','E-mail adicional');
+    inp.addEventListener('input', function(){ inp.removeAttribute('aria-invalid'); atualiza(); });
+    var del = document.createElement('button');
+    del.type = 'button'; del.className = 'xdel';
+    del.setAttribute('aria-label','Remover este e-mail');
+    del.textContent = '×';
+    del.addEventListener('click', function(){ row.parentNode.removeChild(row); atualiza(); });
+    row.appendChild(inp); row.appendChild(del);
+    xWrap.appendChild(row);
+    atualiza();
+    inp.focus();
+  }
+  if(bMaisEmail) bMaisEmail.addEventListener('click', addEmailRow);
+
   /* ---------- resumo, total e barra do celular ---------- */
   var mqCel = window.matchMedia ? window.matchMedia('(max-width:767px)') : {matches:false};
 
@@ -2420,8 +2474,13 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       ? 'É onde seu relatório chega todo mês.'
       : 'O relatório também vai para este número todo mês.';
 
+    var nx = extrasEmails().length;
+    var precoEmail = anual ? 180 : 15;
+    if(maisEmailPr) maisEmailPr.textContent = anual ? '· R$ 180 no ano' : '· R$ 15/mês';
+    if(bMaisEmail) bMaisEmail.hidden = xWrap.children.length >= MAX_EMAILS_EXTRAS;
+
     var base  = p ? PRECO[p] : 0;
-    var extra = (p && !zapIncluso && sw.checked) ? 15 : 0;
+    var extra = ((p && !zapIncluso && sw.checked) ? 15 : 0) + (p ? nx * precoEmail : 0);
     var total = base + extra;
 
     var nome = p ? NOME[p] : 'Nenhum plano escolhido';
@@ -2429,7 +2488,10 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     var unid = anual ? 'pagamento anual' : 'por mês';
 
     txt(resPlano, nome); txt(totV, valor); txt(totU, unid);
-    txt(totDet, extra ? (brl(base) + ' + ' + brl(extra) + ' WhatsApp')
+    var partes = [];
+    if(p && !zapIncluso && sw.checked) partes.push('R$ 15 WhatsApp');
+    if(p && nx) partes.push(brl(nx * precoEmail) + (nx === 1 ? ' e-mail extra' : ' e-mails extras'));
+    txt(totDet, partes.length ? (brl(base) + ' + ' + partes.join(' + '))
                       : (anual ? (p === 'anual590' ? 'pagamento anual à vista, equivale a R$ 412,50 por mês' : 'à vista, menos de R$ 7 por dia') : ''));
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
 
@@ -2588,6 +2650,26 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     }
     iMail.removeAttribute('aria-invalid');
 
+    /* e-mails extras: linha vazia e ignorada, repetido e descartado em
+       silencio, invalido trava aqui mesmo */
+    var vistos = {}; vistos[mail.toLowerCase()] = 1;
+    var extrasOk = [];
+    var xInps = [].slice.call(xWrap.querySelectorAll('input'));
+    for(var xi = 0; xi < xInps.length; xi++){
+      var xv = xInps[xi].value.trim();
+      if(!xv) continue;
+      if(!reMail.test(xv)){
+        xInps[xi].setAttribute('aria-invalid','true');
+        txt(eMail,'Confira o e-mail adicional.');
+        xInps[xi].focus();
+        return;
+      }
+      var xk = xv.toLowerCase();
+      if(vistos[xk]) continue;
+      vistos[xk] = 1;
+      extrasOk.push(xv);
+    }
+
     var precisaZap = !zapWrap.hidden;
     var zapD = iZap.value.replace(/\D/g,'');
     if(precisaZap && (zapD.length < 10 || zapD.length > 11)){
@@ -2601,6 +2683,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     /* zap_addon so existe onde o WhatsApp nao vem incluso (mensais 149/297) */
     var zapJa = (p === 'anual' || p === 'anual590' || p === 'mensal590');
     var corpo = {plano:p, cnpj:st.cnpj, email:mail, zap_addon: (!zapJa && sw.checked)};
+    if(extrasOk.length) corpo.emails_extras = extrasOk;
     if(precisaZap) corpo.whatsapp = '55' + zapD;
 
     ocupado(bPay, true, 'Preparando seu pagamento…');
