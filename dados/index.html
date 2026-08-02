@@ -1358,7 +1358,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       <div class="orbes" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="wrap">
         <h2 class="sec-h rv">Escolha o seu plano</h2>
-        <p class="sec-sub rv" style="--d:.06s">Comece pelo CNPJ · localizamos sua frota na base da Rastcar e os planos se ajustam ao porte dela.</p>
+        <p class="sec-sub rv" style="--d:.06s">Comece pelo CNPJ. Localizamos sua frota na base da Rastcar e os planos se ajustam ao porte dela.</p>
 
         <!-- localizador · o CNPJ vem ANTES dos cartoes de proposito: a prova
              ajusta a vitrine (faixa certa e a face certa do anual) antes da
@@ -1479,9 +1479,9 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <span class="p-was"><span class="sr-only">De </span>R$ 3.564</span>
               <span class="p-val"><span class="sr-only">por </span>R$ 2.497</span><span class="p-per">/ano</span>
             </p>
-            <p class="p-eq">pagamento anual · menos de R$ 7 por dia</p>
-            <p class="p-save">Economize R$ 1.067 <span class="un">no ano</span></p>
-            <p class="p-off">30% de desconto sobre o mensal</p>
+            <p class="p-eq">pagamento anual à vista, menos de R$ 7 por dia</p>
+            <p class="p-save">À vista, economize R$ 1.067 <span class="un">no ano</span></p>
+            <p class="p-off">30% de desconto por pagar à vista</p>
             <hr class="p-div">
             <ul class="p-list">
               <li><span class="ck" aria-hidden="true"></span><span>12 relatórios no ano, um por mês</span></li>
@@ -1567,7 +1567,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
           </fieldset>
 
-          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe · cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
+          <p class="buy-trust" id="buy-trust">Pagamento processado pelo Stripe, com cartão e boleto. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.</p>
           <p class="buy-legal">Assinatura digital da Rastcar · CNPJ 10.142.559/0001-00</p>
         </form>
       </div>
@@ -2138,11 +2138,11 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
   var PRECO = {mensal149:149, mensal297:297, mensal590:590, anual:2497, anual590:4950};
   var NOME  = {
-    mensal149:'Mensal · até 20 veículos',
-    mensal297:'Mensal · 21 a 70 veículos',
-    mensal590:'Mensal · a partir de 71 veículos',
-    anual:'Anual · 12 meses',
-    anual590:'Anual · a partir de 71 veículos'
+    mensal149:'Mensal, até 20 veículos',
+    mensal297:'Mensal, 21 a 70 veículos',
+    mensal590:'Mensal, a partir de 71 veículos',
+    anual:'Anual, 12 meses',
+    anual590:'Anual, a partir de 71 veículos'
   };
   /* Os dois cortes da regua. 70 saiu de medicao da base (2.843 veiculos,
      417 clientes): entre 61 e 70 nao existe UM cliente, entao o corte nao
@@ -2316,8 +2316,8 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       cond:'Para frotas de até 70 veículos.',
       was:'<span class="sr-only">De </span>R$ 3.564',
       val:'<span class="sr-only">por </span>R$ 2.497',
-      eq:'pagamento anual · menos de R$ 7 por dia',
-      save:'Economize R$ 1.067 <span class="un">no ano</span>',
+      eq:'pagamento anual à vista, menos de R$ 7 por dia',
+      save:'À vista, economize R$ 1.067 <span class="un">no ano</span>',
       anchor:'Doze estudos completos da frota. Pagamento anual, e o assunto está resolvido pelos 12 meses.'
     },
     grande:{
@@ -2327,10 +2327,11 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       val:'<span class="sr-only">por </span>R$ 4.950',
       /* equivalente mensal SO nesta face: ao lado do 590/mes ele le como
          queda. Na face de 2.497 o equivalente (208) expunha o furo logico
-         contra o plano de 149 · la segue o preco por dia. "pagamento anual"
-         abre a frase de proposito: nenhum anual e parcelado. */
-      eq:'pagamento anual · equivale a R$ 412,50 por mês',
-      save:'Economize R$ 2.130 <span class="un">no ano</span>',
+         contra o plano de 149 · la segue o preco por dia. "à vista" cola no
+         equivalente e no desconto de proposito: nenhum anual e parcelado, e
+         o desconto e apresentado como o premio de pagar uma vez so. */
+      eq:'pagamento anual à vista, equivale a R$ 412,50 por mês',
+      save:'À vista, economize R$ 2.130 <span class="un">no ano</span>',
       anchor:'Doze estudos da frota inteira, sem limite de veículos. Um pagamento no ano, e o assunto está resolvido.'
     }
   };
@@ -2386,19 +2387,19 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       seleciona(alvo);
       st.planoAutomatico = true;
       txt(aviso, grande
-        ? (caiu ? 'Sua frota passa de 70 veículos · deixamos o plano de frotas grandes selecionado. O anual dessa faixa também está liberado.'
-                : 'Sugerimos o plano de frotas grandes para o seu porte · o anual dessa faixa também está liberado.')
+        ? (caiu ? 'Sua frota passa de 70 veículos. Deixamos o plano de frotas grandes selecionado, e o anual dessa faixa também está liberado.'
+                : 'Sugerimos o plano de frotas grandes para o seu porte, e o anual dessa faixa também está liberado.')
         : media
-        ? (caiu ? 'Sua frota passa de 20 veículos · deixamos o plano de 21 a 70 veículos selecionado.'
-                : 'Sugerimos o plano de 21 a 70 veículos para o seu porte · você pode trocar nos cartões abaixo.')
-        : (caiu ? 'Sua frota cabe no plano de até 20 veículos · deixamos ele selecionado.'
-                : 'Sugerimos o plano mensal de até 20 veículos · você pode trocar nos cartões abaixo.'));
+        ? (caiu ? 'Sua frota passa de 20 veículos. Deixamos o plano de 21 a 70 veículos selecionado.'
+                : 'Sugerimos o plano de 21 a 70 veículos para o seu porte. Você pode trocar nos cartões abaixo.')
+        : (caiu ? 'Sua frota cabe no plano de até 20 veículos. Deixamos ele selecionado.'
+                : 'Sugerimos o plano mensal de até 20 veículos. Você pode trocar nos cartões abaixo.'));
     } else {
       /* escolha manual mantida · se a face do anual trocou por baixo dela,
          avisa o preco novo em vez de trocar em silencio */
       txt(aviso, p !== pAntes
-        ? (grande ? 'Sua frota passa de 70 veículos · o anual ajustou para essa faixa: R$ 4.950 no ano, com os mesmos 30% OFF.'
-                  : 'Sua frota cabe na faixa de até 70 veículos · o anual voltou para R$ 2.497 no ano.')
+        ? (grande ? 'Sua frota passa de 70 veículos. O anual ajustou para essa faixa: R$ 4.950 no ano, com os mesmos 30% OFF.'
+                  : 'Sua frota cabe na faixa de até 70 veículos. O anual voltou para R$ 2.497 no ano.')
         : '');
       atualiza();
     }
@@ -2433,12 +2434,12 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
 
     txt(resPlano, nome); txt(totV, valor); txt(totU, unid);
     txt(totDet, extra ? (brl(base) + ' + ' + brl(extra) + ' WhatsApp')
-                      : (anual ? (p === 'anual590' ? 'pagamento anual · equivale a R$ 412,50 por mês' : 'menos de R$ 7 por dia') : ''));
+                      : (anual ? (p === 'anual590' ? 'pagamento anual à vista, equivale a R$ 412,50 por mês' : 'à vista, menos de R$ 7 por dia') : ''));
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
 
     /* Pix so no anual · assinatura mensal recorrente nao aceita Pix no Brasil.
        Nunca prometer Pix no mensal, aqui nem em lugar nenhum da pagina. */
-    txt(trust, 'Pagamento processado pelo Stripe · ' +
+    txt(trust, 'Pagamento processado pelo Stripe, com ' +
                (anual ? 'cartão, boleto e Pix' : 'cartão e boleto') +
                '. O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.');
 
@@ -2513,7 +2514,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   }
 
   function erroRede(alvo){
-    txt(alvo, 'Não conseguimos falar com o servidor agora · tente de novo em instantes.');
+    txt(alvo, 'Não conseguimos falar com o servidor agora, tente de novo em instantes.');
   }
 
   function localizar(){
@@ -2533,7 +2534,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     blocoBusy();
     post(API_FROTA, {cnpj:c}, 15000).then(function(r){
       ocupado(bFrota, false);
-      if(r.status === 429){ limpaProva(); txt(eCnpj,'Muitas tentativas · aguarde alguns minutos.'); return; }
+      if(r.status === 429){ limpaProva(); txt(eCnpj,'Muitas tentativas, aguarde alguns minutos.'); return; }
       if(r.status === 400){ limpaProva(); txt(eCnpj,'Confira o CNPJ.'); return; }
       if(r.status !== 200){ limpaProva(); erroRede(eCnpj); return; }
 
@@ -2635,11 +2636,11 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         st.veiculos = nSrv;
         regraFrota(nSrv);
         txt(ePay,'Sua frota agora tem ' + nSrv + (nSrv === 1 ? ' veículo' : ' veículos') +
-                 ' · ajustamos o plano para essa faixa. Confira o total e siga.');
+                 '. Ajustamos o plano para essa faixa, confira o total e siga.');
         bPay.focus();
       } else {
         limpaProva();
-        txt(eCnpj,'A frota mudou de tamanho · localize de novo para seguir.');
+        txt(eCnpj,'A frota mudou de tamanho, localize de novo para seguir.');
         iCnpj.focus();
       }
       return;
@@ -2651,7 +2652,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       return;
     }
     if(r.status === 429){
-      txt(ePay,'Muitas tentativas · aguarde alguns minutos.');
+      txt(ePay,'Muitas tentativas, aguarde alguns minutos.');
       return;
     }
     if(r.status === 400){
