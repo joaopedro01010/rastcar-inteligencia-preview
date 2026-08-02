@@ -1499,7 +1499,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
             <ul class="p-list">
               <li><span class="ck" aria-hidden="true"></span><span>12 relatórios no ano, um por mês</span></li>
               <li><span class="ck" aria-hidden="true"></span><span>Preço travado por 12 meses</span></li>
-              <li><span class="ck" aria-hidden="true"></span><span>1 WhatsApp e e-mail já incluídos</span></li>
+              <li><span class="ck" aria-hidden="true"></span><span>1 WhatsApp e 2 e-mails já incluídos</span></li>
               <li><span class="ck" aria-hidden="true"></span><span>Relatório executivo completo, com score</span></li>
               <li><span class="ck" aria-hidden="true"></span><span>Mapa da frota por cidade</span></li>
               <li><span class="ck" aria-hidden="true"></span><span>Comparação com o mês anterior</span></li>
@@ -2474,13 +2474,19 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       ? 'É onde seu relatório chega todo mês.'
       : 'O relatório também vai para este número todo mês.';
 
+    /* anual inclui 2 e-mails (o principal + 1 gratis) · so do terceiro em
+       diante cobra 180/ano. Mensais: 1 incluso, cada extra 15/mes. */
     var nx = extrasEmails().length;
+    var gratis = anual ? 1 : 0;
+    var nxCobrado = Math.max(0, nx - gratis);
     var precoEmail = anual ? 180 : 15;
-    if(maisEmailPr) maisEmailPr.textContent = anual ? '· R$ 180 no ano' : '· R$ 15/mês';
+    if(maisEmailPr) maisEmailPr.textContent = anual
+      ? (xWrap.children.length < 1 ? '· grátis' : '· R$ 180 por 12 meses')
+      : '· R$ 15/mês';
     if(bMaisEmail) bMaisEmail.hidden = xWrap.children.length >= MAX_EMAILS_EXTRAS;
 
     var base  = p ? PRECO[p] : 0;
-    var extra = ((p && !zapIncluso && sw.checked) ? 15 : 0) + (p ? nx * precoEmail : 0);
+    var extra = ((p && !zapIncluso && sw.checked) ? 15 : 0) + (p ? nxCobrado * precoEmail : 0);
     var total = base + extra;
 
     var nome = p ? NOME[p] : 'Nenhum plano escolhido';
@@ -2490,7 +2496,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
     txt(resPlano, nome); txt(totV, valor); txt(totU, unid);
     var partes = [];
     if(p && !zapIncluso && sw.checked) partes.push('R$ 15 WhatsApp');
-    if(p && nx) partes.push(brl(nx * precoEmail) + (nx === 1 ? ' e-mail extra' : ' e-mails extras'));
+    if(p && nxCobrado) partes.push(brl(nxCobrado * precoEmail) + (nxCobrado === 1 ? ' e-mail extra' : ' e-mails extras'));
     txt(totDet, partes.length ? (brl(base) + ' + ' + partes.join(' + '))
                       : (anual ? (p === 'anual590' ? 'pagamento anual à vista, equivale a R$ 412,50 por mês' : 'à vista, menos de R$ 7 por dia') : ''));
     txt(barP, nome); txt(barV, valor); txt(barU, unid);
