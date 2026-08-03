@@ -14,7 +14,7 @@ window.RC_DADOS = {
     km_mes: 48230,
     horas_operacao: 2504,
     disponibilidade_pct: 99.6,
-    narrativa: "Sua frota rodou 48.230 km em julho sob monitoramento contínuo. As 3 máquinas somaram 390 horas de trabalho no horímetro e a operação se manteve estável, com 99,6% de disponibilidade de cobertura.",
+    narrativa: "Sua frota rodou 48.230 km em julho sob monitoramento contínuo. As 3 máquinas somaram 390 horas de trabalho no horímetro e a operação se manteve estável, com 99,6% da frota em atividade.",
     destaque: "O veículo MET-4C22 rodou 40% acima da média da frota, vale checar rota e escala.",
     // v3.5 · de que a frota e feita (maquina se mede por horimetro, nao por km)
     frota_tipos: { caminhao: 11, van: 3, maquina: 3 },

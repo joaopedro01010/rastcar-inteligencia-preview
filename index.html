@@ -1269,7 +1269,7 @@ function __boot(){
       '<div class="substats reveal">'+
         '<div class="s"><div class="n mono" id="hzA">0</div><div class="l">Frota ativa</div></div>'+
         '<div class="s"><div class="n mono" id="hzH">0</div><div class="l">Horas em operação '+deltaChip(r.horas_operacao, ANT&&ANT.horas_operacao, 'neutro')+'</div></div>'+
-        '<div class="s"><div class="n mono" id="hzD">0</div><div class="l">Disponibilidade</div></div>'+
+        '<div class="s"><div class="n mono" id="hzD">0</div><div class="l">Em atividade, últimas 24h</div></div>'+
       '</div>'+
       '<p class="narrativa reveal">'+esc(r.narrativa)+'</p>'+
       (function(){
@@ -1661,10 +1661,13 @@ function __boot(){
           '<stop offset="0" stop-color="#E01E37"/><stop offset="1" stop-color="#FF4FA0"/></linearGradient></defs>'+
           '<circle class="trk" cx="84" cy="84" r="'+R+'"></circle>'+
           '<circle class="arc" id="rzArc" cx="84" cy="84" r="'+R+'" style="stroke-dasharray:'+C+';stroke-dashoffset:'+C+'"></circle></svg>'+
-        '<div class="ctr"><span class="p grad">'+pctTxt+'</span><span class="l">cobertura no mês</span></div></div>'+
+        /* TRAVA DE MARCA: o anel e os indicadores falam da ATIVIDADE DA FROTA, nunca de
+           "rastreador offline" — veiculo parado no patio nao comunica e isso e normal,
+           mas "156/212 online" leria como falha do servico. Sinal sem dado nao mostra "—". */
+        '<div class="ctr"><span class="p grad">'+pctTxt+'</span><span class="l">da frota em atividade, últimas 24h</span></div></div>'+
         '<div class="indics">'+
-          '<div class="indic"><span class="dot"></span><span class="it">Rastreadores online <b>'+v.rastreadores_online+'/'+v.rastreadores_total+'</b></span></div>'+
-          '<div class="indic"><span class="dot"></span><span class="it">Qualidade de sinal <b>'+sinalTxt+'</b></span></div>'+
+          '<div class="indic"><span class="dot"></span><span class="it"><b>'+v.rastreadores_online+'</b> veículos em atividade nas últimas 24 horas</span></div>'+
+          (v.sinal_qualidade_pct!=null?('<div class="indic"><span class="dot"></span><span class="it">Qualidade de sinal <b>'+sinalTxt+'</b></span></div>'):'')+
           '<div class="indic"><span class="dot"></span><span class="it">Bloqueio pronto em <b>'+v.bloqueio_pronto+'</b> veículos</span></div>'+
           '<div class="indic"><span class="dot"></span><span class="it"><b>'+v.cobertura_dias+'</b> dias sob monitoramento contínuo</span></div>'+
         '</div></div>'+
@@ -1683,16 +1686,17 @@ function __boot(){
     if(sd2){
       var bf=(sd2.bateria_fraca||[]);
       /* a lista de bateria e RESUMO, nunca muro: a IDEAL abriu com 31 placas emendadas
-         atravessando a tela. Acima de 6, conta e aponta as piores. */
+         atravessando a tela. Acima de 6, conta e aponta as piores.
+         TRAVA DE MARCA: nada aqui pode ler como falha da Rastcar — o card "sem leitura de
+         tensao" foi REMOVIDO da tela (o dado segue no payload pra auditoria) e o card de
+         comunicacao virou a afirmacao positiva do monitoramento. */
       var bfShow=bf.slice(0,6).map(function(x){ return esc(x.placa)+', '+String(x.volts).replace('.',',')+' V'; }).join('  ');
       if(bf.length>6) bfShow+='  e mais '+nf(bf.length-6);
       h+='<p class="alerts-cap reveal">Saúde da frota, lida pelo rastreador</p>'+
         '<div class="alerts reveal">'+
-          '<div class="acard"><div class="aq mono">'+sd2.comunicando+'/'+sd2.comunicando_total+'</div><div class="at">Rastreadores comunicando</div></div>'+
+          '<div class="acard"><div class="aq mono">'+nf(sd2.comunicando_total)+'</div><div class="at">Veículos sob monitoramento 24h</div></div>'+
           '<div class="acard"><div class="aq mono">'+bf.length+'</div><div class="at">Bateria de veículo fraca</div>'+
             (bf.length?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+bfShow+'</div>':'')+'</div>'+
-          ((sd2.bateria_sem_leitura>0)?('<div class="acard"><div class="aq mono">'+nf(sd2.bateria_sem_leitura)+'</div><div class="at">Sem leitura de tensão</div>'+
-            '<div class="at" style="margin-top:6px">o rastreador não informou a voltagem, não é defeito da bateria</div></div>'):'')+
           '<div class="acard"><div class="aq mono">'+(sd2.violacoes||0)+'</div><div class="at">Violações de equipamento</div></div>'+
         '</div>'+
         '<p class="note reveal" style="margin-top:12px">A tensão é da bateria do próprio veículo, medida pelo rastreador, bateria caindo é aviso antes da pane, não depois.</p>';
@@ -1852,7 +1856,7 @@ function __boot(){
            (v.km!=null?drow('Km no mês', nf(v.km)+' km'):''))
         : (drow('Km no mês', nfDash(v.km,' km'), true)+
            drow('Horas em operação', nfDash(v.horas,' h'))))+
-      (v.km==null && !ehMaq ? drow('Medição', 'por horímetro, sem odômetro ligado') : '')+
+      (v.km==null && !ehMaq ? drow('Medição', 'pelo horímetro, horas de motor') : '')+
       (v.op ? drow('Perfil', 'trabalha parado com o motor ligado, horas são operação') : '')+
       (vsTxt!=null ? drow('vs média da frota', esc(vsTxt), vsMedia>0) : '')+
       drow('Status', v.ocioso?(ehMaq?'Parada no período':'Subutilizado'):(ehMaq?'Em operação':'Ativo'));
@@ -1937,7 +1941,7 @@ function __boot(){
     }
     var r=D.resumo||{};
     if(r.km_mes!=null) row('#resumo','Km rodados no mês', nf(r.km_mes), deltaChip(r.km_mes, ANT&&ANT.km_mes, 'neutro'));
-    if(r.disponibilidade_pct!=null) row('#resumo','Disponibilidade da frota', String(r.disponibilidade_pct).replace('.',',')+'%');
+    if(r.disponibilidade_pct!=null) row('#resumo','Frota em atividade nas últimas 24h', String(r.disponibilidade_pct).replace('.',',')+'%');
     var vg=D.vigilancia;
     if(vg&&vg.alertas&&vg.alertas.length){ var tot=0; vg.alertas.forEach(function(a){ tot+=(a.qtd||0); }); row('#vigilancia','Alertas tratados pela central 24h', nf(tot)); }
     var ec=D.economia;
