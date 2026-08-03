@@ -1116,6 +1116,7 @@ footer.bot{padding-bottom:104px}
 <main class="wrap">
   <section class="block" id="resumo"></section>
   <section class="block" id="movimento"></section>
+  <section class="block" id="maquinas"></section>
   <section class="block" id="benchmark"></section>
   <section class="block" id="vigilancia"></section>
   <section class="block" id="comportamento"></section>
@@ -1226,6 +1227,7 @@ function __boot(){
   var SECS=[];
   if(D.resumo) SECS.push(['resumo','Resumo']);
   if(veiculos.length) SECS.push(['movimento','Movimento']);
+  if(temMaquinas) SECS.push(['maquinas','Máquinas']);
   if(temBench) SECS.push(['benchmark','Mercado']);
   if(D.vigilancia) SECS.push(['vigilancia','Vigilância']);
   if(temComp) SECS.push(['comportamento','Comportamento']);
@@ -1265,11 +1267,27 @@ function __boot(){
         '<h2>O panorama de '+esc(mes)+'</h2>'+
         '<p class="sub">O essencial primeiro, o detalhe está nas seções a seguir.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad" id="hzKm">0</span>'+
-        '<span class="cap"><span class="u">km rodados no mês '+deltaChip(r.km_mes, ANT&&ANT.km_mes, 'neutro')+'</span><span class="lbl">frota sob monitoramento contínuo</span></span></div>'+
-      '<div class="substats reveal">'+
+        '<span class="cap"><span class="u">km rodados no mês '+deltaChip(r.km_mes, ANT&&ANT.km_mes, 'neutro')+'</span><span class="lbl">frota sob monitoramento contínuo</span></span></div>';
+    /* INDICE DE EFICIENCIA (toque Oracle): UM numero executivo 0 a 100, media simples das
+       dimensoes que o mes MEDIU (atividade, utilizacao dos dias, aproveitamento, conducao).
+       Metodologia declarada na propria pagina; menos de 2 dimensoes = nao aparece. */
+    var compI=[];
+    if(r.disponibilidade_pct!=null) compI.push(Math.min(100,Number(r.disponibilidade_pct)));
+    var uI=D.utilizacao;
+    if(uI&&uI.por_placa&&uI.por_placa.length&&uI.dias&&uI.dias.length){
+      var somaD=uI.por_placa.reduce(function(s,p){ return s+((p.dias_rodados!=null)?p.dias_rodados:(p.mapa||[]).reduce(function(a,x){return a+(x?1:0);},0)); },0);
+      compI.push(Math.round(somaD/(uI.por_placa.length*uI.dias.length)*100));
+    }
+    var ocI=veiculos.filter(function(v){return v.ocioso===true;}).length;
+    var medI=veiculos.filter(function(v){return v.ocioso===true||v.ocioso===false;}).length;
+    if(medI>0) compI.push(Math.round(100-(ocI/medI*100)));
+    if(D.comportamento&&D.comportamento.score_frota!=null) compI.push(D.comportamento.score_frota);
+    var indice=(compI.length>=2)?Math.round(compI.reduce(function(a,b){return a+b;},0)/compI.length):null;
+    h+='<div class="substats reveal">'+
         '<div class="s"><div class="n mono" id="hzA">0</div><div class="l">Frota ativa</div></div>'+
         '<div class="s"><div class="n mono" id="hzH">0</div><div class="l">Horas em operação '+deltaChip(r.horas_operacao, ANT&&ANT.horas_operacao, 'neutro')+'</div></div>'+
         '<div class="s"><div class="n mono" id="hzD">0</div><div class="l">Em atividade, últimas 24h</div></div>'+
+        (indice!=null?('<div class="s"><div class="n mono" id="hzI">0</div><div class="l">Índice de eficiência, 0 a 100</div></div>'):'')+
       '</div>'+
       '<p class="narrativa reveal">'+esc(r.narrativa)+'</p>'+
       (function(){
@@ -1281,6 +1299,26 @@ function __boot(){
         if(!chips.length) return '';
         var nota=(ft.maquina>0)?'<span class="hc" style="border-style:dashed">máquina se mede por horas de motor, não por km</span>':'';
         return '<div class="heat-cities reveal" style="margin-top:14px">'+chips.join('')+nota+'</div>';
+      })()+
+      (indice!=null?('<p class="note reveal" style="margin-top:12px">Índice de eficiência: média das dimensões medidas no mês, atividade da frota, utilização dos dias, aproveitamento e condução.</p>'):'')+
+      (function(){
+        /* OS RECORDES DO MES (toque Apple): a historia do mes em 3 ou 4 fatos limpos,
+           todos derivados do que ja esta na pagina — nada inventado. */
+        var cards=[];
+        var kd=D.km_diario||[];
+        if(kd.length){ var pk=kd.reduce(function(m,x){ return (x.km||0)>(m.km||0)?x:m; },kd[0]);
+          if(pk&&pk.km>0){ var pp=(pk.d||'').split('-'); cards.push(['<b>'+nf(pk.km)+'</b> km','Dia de pico, '+(pp[2]||'')+'/'+(pp[1]||'')]); } }
+        var t1=veiculos.filter(function(v){return v.km!=null;})[0];
+        if(t1&&t1.km>0) cards.push([esc(t1.placa),'Mais rodado, '+nf(t1.km)+' km']);
+        if(temMaquinas){ var mq=veiculos.filter(function(v){return v.tipo==='maquina'&&(v.horas||0)>0;}).sort(function(a,b){return (b.horas||0)-(a.horas||0);})[0];
+          if(mq) cards.push([esc(mq.placa),'Máquina mais ativa, '+nf(mq.horas)+' h']); }
+        var mel=(D.comportamento&&D.comportamento.melhores)||[];
+        if(mel.length) cards.push([esc(mel[0].placa),'Melhor condução, score '+mel[0].score]);
+        if(cards.length<2) return '';
+        return '<p class="alerts-cap reveal">Os recordes do mês</p>'+
+          '<div class="alerts reveal">'+cards.slice(0,4).map(function(c){
+            return '<div class="acard"><div class="aq mono">'+c[0]+'</div><div class="at">'+c[1]+'</div></div>';
+          }).join('')+'</div>';
       })();
     if(r.destaque){ h+=insightHtml(r.destaque); }
     var sec=el('resumo'); sec.innerHTML=h;
@@ -1289,6 +1327,7 @@ function __boot(){
     watch(sec.querySelector('.substats'), function(){
       countUp(el('hzA'), r.frota_ativa); countUp(el('hzH'), r.horas_operacao);
       countUp(el('hzD'), r.disponibilidade_pct, {dec:1, suf:'%'});
+      if(indice!=null&&el('hzI')) countUp(el('hzI'), indice);
     });
   })();
 
@@ -1576,6 +1615,66 @@ function __boot(){
     initMapa();
   })();
 
+  // ---------- Bloco · Máquinas (só quando a frota tem; completo mas resumido) ----------
+  // Maquina nao roda km, produz horas: esta secao conta o mes delas inteiro num bloco so —
+  // horas totais, quem trabalhou, quem parou, dias de trabalho e marco de horimetro.
+  (function(){
+    var sec=el('maquinas'); if(!sec || !temMaquinas) return;
+    var maqs=veiculos.filter(function(v){ return v.tipo==='maquina'; });
+    var totalH=0, emOp=0, paradas=0;
+    maqs.forEach(function(v){ if(typeof v.horas==='number') totalH+=v.horas; if(v.ocioso===true) paradas+=1; else if((v.horas||0)>0) emOp+=1; });
+    var mediaH=maqs.length?Math.round(totalH/maqs.length):0;
+    // dias de trabalho por placa (a grade de utilizacao ja acende o dia pelo horimetro)
+    var diasMap={}, nd=0;
+    if(D.utilizacao&&D.utilizacao.por_placa){ nd=(D.utilizacao.dias||[]).length;
+      D.utilizacao.por_placa.forEach(function(p){ diasMap[p.placa]=(p.dias_rodados!=null)?p.dias_rodados:(p.mapa||[]).reduce(function(s,x){return s+(x?1:0);},0); }); }
+    var rankM=maqs.slice().sort(function(a,b){ return (b.horas||0)-(a.horas||0); });
+    var maxH=Math.max(1,rankM.length?(rankM[0].horas||0):1);
+    var top=rankM.slice(0,5);
+    var marcos=(D.manutencao||[]).filter(function(x){ return x.marco_h!=null; });
+    var insM = paradas>0
+      ? (paradas+' '+(paradas===1?'máquina não trabalhou':'máquinas não trabalharam')+' no período, máquina parada é capital e locação sem retorno, vale conferir a alocação.')
+      : 'Todas as máquinas produziram horas no período, o parque está alocado.';
+    var h='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['maquinas']+' Máquinas</span>'+
+      '<h2>O trabalho medido em horas</h2>'+
+      '<p class="sub">Máquina não roda km, produz horas de motor. Aqui é o mês do seu parque, pelo horímetro.</p></div>'+
+      '<div class="hero-stat reveal"><span class="big grad" id="mqH">0</span>'+
+        '<span class="cap"><span class="u">horas de trabalho no horímetro</span>'+
+        '<span class="lbl">'+nf(maqs.length)+' '+(maqs.length===1?'máquina':'máquinas')+' sob monitoramento 24h</span></span></div>'+
+      '<div class="substats reveal">'+
+        '<div class="s"><div class="n mono" id="mqOp">0</div><div class="l">Em operação</div></div>'+
+        '<div class="s"><div class="n mono" id="mqPar">0</div><div class="l">Paradas no período</div></div>'+
+        '<div class="s"><div class="n mono" id="mqMed">0</div><div class="l">Média de horas por máquina</div></div>'+
+      '</div>'+
+      '<div class="rank reveal">'+top.map(function(v,i){
+        var w=Math.max(4,Math.round((v.horas||0)/maxH*100));
+        var dias=diasMap[v.placa];
+        var etq=(v.ocioso===true)?'<span class="tag ghost">Parada</span>':(i===0&&(v.horas||0)>0?'<span class="tag solid">Mais horas</span>':'');
+        return '<div class="rrow" tabindex="0" role="button" data-placa="'+esc(v.placa)+'" aria-label="Ver ficha de '+esc(v.placa)+'">'+
+          '<span class="plate">'+esc(v.placa)+'</span>'+
+          '<div class="who"><div class="model"><span class="mname">'+esc(v.modelo)+'</span>'+etq+'</div>'+
+            '<div class="bar"><i style="--w:'+w+'%"></i></div></div>'+
+          '<span class="kv">'+nfDash(v.horas,' h')+(dias!=null&&nd?('<small>'+dias+' de '+nd+' dias</small>'):'')+'</span>'+
+        '</div>';
+      }).join('')+'</div>'+
+      (rankM.length>5?'<p class="note reveal">Mostrando as 5 de maior atividade de '+nf(rankM.length)+' máquinas, todas estão no recorte Máquinas da frota em movimento.</p>':'')+
+      (marcos.length?('<p class="alerts-cap reveal">Revisão pelo horímetro</p>'+
+        '<div class="alerts reveal">'+marcos.map(function(x){
+          return '<div class="acard"><div class="aq mono">'+esc(x.placa)+'</div>'+
+            '<div class="at">passou das '+nf(x.marco_h)+' h de motor, programe a revisão</div>'+
+            '<div class="at mnt-odo">Horímetro: '+nf(x.horimetro)+' h</div></div>';
+        }).join('')+'</div>'):'')+
+      insightHtml(insM);
+    sec.innerHTML=h;
+    Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
+    watch(sec.querySelector('.hero-stat'),function(){ countUp(el('mqH'), Math.round(totalH)); });
+    watch(sec.querySelector('.substats'),function(){ countUp(el('mqOp'), emOp); countUp(el('mqPar'), paradas); countUp(el('mqMed'), mediaH); });
+    if(!reduce && !instant){ requestAnimationFrame(function(){ Array.prototype.forEach.call(sec.querySelectorAll('.bar>i'),function(i){ i.style.width=i.style.getPropertyValue('--w'); }); }); }
+    else { Array.prototype.forEach.call(sec.querySelectorAll('.bar>i'),function(i){ i.style.width=i.style.getPropertyValue('--w'); }); }
+    sec.addEventListener('click',function(e){ var row=e.target.closest('.rrow'); if(row) openDetail(row.getAttribute('data-placa')); });
+    sec.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ var row=e.target.closest('.rrow'); if(row){ e.preventDefault(); openDetail(row.getAttribute('data-placa')); } } });
+  })();
+
   // ---------- Bloco · Sua frota vs o mercado (benchmark anônimo por porte) ----------
   (function(){
     var sec=el('benchmark'); if(!sec || !temBench) return;
@@ -1701,6 +1800,34 @@ function __boot(){
         '</div>'+
         '<p class="note reveal" style="margin-top:12px">A tensão é da bateria do próprio veículo, medida pelo rastreador, bateria caindo é aviso antes da pane, não depois.</p>';
     }
+    /* O QUE A INTELIGENCIA VIU (toque CIA): briefing de padroes e anomalias do mes, cada
+       linha derivada de dado ja presente na pagina — deteccao, nunca invencao. So aparece
+       com 2+ sinais (1 sinal solto nao e briefing). */
+    (function(){
+      var sinais=[];
+      var mad=(v.alertas||[]).filter(function(a){ return /madrugada/i.test(a.tipo||''); });
+      if(mad.length){ var mq=mad.reduce(function(s,a){ return s+(a.qtd||0); },0);
+        var pl=(mad[0].placas||[]);
+        if(mq>0) sinais.push('Movimentação entre 22h e 5h: '+nf(mq)+' registros'+(pl.length?(', concentrados em '+joinNat(pl.slice(0,3).map(esc))):'')+'.'); }
+      var kd=D.km_diario||[];
+      if(kd.length>=7){
+        var ut=kd.filter(function(x){ return !isFimDeSemana(x.d); }), fd=kd.filter(function(x){ return isFimDeSemana(x.d); });
+        if(ut.length&&fd.length){
+          var mu=ut.reduce(function(s,x){return s+(x.km||0);},0)/ut.length, mf=fd.reduce(function(s,x){return s+(x.km||0);},0)/fd.length;
+          if(mu>0){ var rr=mf/mu;
+            if(rr>=0.7) sinais.push('Fins de semana rodando no ritmo da semana, padrão de operação contínua.');
+            else if(rr<0.3) sinais.push('Fins de semana quase parados, padrão de semana cheia com descanso real da frota.'); } } }
+      var cid=D.rotas_calor&&D.rotas_calor.cidades;
+      if(cid&&cid.length&&cid[0].nome!=='Outras'&&cid[0].pct>=40) sinais.push(cid[0].pct+'% da operação concentrada em '+esc(cid[0].nome)+', a praça dominante do mês.');
+      var evv=D.economia?(D.economia.eventos_velocidade||0):0;
+      var pio=(D.comportamento&&D.comportamento.piores)||[];
+      if(evv>0&&pio.length) sinais.push(nf(evv)+' eventos de velocidade no mês, concentrados em '+nf(pio.length)+' '+(pio.length===1?'veículo':'veículos')+', padrão de condutor, não de frota.');
+      if(sinais.length<2) return;
+      h+='<p class="alerts-cap reveal">O que a inteligência viu no mês</p>'+
+        '<div class="indics reveal" style="margin-top:6px">'+sinais.slice(0,4).map(function(t){
+          return '<div class="indic"><span class="dot"></span><span class="it">'+t+'</span></div>';
+        }).join('')+'</div>';
+    })();
     h+=heatAlertasHtml(D.heat_alertas);
     var sec=el('vigilancia'); sec.innerHTML=h;
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
