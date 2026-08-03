@@ -6,16 +6,19 @@ window.RC_DADOS = {
   amostra: true,
   cliente: "( Nome da empresa )",
   periodo: "Julho · 2026",
-  frota: 14,
+  frota: 17,
 
   // Bloco 1 · numeros-heroi
   resumo: {
-    frota_ativa: 14,
+    frota_ativa: 16,
     km_mes: 48230,
-    horas_operacao: 2114,
+    horas_operacao: 2504,
     disponibilidade_pct: 99.6,
-    narrativa: "Sua frota rodou 48.230 km em julho sob monitoramento contínuo. A operação se manteve estável, com 99,6% de disponibilidade de cobertura e o destaque abaixo.",
-    destaque: "O veículo MET-4C22 rodou 40% acima da média da frota, vale checar rota e escala."
+    narrativa: "Sua frota rodou 48.230 km em julho sob monitoramento contínuo. As 3 máquinas somaram 390 horas de trabalho no horímetro e a operação se manteve estável, com 99,6% de disponibilidade de cobertura.",
+    destaque: "O veículo MET-4C22 rodou 40% acima da média da frota, vale checar rota e escala.",
+    // v3.5 · de que a frota e feita (maquina se mede por horimetro, nao por km)
+    frota_tipos: { caminhao: 11, van: 3, maquina: 3 },
+    horas_maquinas: 390
   },
 
   // Mês anterior (para as setas de evolução). Sem este bloco, nenhuma seta aparece.
@@ -28,21 +31,25 @@ window.RC_DADOS = {
   },
 
   // Bloco 2 · frota em movimento (zona = onde o veiculo ficou mais tempo no mes)
+  // v3.5 · tipo por veiculo; MAQUINA tem km:null (sem odometro, medida por horimetro)
   veiculos: [
-    { placa:"MET-4C22", modelo:"Scania R450",       km:6920, horas:305, ocioso:false, zona:"Campinas", pos:{lat:-22.925,lng:-47.080} },
-    { placa:"KLR-2F18", modelo:"Volvo FH",          km:5810, horas:268, ocioso:false, zona:"Ribeirão Preto", pos:{lat:-21.187,lng:-47.820} },
-    { placa:"BQT-9A07", modelo:"VW Constellation",  km:5120, horas:240, ocioso:false, zona:"Sorocaba", pos:{lat:-23.501,lng:-47.458} },
-    { placa:"RDZ-1K55", modelo:"Mercedes Actros",   km:4870, horas:222, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.213,lng:-45.891} },
-    { placa:"HNP-7G31", modelo:"Iveco Tector",      km:3990, horas:190, ocioso:false, zona:"Jundiaí", pos:{lat:-23.166,lng:-46.904} },
-    { placa:"TGV-3M09", modelo:"Ford Cargo",        km:3510, horas:171, ocioso:false, zona:"Santos", pos:{lat:-23.981,lng:-46.343} },
-    { placa:"CWX-8B44", modelo:"DAF XF",            km:3120, horas:150, ocioso:false, zona:"Guarulhos", pos:{lat:-23.464,lng:-46.533} },
-    { placa:"LMF-5D27", modelo:"Scania P320",       km:2740, horas:133, ocioso:false, zona:"Cajamar", pos:{lat:-23.356,lng:-46.866} },
-    { placa:"PVE-6H12", modelo:"Volvo VM",          km:2310, horas:118, ocioso:false, zona:"Piracicaba", pos:{lat:-22.715,lng:-47.669} },
-    { placa:"ZAB-4J88", modelo:"VW Delivery",       km:1980, horas:101, ocioso:false, zona:"Resende", pos:{lat:-22.449,lng:-44.456} },
-    { placa:"OKT-2C63", modelo:"Iveco Daily",       km:1540, horas:82,  ocioso:false, zona:"Duque de Caxias", pos:{lat:-22.805,lng:-43.305} },
-    { placa:"WSD-9E01", modelo:"Mercedes Accelo",   km:1210, horas:64,  ocioso:false, zona:"Betim", pos:{lat:-19.978,lng:-44.188} },
-    { placa:"FRN-7A19", modelo:"Ford Transit",      km:640,  horas:31,  ocioso:true,  zona:"Uberlândia", pos:{lat:-18.919,lng:-48.297} },
-    { placa:"XUP-3B50", modelo:"Renault Master",    km:450,  horas:23,  ocioso:true,  zona:"Campinas", pos:{lat:-22.895,lng:-47.070} }
+    { placa:"MET-4C22", modelo:"Scania R450",       tipo:"caminhao", km:6920, horas:305, ocioso:false, zona:"Campinas", pos:{lat:-22.925,lng:-47.080} },
+    { placa:"KLR-2F18", modelo:"Volvo FH",          tipo:"caminhao", km:5810, horas:268, ocioso:false, zona:"Ribeirão Preto", pos:{lat:-21.187,lng:-47.820} },
+    { placa:"BQT-9A07", modelo:"VW Constellation",  tipo:"caminhao", km:5120, horas:240, ocioso:false, zona:"Sorocaba", pos:{lat:-23.501,lng:-47.458} },
+    { placa:"RDZ-1K55", modelo:"Mercedes Actros",   tipo:"caminhao", km:4870, horas:222, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.213,lng:-45.891} },
+    { placa:"HNP-7G31", modelo:"Iveco Tector",      tipo:"caminhao", km:3990, horas:190, ocioso:false, zona:"Jundiaí", pos:{lat:-23.166,lng:-46.904} },
+    { placa:"TGV-3M09", modelo:"Ford Cargo",        tipo:"caminhao", km:3510, horas:171, ocioso:false, zona:"Santos", pos:{lat:-23.981,lng:-46.343} },
+    { placa:"CWX-8B44", modelo:"DAF XF",            tipo:"caminhao", km:3120, horas:150, ocioso:false, zona:"Guarulhos", pos:{lat:-23.464,lng:-46.533} },
+    { placa:"LMF-5D27", modelo:"Scania P320",       tipo:"caminhao", km:2740, horas:133, ocioso:false, zona:"Cajamar", pos:{lat:-23.356,lng:-46.866} },
+    { placa:"PVE-6H12", modelo:"Volvo VM",          tipo:"caminhao", km:2310, horas:118, ocioso:false, zona:"Piracicaba", pos:{lat:-22.715,lng:-47.669} },
+    { placa:"ZAB-4J88", modelo:"VW Delivery",       tipo:"caminhao", km:1980, horas:101, ocioso:false, zona:"Resende", pos:{lat:-22.449,lng:-44.456} },
+    { placa:"ESC-0301", modelo:"Escavadeira CAT 320",     tipo:"maquina", km:null, horas:214, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.245,lng:-45.912} },
+    { placa:"RET-0302", modelo:"Retroescavadeira JCB 3CX", tipo:"maquina", km:null, horas:176, ocioso:false, zona:"Sorocaba", pos:{lat:-23.512,lng:-47.471} },
+    { placa:"OKT-2C63", modelo:"Iveco Daily",       tipo:"van", km:1540, horas:82,  ocioso:false, zona:"Duque de Caxias", pos:{lat:-22.805,lng:-43.305} },
+    { placa:"WSD-9E01", modelo:"Mercedes Accelo",   tipo:"caminhao", km:1210, horas:64,  ocioso:false, zona:"Betim", pos:{lat:-19.978,lng:-44.188} },
+    { placa:"FRN-7A19", modelo:"Ford Transit",      tipo:"van", km:640,  horas:31,  ocioso:true,  zona:"Uberlândia", pos:{lat:-18.919,lng:-48.297} },
+    { placa:"XUP-3B50", modelo:"Renault Master",    tipo:"van", km:450,  horas:23,  ocioso:true,  zona:"Campinas", pos:{lat:-22.895,lng:-47.070} },
+    { placa:"ROL-0303", modelo:"Rolo compactador CA25",   tipo:"maquina", km:null, horas:0,   ocioso:true,  zona:"Campinas", pos:{lat:-22.910,lng:-47.062} }
   ],
 
   // Mapa real de concentração (lat/lng + peso) e ranking de tempo por cidade.
@@ -88,8 +95,8 @@ window.RC_DADOS = {
   vigilancia: {
     cobertura_dias: 31,
     cobertura_pct: 99.6,
-    rastreadores_online: 14,
-    rastreadores_total: 14,
+    rastreadores_online: 17,
+    rastreadores_total: 17,
     sinal_qualidade_pct: 97,
     alertas: [
       { tipo:"Cerca virtual", qtd:23 },
@@ -97,12 +104,14 @@ window.RC_DADOS = {
       { tipo:"Excesso de velocidade", qtd:41 },
       { tipo:"Movimentação de madrugada (22h às 5h)", qtd:7, placas:["TGV-3M09","MET-4C22"] }
     ],
-    bloqueio_pronto: 14,
+    bloqueio_pronto: 17,
     // Saúde: a TENSÃO é da bateria do PRÓPRIO VEÍCULO do cliente (lida pelo rastreador),
     // não do rastreador. Sem este bloco, o painel de saúde não renderiza.
+    // bateria_sem_leitura: rastreador sem informar voltagem (nunca vira "bateria fraca").
     saude: {
-      comunicando: 14, comunicando_total: 14,
+      comunicando: 17, comunicando_total: 17,
       bateria_fraca: [ { placa:"WSD-9E01", volts:11.8 } ],
+      bateria_sem_leitura: 1,
       violacoes: 0
     }
   },
@@ -121,7 +130,9 @@ window.RC_DADOS = {
       { placa:"MET-4C22", horas:22 },
       { placa:"BQT-9A07", horas:17 },
       { placa:"RDZ-1K55", horas:14 }
-    ]
+    ],
+    // maquinas fora da conta: hora de motor de maquina e producao, nao marcha lenta
+    maquinas_fora: 3
   },
 
   // Bloco 4 · comportamento & risco (Fase 2 conforme o GPS7 exponha o dado)
@@ -178,7 +189,11 @@ window.RC_DADOS = {
       { placa:"OKT-2C63", dias_rodados:12, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
       { placa:"WSD-9E01", dias_rodados:10, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
       { placa:"FRN-7A19", dias_rodados:7,  mapa:[1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0] },
-      { placa:"XUP-3B50", dias_rodados:5,  mapa:[0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0] }
+      { placa:"XUP-3B50", dias_rodados:5,  mapa:[0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0] },
+      // maquinas: o dia aceso vem do HORIMETRO (trabalhou = rodou), nao do odometro
+      { placa:"ESC-0301", dias_rodados:22, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0] },
+      { placa:"RET-0302", dias_rodados:18, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0] },
+      { placa:"ROL-0303", dias_rodados:0,  mapa:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
     ]
   },
 
@@ -209,9 +224,10 @@ window.RC_DADOS = {
     ]
   },
 
-  // Manutenção preventiva por odômetro · 1 veículo cruzou marco de 10 mil km este mês.
-  // Premissa: marco a cada 10.000 km. NUNCA é diagnóstico mecânico. Sem este bloco, some.
+  // Manutenção preventiva · veículo cruza marco de ODÔMETRO (10.000 km);
+  // máquina cruza marco de HORÍMETRO (250 h). NUNCA é diagnóstico mecânico. Sem este bloco, some.
   manutencao: [
-    { placa:"MET-4C22", odometro:120340, marco:120000 }
+    { placa:"MET-4C22", odometro:120340, marco:120000 },
+    { placa:"ESC-0301", horimetro:5120, marco_h:5000 }
   ]
 };
