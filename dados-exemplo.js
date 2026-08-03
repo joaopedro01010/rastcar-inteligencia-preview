@@ -46,7 +46,7 @@ window.RC_DADOS = {
     { placa:"ESC-0301", modelo:"Escavadeira CAT 320",     tipo:"maquina", km:null, horas:214, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.245,lng:-45.912} },
     { placa:"RET-0302", modelo:"Retroescavadeira JCB 3CX", tipo:"maquina", km:null, horas:176, ocioso:false, zona:"Sorocaba", pos:{lat:-23.512,lng:-47.471} },
     { placa:"OKT-2C63", modelo:"Iveco Daily",       tipo:"van", km:1540, horas:82,  ocioso:false, zona:"Duque de Caxias", pos:{lat:-22.805,lng:-43.305} },
-    { placa:"WSD-9E01", modelo:"Mercedes Accelo",   tipo:"caminhao", km:1210, horas:64,  ocioso:false, zona:"Betim", pos:{lat:-19.978,lng:-44.188} },
+    { placa:"WSD-9E01", modelo:"Mercedes Accelo Basculante", tipo:"caminhao", op:true, km:1210, horas:64, ocioso:false, zona:"Betim", pos:{lat:-19.978,lng:-44.188} },
     { placa:"FRN-7A19", modelo:"Ford Transit",      tipo:"van", km:640,  horas:31,  ocioso:true,  zona:"Uberlândia", pos:{lat:-18.919,lng:-48.297} },
     { placa:"XUP-3B50", modelo:"Renault Master",    tipo:"van", km:450,  horas:23,  ocioso:true,  zona:"Campinas", pos:{lat:-22.895,lng:-47.070} },
     { placa:"ROL-0303", modelo:"Rolo compactador CA25",   tipo:"maquina", km:null, horas:0,   ocioso:true,  zona:"Campinas", pos:{lat:-22.910,lng:-47.062} }
@@ -131,8 +131,10 @@ window.RC_DADOS = {
       { placa:"BQT-9A07", horas:17 },
       { placa:"RDZ-1K55", horas:14 }
     ],
-    // maquinas fora da conta: hora de motor de maquina e producao, nao marcha lenta
-    maquinas_fora: 3
+    // maquinas e veiculos de operacao (basculante/pipa/munck) fora da conta:
+    // neles, motor ligado parado e producao, nao marcha lenta
+    maquinas_fora: 3,
+    operacionais_fora: 1
   },
 
   // Bloco 4 · comportamento & risco (Fase 2 conforme o GPS7 exponha o dado)

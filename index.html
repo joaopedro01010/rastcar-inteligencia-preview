@@ -1809,7 +1809,17 @@ function __boot(){
         String(ec.premissa_litros_hora).replace('.',',')+' L/h de marcha lenta × R$ '+
         ec.premissa_preco_litro.toLocaleString('pt-BR',{minimumFractionDigits:2})+' por litro. '+
         'O valor em reais é uma estimativa com premissas declaradas.'+
-        (ec.maquinas_fora?(' As '+nf(ec.maquinas_fora)+' máquinas ficam fora desta conta: hora de motor de máquina é produção, e o acompanhamento delas é pelo horímetro, na frota em movimento.'):'')+
+        (function(){
+          /* maquina e veiculo de operacao (basculante, pipa, munck) trabalham parados ligados:
+             ficam fora da conta e a frase diz isso com clareza, nunca em tom de desculpa */
+          var mq=ec.maquinas_fora||0, op=ec.operacionais_fora||0;
+          if(!mq && !op) return '';
+          var partes=[];
+          if(mq) partes.push(nf(mq)+' '+(mq===1?'máquina':'máquinas'));
+          if(op) partes.push(nf(op)+' '+(op===1?'veículo de operação':'veículos de operação')+' (basculante, pipa, munck e afins)');
+          return ' '+(partes.length===2?(partes[0]+' e '+partes[1]+' ficam'):(partes[0]+' '+((mq||op)===1?'fica':'ficam')))+
+            ' fora desta conta: neles, motor ligado parado é trabalho, e o acompanhamento é pelo horímetro, na frota em movimento.';
+        })()+
         '</p>'+
       insightHtml(insEc);
     var sec=el('economia'); sec.innerHTML=h;
@@ -1843,6 +1853,7 @@ function __boot(){
         : (drow('Km no mês', nfDash(v.km,' km'), true)+
            drow('Horas em operação', nfDash(v.horas,' h'))))+
       (v.km==null && !ehMaq ? drow('Medição', 'por horímetro, sem odômetro ligado') : '')+
+      (v.op ? drow('Perfil', 'trabalha parado com o motor ligado, horas são operação') : '')+
       (vsTxt!=null ? drow('vs média da frota', esc(vsTxt), vsMedia>0) : '')+
       drow('Status', v.ocioso?(ehMaq?'Parada no período':'Subutilizado'):(ehMaq?'Em operação':'Ativo'));
     if(v.zona) h+=drow('Onde ficou mais tempo', esc(v.zona), true);
