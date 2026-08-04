@@ -1291,8 +1291,12 @@ function __boot(){
       '</div>'+
       '<p class="narrativa reveal">'+esc(r.narrativa)+'</p>'+
       (function(){
-        /* v3.5 · de que a frota e feita: chips por tipo (maquina medida por horimetro) */
+        /* v3.5 · de que a frota e feita: chips por tipo (maquina medida por horimetro).
+           Cadastro sem modelo vira "outro": quando "outro" e maioria, a quebra por tipo
+           nao informa nada e a fileira inteira some (dado insuficiente nao vai pra tela). */
         var ft=r.frota_tipos; if(!ft) return '';
+        var totalT=0; for(var tk in ft) totalT+=ft[tk];
+        if((ft.outro||0) > totalT*0.5) return '';
         var chips=TIPO_ORDEM.filter(function(t){ return ft[t]>0; }).map(function(t){
           return '<span class="hc"><b>'+nf(ft[t])+'</b> '+esc(tipoNome(t,ft[t]))+'</span>';
         });
