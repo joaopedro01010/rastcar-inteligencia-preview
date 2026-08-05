@@ -134,7 +134,10 @@ window.RC_DADOS = {
     // maquinas e veiculos de operacao (basculante/pipa/munck) fora da conta:
     // neles, motor ligado parado e producao, nao marcha lenta
     maquinas_fora: 3,
-    operacionais_fora: 1
+    maquinas_fora_horas: 214,
+    operacionais_fora: 1,
+    operacionais_fora_horas: 31,
+    operacionais_fora_tipos: ["basculante"]
   },
 
   // Bloco 4 · comportamento & risco (Fase 2 conforme o GPS7 exponha o dado)

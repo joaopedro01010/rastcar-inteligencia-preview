@@ -1949,11 +1949,15 @@ function __boot(){
              ficam fora da conta e a frase diz isso com clareza, nunca em tom de desculpa */
           var mq=ec.maquinas_fora||0, op=ec.operacionais_fora||0;
           if(!mq && !op) return '';
+          var tipos=(ec.operacionais_fora_tipos||[]).slice(0,4).map(esc);
+          var rot=tipos.length?joinNat(tipos):'basculante, pipa, munck e afins';
+          var horasFora=(ec.maquinas_fora_horas||0)+(ec.operacionais_fora_horas||0);
           var partes=[];
           if(mq) partes.push(nf(mq)+' '+(mq===1?'máquina':'máquinas'));
-          if(op) partes.push(nf(op)+' '+(op===1?'veículo de operação':'veículos de operação')+' (basculante, pipa, munck e afins)');
-          return ' '+(partes.length===2?(partes[0]+' e '+partes[1]+' ficam'):(partes[0]+' '+((mq||op)===1?'fica':'ficam')))+
-            ' fora desta conta: neles, motor ligado parado é trabalho, e o acompanhamento é pelo horímetro, na frota em movimento.';
+          if(op) partes.push(nf(op)+' '+(op===1?'veículo de operação':'veículos de operação')+' ('+rot+')');
+          return ' '+partes.join(' e ')+' '+((mq+op)===1?'fica':'ficam')+' fora desta conta'+
+            (horasFora?(', foram '+nf(horasFora)+' h de motor ligado que aqui são trabalho, não custo'):'')+
+            ': esse acompanhamento é pelo horímetro, na frota em movimento.';
         })()+
         '</p>'+
       insightHtml(insEc);
