@@ -30,6 +30,17 @@ window.RC_DADOS = {
     score_frota: 78
   },
 
+  // Trajetória (curva do score no Resumo). Um ponto por mês, gravado pelo Builder;
+  // com menos de 2 pontos o painel não aparece. Fecha no mês atual (julho, score 82).
+  historico: [
+    { mes: "2026-02", score: 69, km_mes: 38120, horas_operacao: 1804, horas_ociosas_mes: 132 },
+    { mes: "2026-03", score: 73, km_mes: 41780, horas_operacao: 1902, horas_ociosas_mes: 121 },
+    { mes: "2026-04", score: 71, km_mes: 39640, horas_operacao: 1875, horas_ociosas_mes: 127 },
+    { mes: "2026-05", score: 75, km_mes: 44210, horas_operacao: 1980, horas_ociosas_mes: 114 },
+    { mes: "2026-06", score: 78, km_mes: 43060, horas_operacao: 1978, horas_ociosas_mes: 104 },
+    { mes: "2026-07", score: 82, km_mes: 48230, horas_operacao: 2114, horas_ociosas_mes: 96 }
+  ],
+
   // Bloco 2 · frota em movimento (zona = onde o veiculo ficou mais tempo no mes)
   // v3.5 · tipo por veiculo; MAQUINA tem km:null (sem odometro, medida por horimetro)
   veiculos: [
