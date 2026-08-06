@@ -335,6 +335,15 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .cs.warn{color:#ff7a4d;background:rgba(255,122,77,.14)}
 .crow .cx{font-family:var(--head);font-weight:500;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--muted);white-space:nowrap}
 
+/* ---------- Motoristas · fileiras no material do .crow, sem estado de clique ---------- */
+.drvlist{display:flex;flex-direction:column;gap:8px}
+.crow.drv{cursor:default}
+.crow.drv:hover{background:var(--glass-bg);border-color:var(--glass-b)}
+.crow.drv .cx{white-space:normal}
+.crow.drv .kv{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;text-align:right;color:var(--ink);white-space:nowrap}
+.crow.drv .kv small{display:block;font-size:10px;color:var(--muted-2);letter-spacing:.1em;text-transform:uppercase;font-weight:400;margin-top:2px}
+.dcode{font-size:11px;color:var(--muted-2);letter-spacing:.08em;margin-left:6px}
+
 /* ---------- Drill-down (ficha do veículo) ---------- */
 .ovl{position:fixed;inset:0;z-index:60;background:rgba(4,3,4,.66);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
 .ovl.open{opacity:1;pointer-events:auto}
@@ -1155,6 +1164,7 @@ footer.bot{padding-bottom:104px}
   <section class="block" id="maquinas"></section>
   <section class="block" id="benchmark"></section>
   <section class="block" id="vigilancia"></section>
+  <section class="block" id="motoristas"></section>
   <section class="block" id="comportamento"></section>
   <section class="block" id="economia"></section>
   <section class="block" id="plano"></section>
@@ -1359,6 +1369,8 @@ function __boot(){
   if(temMaquinas) SECS.push(['maquinas','Máquinas']);
   if(temBench) SECS.push(['benchmark','Mercado']);
   if(D.vigilancia) SECS.push(['vigilancia','Vigilância']);
+  var temMot = !!(D.motoristas && (D.motoristas.ranking||[]).length);
+  if(temMot) SECS.push(['motoristas','Motoristas']);
   if(temComp) SECS.push(['comportamento','Comportamento']);
   if(D.economia) SECS.push(['economia','Economia']);
   if(temPlano) SECS.push(['plano','Plano']);
@@ -1988,6 +2000,77 @@ function __boot(){
       if(reduce||instant){ arc.style.transition='none'; arc.style.strokeDashoffset=off; return; }
       arc.style.transition='stroke-dashoffset 1.3s cubic-bezier(.22,1,.36,1)';
       requestAnimationFrame(function(){ arc.style.strokeDashoffset=off; });
+    });
+  })();
+
+  // ---------- Bloco · Motoristas (identificação por chave eletrônica; só com D.motoristas) ----------
+  // BLINDAGEM: a seção inteira nasce do payload — sem D.motoristas.ranking ela NÃO existe
+  // (nav inclusa). Nada aqui é estimado: autenticações, km e eventos são MEDIDOS pelo
+  // leitor do veículo. "Km sem identificação" fala da disciplina da OPERAÇÃO do cliente,
+  // nunca de falha da Rastcar. Score de motorista segue a régua do score de veículo.
+  (function(){
+    var M=D.motoristas; if(!temMot) return;
+    var rk=(M.ranking||[]).slice().sort(function(a,b){
+      if(a.score!=null&&b.score!=null) return b.score-a.score;
+      if(a.score!=null) return -1; if(b.score!=null) return 1;
+      return (b.km||0)-(a.km||0);
+    });
+    function clsm(s){ return s==null?'mid':(s>=80?'good':(s>=60?'mid':'warn')); }
+    var EV_LABEL={velocidade:['evento de velocidade','eventos de velocidade'],freada:['freada brusca','freadas bruscas'],
+      aceleracao:['aceleração brusca','acelerações bruscas'],celular:['uso de celular','usos de celular'],
+      fadiga:['alerta de fadiga','alertas de fadiga'],distracao:['alerta de distração','alertas de distração']};
+    function evTxt(ev){
+      if(!ev) return null;
+      var parts=[]; for(var k in EV_LABEL){ if(ev[k]>0) parts.push(nf(ev[k])+' '+EV_LABEL[k][ev[k]===1?0:1]); }
+      return parts.length?parts.join(', '):'sem eventos de conduta no mês';
+    }
+    var rows=rk.map(function(m){
+      var vs=(m.veiculos||[]).map(esc).join(', ');
+      var linha=[]; if(vs) linha.push('volante de '+vs);
+      var et=evTxt(m.eventos); if(et) linha.push(esc(et));
+      /* TRAVA: travessão não entra em texto visível; sem score = palavra honesta */
+      if(m.score==null) linha.push('ainda sem score de condução');
+      return '<div class="crow drv">'+
+        '<div class="who"><div class="cp">'+esc(m.nome)+(m.codigo?' <span class="dcode mono">'+esc(m.codigo)+'</span>':'')+'</div>'+
+          '<div class="cx" style="margin-top:3px">'+linha.join(', ')+'</div></div>'+
+        '<div class="kv">'+(m.km!=null?nf(m.km):'')+'<small>km no mês</small></div>'+
+        (m.score!=null?('<span class="cs '+clsm(m.score)+'">'+m.score+'</span>')
+                      :'<span class="cs mid" style="visibility:hidden" aria-hidden="true">0</span>')+
+      '</div>';
+    }).join('');
+    var top=rk[0]||{};
+    var pctId=M.km_identificado_pct;
+    var semId=M.sem_identificacao;
+    var ins = top.nome
+      ? (esc(top.nome)+' liderou o mês ao volante'+(top.score!=null?(', score '+top.score):'')+
+         (pctId!=null?(', e '+pctId+'% dos quilômetros da frota rodaram com motorista identificado.'):'.'))
+      : '';
+    var h=''+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['motoristas']+' Motoristas</span>'+
+        '<h2>Quem esteve ao volante</h2>'+
+        '<p class="sub">Identificação por chave eletrônica no veículo, cada quilômetro com dono.</p></div>'+
+      '<div class="hero-stat reveal"><span class="big grad" id="mtN">0</span>'+
+        '<span class="cap"><span class="u">motoristas identificados no mês</span>'+
+        '<span class="lbl">medido pelo leitor do veículo, não por declaração</span></span></div>'+
+      '<div class="substats reveal">'+
+        '<div class="s"><div class="n mono" id="mtA">0</div><div class="l">Autenticações no leitor</div></div>'+
+        (pctId!=null?('<div class="s"><div class="n mono" id="mtP">0</div><div class="l">Dos km com motorista identificado</div></div>'):'')+
+        (semId&&semId.km!=null?('<div class="s"><div class="n mono" id="mtS">0</div><div class="l">Km sem identificação no mês</div></div>'):'')+
+      '</div>'+
+      '<p class="alerts-cap reveal">Ranking de condução, por motorista</p>'+
+      '<div class="drvlist reveal">'+rows+'</div>'+
+      (semId&&semId.km!=null?(
+        '<p class="note reveal" style="margin-top:12px">'+nf(semId.km)+' km rodaram sem chave de identificação'+
+        ((semId.veiculos&&semId.veiculos.length)?(', concentrados em '+semId.veiculos.slice(0,4).map(esc).join(', ')):'')+
+        '. Cobrar o uso da chave nesses veículos fecha o mapa: cada km com dono.</p>'):'')+
+      (ins?insightHtml(ins):'');
+    var sec=el('motoristas'); sec.innerHTML=h;
+    Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
+    watch(sec.querySelector('.hero-stat'), function(){
+      countUp(el('mtN'), M.identificados);
+      countUp(el('mtA'), M.autenticacoes);
+      if(el('mtP')) countUp(el('mtP'), pctId, {suf:'%'});
+      if(el('mtS')&&semId) countUp(el('mtS'), semId.km);
     });
   })();
 

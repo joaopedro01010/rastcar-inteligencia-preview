@@ -41,6 +41,29 @@ window.RC_DADOS = {
     { mes: "2026-07", score: 82, km_mes: 48230, horas_operacao: 2114, horas_ociosas_mes: 96 }
   ],
 
+  // Motoristas (identificação por chave eletrônica). Sem este bloco, a seção não existe.
+  // BLINDAGEM: tudo aqui é medido pelo leitor do veículo; km sem identificação é honesto.
+  motoristas: {
+    identificados: 6,
+    autenticacoes: 148,
+    km_identificado_pct: 87,
+    sem_identificacao: { km: 3140, veiculos: ["BQT-9A07", "JKP-7D55"] },
+    ranking: [
+      { nome: "Carlos Meirelles", codigo: "M-014", score: 94, km: 8340, horas: 218,
+        veiculos: ["MET-4C22"], eventos: { velocidade: 0, freada: 1, aceleracao: 0, celular: 0, fadiga: 0 } },
+      { nome: "Edson Prado", codigo: "M-022", score: 88, km: 7120, horas: 201,
+        veiculos: ["KLR-2F18", "VHT-3B91"], eventos: { velocidade: 2, freada: 2, aceleracao: 1, celular: 0, fadiga: 0 } },
+      { nome: "Rogério Tanaka", codigo: "M-007", score: 81, km: 6480, horas: 187,
+        veiculos: ["ESC-0301"], eventos: { velocidade: 4, freada: 3, aceleracao: 2, celular: 0, fadiga: 0 } },
+      { nome: "Marcos Vilela", codigo: "M-031", score: 72, km: 5930, horas: 176,
+        veiculos: ["PQR-8C12", "MET-4C22"], eventos: { velocidade: 7, freada: 5, aceleracao: 3, celular: 1, fadiga: 0 } },
+      { nome: "Ademir Costa", codigo: "M-019", score: 58, km: 5410, horas: 168,
+        veiculos: ["BQT-9A07"], eventos: { velocidade: 12, freada: 8, aceleracao: 6, celular: 2, fadiga: 1 } },
+      { nome: "Jorge Lins", codigo: "M-026", score: null, km: 2110, horas: 74,
+        veiculos: ["JKP-7D55"], eventos: null }
+    ]
+  },
+
   // Bloco 2 · frota em movimento (zona = onde o veiculo ficou mais tempo no mes)
   // v3.5 · tipo por veiculo; MAQUINA tem km:null (sem odometro, medida por horimetro)
   veiculos: [
