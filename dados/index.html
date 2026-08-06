@@ -876,6 +876,14 @@ main section:empty{display:none}
   margin:22px 0 0;text-align:center;
 }
 
+/* cancelamento livre, dito com destaque e honestidade (mesma frase do cartaz SPMAR) */
+.plans-canc{
+  font-family:var(--card-body);font-weight:400;
+  font-size:13px;line-height:1.6;letter-spacing:.01em;color:var(--ink);
+  margin:24px 0 0;text-align:center;
+}
+.plans-canc b{font-family:var(--card-title);font-weight:700}
+
 /* Com o 4o cartao (71+) a vitrine so cabe em tela larga: a secao ganha uma
    wrap propria de 1240px e o cartao volta a ~269px, perto dos 310px de
    quando eram 3. Como TODO o desenho interno e calculado sobre --w, e a
@@ -1517,6 +1525,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
           </article>
 
         </div>
+        <p class="plans-canc"><b>Sem fidelidade e sem multa de cancelamento.</b> Cancele quando quiser.</p>
         <p class="plans-note">O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.<span class="nota-add">Cada e-mail ou WhatsApp a mais: R$ 15/mês nos mensais. Nos anuais, que já incluem 1 WhatsApp e 2 e-mails, cada e-mail a mais sai por R$ 180 por 12 meses.</span></p>
       </div>
     </section>
