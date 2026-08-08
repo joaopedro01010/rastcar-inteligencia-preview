@@ -260,11 +260,13 @@ img{max-width:100%}
    tras assume o centro. Zero scroll-jacking: o JS so LE o scroll.
    ============================================================ */
 #story{position:relative}
-/* 8 folhas x 80vh · a troca de capitulo precisa de CURSO. Com 340vh cada
-   giro de trackpad consumia quase um capitulo inteiro: a cena pulava e dava
-   a sensacao de quebrada. Com 640vh, uma rolada avanca uma fracao do passo
-   e a folha tem tempo de virar. */
-.story-track{position:relative;height:640vh}
+/* A troca de capitulo precisa de CURSO. Com 340vh cada giro de trackpad
+   consumia quase um capitulo inteiro: a cena pulava e dava a sensacao de
+   quebrada. O que importa nao e a altura total, e o CURSO POR TROCA: eram
+   640vh para 8 folhas (7 trocas). Com 10 folhas sao 9 trocas, entao a pista
+   cresce na mesma proporcao (640 x 9/7) para a folha continuar levando o
+   mesmo tanto de rolagem para virar. */
+.story-track{position:relative;height:820vh}
 .story-sticky{
   position:sticky;top:0;
   height:100vh;height:100svh;
@@ -1322,8 +1324,10 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         <p><strong>A capa com o nome da sua empresa.</strong> Todo mês um documento fechado, com o período, a frota ativa e o mês inteiro resumido em uma tabela.</p>
         <p><strong>O panorama do mês.</strong> Quilometragem total, horas em operação, disponibilidade e a comparação com o mês anterior. No exemplo: 48.230 km, 2.114 horas e 99,6% de disponibilidade.</p>
         <p><strong>Quem mais trabalhou.</strong> A frota inteira ordenada por quilometragem, veículo a veículo, do que mais rodou ao que quase não saiu.</p>
+        <p><strong>As máquinas, medidas em horas.</strong> Escavadeira, retroescavadeira e rolo não rodam quilômetro, produzem hora de motor. Quem tem parque de máquinas recebe um capítulo próprio pelo horímetro: horas trabalhadas, dias em serviço, máquina parada e revisão pelo marco de horas.</p>
         <p><strong>Sua frota comparada com o mercado.</strong> Km por veículo, score de direção e horas de motor parado, lado a lado com a média de frotas anônimas do mesmo porte na carteira da Rastcar.</p>
         <p><strong>O que a central viu.</strong> Cerca virtual, ignição fora de hora, excesso de velocidade e movimentação de madrugada, com placa e horário.</p>
+        <p><strong>Quem esteve ao volante.</strong> Identificação por chave eletrônica no veículo: quem dirigiu o quê, quanto rodou, como dirigiu e quanto da quilometragem saiu sem condutor identificado. Depende da chave eletrônica instalada e dos condutores cadastrados na plataforma.</p>
         <p><strong>Como a frota dirige.</strong> Score de 0 a 100 por veículo, quem precisa de atenção e quem é destaque.</p>
         <p><strong>O dinheiro que a frota deixa na mesa.</strong> Toda operação tem custo escondido. O relatório cruza os dados da frota inteira, converte o desperdício em reais e entrega a lista: quanto está vazando, em quais placas e por onde começar a recuperar. Custo escondido não sobrevive a dado. Cálculo aberto, declarado no próprio relatório, com premissas explícitas: 2 L/h e R$ 5,90 por litro.</p>
         <p><strong>O plano do mês seguinte.</strong> Movimentos práticos com placa e prazo, e uma meta para o próximo relatório cobrar.</p>
@@ -1350,16 +1354,18 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
         <ul class="chips">
           <li><span class="tag ghost rv">Relatório executivo mensal</span></li>
           <li><span class="tag ghost rv" style="--d:.03s">Toda a frota, veículo a veículo</span></li>
-          <li><span class="tag ghost rv" style="--d:.06s">Km por dia, dias rodados</span></li>
-          <li><span class="tag ghost rv" style="--d:.09s">Sua frota vs o mercado</span></li>
-          <li><span class="tag ghost rv" style="--d:.12s">Score de comportamento</span></li>
-          <li><span class="tag ghost rv" style="--d:.15s">Tempo ocioso, custo estimado</span></li>
-          <li><span class="tag ghost rv" style="--d:.18s">Alertas por período do dia</span></li>
-          <li><span class="tag ghost rv" style="--d:.21s">Ranking da operação</span></li>
-          <li><span class="tag ghost rv" style="--d:.24s">Revisão pela quilometragem</span></li>
-          <li><span class="tag ghost rv" style="--d:.27s">Cobertura de sinal</span></li>
-          <li><span class="tag ghost rv" style="--d:.3s">Comparação com o mês anterior</span></li>
-          <li><span class="tag ghost rv" style="--d:.33s">Plano do mês seguinte</span></li>
+          <li><span class="tag ghost rv" style="--d:.06s">Máquinas medidas em horas</span></li>
+          <li><span class="tag ghost rv" style="--d:.09s">Km por dia, dias rodados</span></li>
+          <li><span class="tag ghost rv" style="--d:.12s">Sua frota vs o mercado</span></li>
+          <li><span class="tag ghost rv" style="--d:.15s">Score de comportamento</span></li>
+          <li><span class="tag ghost rv" style="--d:.18s">Motoristas ao volante</span></li>
+          <li><span class="tag ghost rv" style="--d:.21s">Tempo ocioso, custo estimado</span></li>
+          <li><span class="tag ghost rv" style="--d:.24s">Alertas por período do dia</span></li>
+          <li><span class="tag ghost rv" style="--d:.27s">Ranking da operação</span></li>
+          <li><span class="tag ghost rv" style="--d:.3s">Revisão por km e por hora</span></li>
+          <li><span class="tag ghost rv" style="--d:.33s">Cobertura de sinal</span></li>
+          <li><span class="tag ghost rv" style="--d:.36s">Comparação com o mês anterior</span></li>
+          <li><span class="tag ghost rv" style="--d:.39s">Plano do mês seguinte</span></li>
         </ul>
       </div>
     </section>
@@ -1638,24 +1644,29 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   var track  = story.querySelector('.story-track');
   if(!deck || !asides || !track) return;
 
-  /* as 8 folhas · imagem real do relatorio, uma por capitulo */
+  /* as 10 folhas · imagem real do relatorio, uma por capitulo */
   var PAGS = [
-    {f:'rel-1-capa',      n:'01', h:'Chega com o nome da sua empresa', toque:1,
+    {f:'rel-1-capa',       n:'01', h:'Chega com o nome da sua empresa', toque:1,
      p:'Um documento fechado por mês, com o período, a frota ativa e o mês inteiro resumido logo na abertura.'},
-    {f:'rel-2-panorama',  n:'02', h:'O mês inteiro em um número',
+    {f:'rel-2-panorama',   n:'02', h:'O mês inteiro em um número',
      p:'Quilometragem, horas em operação, disponibilidade e o que mudou desde o mês passado.'},
-    {f:'rel-3-ranking',   n:'03', h:'Quem trabalhou e quem ficou parado',
+    {f:'rel-3-ranking',    n:'03', h:'Quem trabalhou e quem ficou parado',
      p:'A frota inteira em ordem, veículo a veículo, do que mais rodou ao que quase não saiu da garagem.'},
-    {f:'rel-4-porte',     n:'04', h:'Sua frota comparada com o mercado',
+    {f:'rel-4-maquinas',   n:'04', h:'A máquina se mede por hora, não por quilômetro',
+     p:'Quem tem escavadeira, retroescavadeira ou rolo ganha um capítulo próprio, medido pelo horímetro: horas trabalhadas, dias em serviço e a revisão que vence por hora de motor.'},
+    {f:'rel-5-porte',      n:'05', h:'Sua frota comparada com o mercado',
      p:'Km por veículo, direção e motor parado na mesma régua de frotas anônimas do seu porte.'},
-    {f:'rel-5-escudo',    n:'05', h:'O que a central viu de madrugada', toque:1,
+    {f:'rel-6-escudo',     n:'06', h:'O que a central viu de madrugada', toque:1,
      p:'Cerca virtual, ignição fora de hora e movimentação noturna, com placa e horário.'},
-    {f:'rel-6-direcao',   n:'06', h:'O volante vira nota',
+    {f:'rel-7-motoristas', n:'07', h:'Cada quilômetro com um dono',
+     p:'O ranking mostra quem esteve ao volante de cada veículo, quanto rodou, como dirigiu e quanto da quilometragem saiu sem ninguém identificado.',
+     s:'Depende da chave eletrônica no veículo e dos condutores cadastrados na plataforma.'},
+    {f:'rel-8-direcao',    n:'08', h:'O volante vira nota',
      p:'Score de 0 a 100 por veículo. A conversa com a equipe deixa de ser opinião e passa a ser número.'},
-    {f:'rel-7-economia',  n:'07', h:'O dinheiro que a frota deixa na mesa',
+    {f:'rel-9-economia',   n:'09', h:'O dinheiro que a frota deixa na mesa',
      p:'Toda operação tem custo escondido. O relatório cruza os dados da frota inteira, converte o desperdício em reais e entrega a lista: quanto está vazando, em quais placas e por onde começar a recuperar. Custo escondido não sobrevive a dado.',
      s:'Cálculo aberto, declarado no próprio relatório, com premissas explícitas: 2 L/h e R$ 5,90 por litro.'},
-    {f:'rel-8-plano',     n:'08', h:'O mês que vem já vem com plano',
+    {f:'rel-10-plano',     n:'10', h:'O mês que vem já vem com plano',
      p:'Movimentos práticos com placa e prazo, e uma meta para o próximo relatório cobrar.'}
   ];
   var N = PAGS.length;

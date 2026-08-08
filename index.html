@@ -152,6 +152,15 @@ nav.seg{
 }
 nav.seg .wrap{display:flex;gap:6px;height:var(--nav-h);align-items:center;overflow-x:auto;scrollbar-width:none}
 nav.seg .wrap::-webkit-scrollbar{display:none}
+/* A fileira de 9 secoes mede ~1190px e so cabe inteira acima de 1400px de
+   janela: em notebook de 1280 o indice saia CORTADO no meio da palavra.
+   No desktop ninguem rola barra de indice de lado, entao ela QUEBRA em duas
+   linhas quando nao couber. O rolo horizontal continua no celular, onde o
+   gesto e natural. Estrutural: vale pra qualquer largura e qualquer
+   quantidade de secoes, nao so pras 9 de hoje. */
+@media (min-width:820px){
+  nav.seg .wrap{flex-wrap:wrap;height:auto;overflow:visible;row-gap:4px;padding-top:13px;padding-bottom:13px}
+}
 nav.seg a{
   flex:0 0 auto;font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
   color:var(--muted);text-decoration:none;padding:7px 14px;border-radius:999px;
@@ -2328,7 +2337,10 @@ function __boot(){
     if(acao) row('#plano','Primeira ação do mês que vem', esc(acao.textContent), '', true);
     if(rows.length<3) return; // com pouco dado a porta de entrada não ajuda
     var sec=document.createElement('section'); sec.className='block dg'; sec.id='mes30';
-    sec.innerHTML='<p class="dgt reveal">O mês em 30 segundos<span class="scr">, toque para ir à seção</span></p>'+
+    /* a frase inteira num SO item de flex: solta, o "<span class=scr>" virava
+       item proprio e o gap de 11px do .dgt caia ANTES da virgula ("SEGUNDOS ,
+       TOQUE"). O gap existe pro risco do ::before e nao pode sair. */
+    sec.innerHTML='<p class="dgt reveal"><span>O mês em 30 segundos<span class="scr">, toque para ir à seção</span></span></p>'+
       '<div class="dgrid reveal">'+rows.join('')+'</div>';
     mn.insertBefore(sec, mn.firstElementChild);
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
