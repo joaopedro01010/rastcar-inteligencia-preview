@@ -1597,7 +1597,7 @@ function __boot(){
       : (sub+' '+(sub===1?'veículo rodou':'veículos rodaram')+' menos da metade dos dias, veículo parado é custo fixo sem retorno.');
     return '<div class="utilwrap reveal">'+
       '<div class="km-cap">Quantos dias cada veículo rodou</div>'+
-      '<p class="km-sub">Do menos rodado ao mais rodado, os que menos giraram aparecem primeiro.</p>'+
+      '<p class="km-sub">Do menos rodado ao mais rodado.</p>'+
       '<div id="utilRows"></div>'+
       '<div id="utilMoreWrap"></div>'+
       '<div class="km-leg"><span class="ucell on ulg"></span>quadrado aceso = rodou no dia<span class="ucell ulg"></span>vazio = parado</div>'+
@@ -1621,7 +1621,7 @@ function __boot(){
           '<div class="at">passou dos '+nf(x.marco)+' km neste mês, programe a revisão</div>'+
           '<div class="at mnt-odo">Odômetro: '+nf(x.odometro)+' km</div></div>';
       }).join('')+'</div>'+
-      '<p class="note reveal mnt-note">Premissa: marco de revisão a cada 10.000 km rodados'+(temMarcoH?', e a cada 250 horas de motor nas máquinas':'')+'. É um lembrete de agenda, não um diagnóstico mecânico.</p>'+
+      '<p class="note reveal mnt-note">Premissa: marco de revisão a cada 10.000 km rodados'+(temMarcoH?', e a cada 250 horas de motor nas máquinas':'')+'. Serve como agenda de manutenção, o diagnóstico é da oficina.</p>'+
     '</div>';
   }
   (function(){
@@ -1810,7 +1810,7 @@ function __boot(){
       : 'Todas as máquinas produziram horas no período, o parque está alocado.';
     var h='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['maquinas']+' Máquinas</span>'+
       '<h2>O trabalho medido em horas</h2>'+
-      '<p class="sub">Máquina não roda km, produz horas de motor. Aqui é o mês do seu parque, pelo horímetro.</p></div>'+
+      '<p class="sub">Máquina não roda km, produz hora de motor. Este é o mês do seu parque, contado pelo horímetro.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad" id="mqH">0</span>'+
         '<span class="cap"><span class="u">horas de trabalho no horímetro</span>'+
         '<span class="lbl">'+nf(maqs.length)+' '+(maqs.length===1?'máquina':'máquinas')+' sob monitoramento 24h</span></span></div>'+
@@ -1869,7 +1869,10 @@ function __boot(){
       var read = absp===0
         ? 'Sua frota está na média do seu porte em '+nomeL+'.'
         : (better
-            ? 'Sua frota está '+absp+'% melhor que a média do seu porte em '+nomeL+', esse é um ponto forte.'
+            /* sem tapinha nas costas depois do ponto: o numero JA e o veredito.
+               A ma noticia ganha cauda porque ela pede acao, e a cauda e o link
+               pro plano. A boa nao precisa de nada. */
+            ? 'Sua frota está '+absp+'% melhor que a média do seu porte em '+nomeL+'.'
             : 'Sua frota está '+absp+'% pior que a média do seu porte em '+nomeL+', <a href="#plano">o plano do próximo mês ataca isso</a>.');
       var wYou=Math.max(4,Math.round(voce/max*100)), wAvg=Math.max(4,Math.round(media/max*100));
       return '<div class="bm">'+
@@ -2292,7 +2295,7 @@ function __boot(){
     var sf=c.score_frota||0;
     var h='<div class="block-head reveal"><span class="eyebrow">'+SECNUM['plano']+' O plano</span>'+
       '<h2>O que fazer no próximo mês</h2>'+
-      '<p class="sub">Movimentos práticos, o próximo relatório mostra o efeito.</p></div>'+
+      '<p class="sub">Cada ação com placa e prazo. O próximo relatório mostra o efeito.</p></div>'+
       '<div class="indics reveal" style="margin-top:6px">'+itens.map(function(t,i){
         return '<div class="indic'+(i===0?' p1':'')+'"><span class="dot"></span><span class="it">'+t+'</span>'+
                (i===0?'<span class="tag solid">Começar por aqui</span>':'')+'</div>'; }).join('')+'</div>'+
