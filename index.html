@@ -1368,7 +1368,11 @@ function __boot(){
   // seções realmente presentes → nav e numeração dos cabeçalhos saem da MESMA lista (nunca divergem)
   var _cmp=D.comportamento||{};
   var temComp = !!D.comportamento && (_cmp.score_frota!=null || (_cmp.piores||[]).length || (_cmp.melhores||[]).length);
-  var temPlano = !!((_cmp.piores||[]).length || veiculos.some(function(v){return v.ocioso;}) ||
+  /* o gate espelha o Bloco 6 acao por acao · contar `piores` sem exigir excesso
+     dava item de menu "Plano" para frota sem nenhum evento: o bloco nao gerava
+     acao, se escondia, e o link do menu caia no vazio */
+  var _piorEv = (_cmp.piores||[]).reduce(function(a,x){ return a+(x.excessos||0); },0);
+  var temPlano = !!(((_cmp.piores||[]).length && _piorEv>0) || veiculos.some(function(v){return v.ocioso;}) ||
     ((D.vigilancia&&D.vigilancia.saude&&D.vigilancia.saude.bateria_fraca)||[]).length || D.economia ||
     (D.manutencao&&D.manutencao.length));
   var temBench = !!(D.benchmark && D.benchmark.metricas && D.benchmark.metricas.length);
