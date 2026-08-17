@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rastcar Inteligência. Dados. O ativo mais valioso do mundo.</title>
 <meta name="description" content="O relatório executivo completo da sua frota, pronto todo mês. Assinatura digital da Rastcar.">
+<!-- Fora do Google ate o lancamento: o Stripe ainda esta em modo teste e ninguem
+     consegue comprar. Remover esta linha no dia de abrir a venda. -->
+<meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Rastcar">
 <meta property="og:title" content="Rastcar Inteligência. Dados. O ativo mais valioso do mundo.">
@@ -1279,6 +1282,588 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   .aura i{animation:none}
   .ha-float{animation:none;transform:rotateY(-14deg) rotateX(6deg)}
 }
+
+
+/* ============================================================
+   LIQUID GLASS v2 · o funil (#comprar e o bloco do CNPJ)
+   ------------------------------------------------------------
+   v1 ficou CHAPADA e o Joao reprovou com razao. Tres causas, e
+   as tres estao consertadas aqui:
+
+   1. TINTA OPACA DEMAIS. O painel era branco a 80%. Isso e
+      frosted, nao vidro. Vidro de verdade e tinta BAIXA (18-35%)
+      com saturacao alta — e a saturacao que faz a cor de tras
+      SANGRAR atraves. E ela que da a impressao de material.
+   2. BACKDROP-FILTER ANINHADO LE O PAI JA COMPOSTO. Campo com
+      blur dentro de painel quase branco borra... branco liso.
+      Nada pra refratar. Por isso o pai agora e translucido DE
+      VERDADE: o campo passa a ler os orbes, nao o pai.
+   3. NAO HAVIA LUZ ATRAS. Sem cor no fundo, nenhum blur vira
+      vidro. Os orbes do #comprar ganharam chroma e tamanho.
+
+   A Apple descreve o material em TRES CAMADAS (highlight,
+   shadow, illumination) e o que separa de frosted e o LENSING:
+   a luz entorta na borda. Sem SVG feDisplacementMap (que so
+   funciona no Chromium e nao acompanha elemento responsivo),
+   o lensing e aproximado por: rim especular assimetrico (luz
+   nasce no topo-esquerda), contra-luz sutil na base e um brilho
+   diagonal que atravessa a peca.
+
+   LEGIBILIDADE: a propria Apple recuou da transparencia nos
+   betas por causa disso, e o CSS-Tricks alerta pro contraste
+   variavel. Por isso o TEXTO nunca fica sobre o vidro puro —
+   toda peca com texto tem tinta minima garantida, e o QA de
+   contraste (81 checagens) roda depois.
+   ============================================================ */
+
+:root{
+  /* tinta REAL de vidro · baixa de proposito */
+  --lg-tint:rgba(255,255,255,.42);
+  --lg-tint-2:rgba(255,255,255,.28);
+  /* a saturacao e o coracao do efeito: sem ela o blur e cinza */
+  --lg-blur:blur(28px) saturate(210%) brightness(1.04);
+  --lg-blur-sm:blur(16px) saturate(200%) brightness(1.03);
+  --lg-bd:rgba(255,255,255,.5);
+  /* highlight / shadow / illumination · as 3 camadas da Apple */
+  --lg-hi:inset 0 1px 0 rgba(255,255,255,.9), inset 1px 0 0 rgba(255,255,255,.42);
+  --lg-lo:inset 0 -1px 0 rgba(255,255,255,.22), inset 0 -14px 26px -20px rgba(22,18,28,.30);
+  --lg-sh:0 10px 34px -12px rgba(22,18,28,.20), 0 2px 6px -3px rgba(22,18,28,.12);
+  --apple-green:#34C759;
+}
+
+/* ---------- LUZ ATRAS ----------
+   Sem isto nada acima existe. Orbes maiores e com chroma real
+   (o v1 usava .12-.26 de alpha e sumia). */
+#comprar{position:relative;overflow:hidden}
+#comprar .wrap{position:relative;z-index:1}
+#comprar .orbes{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
+          mask-image:linear-gradient(180deg,transparent 0%,#000 14%,#000 86%,transparent 100%);
+}
+#comprar .orbes i{position:absolute;display:block;border-radius:50%;filter:blur(60px);will-change:transform}
+#comprar .orbes i:nth-child(1){
+  width:62%;height:74%;right:-14%;top:-6%;
+  background:radial-gradient(circle at 50% 50%, rgba(var(--good-rgb),.34), rgba(var(--good-rgb),0) 70%);
+  animation:orb1 36s ease-in-out infinite alternate;
+}
+#comprar .orbes i:nth-child(2){
+  width:56%;height:66%;left:-14%;bottom:-8%;
+  background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.38), rgba(209,254,23,0) 70%);
+  animation:orb2 30s ease-in-out infinite alternate;
+}
+#comprar .orbes i:nth-child(3){
+  width:46%;height:54%;left:28%;top:22%;
+  background:radial-gradient(circle at 50% 50%, rgba(var(--crimson-rgb),.15), rgba(var(--crimson-rgb),0) 70%);
+  animation:orb3 44s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion:reduce){#comprar .orbes i{animation:none}}
+
+/* ---------- o painel-mae ---------- */
+.buy{
+  position:relative;overflow:hidden;border-radius:30px;
+  background:linear-gradient(168deg, var(--lg-tint), var(--lg-tint-2) 62%, rgba(255,255,255,.2));
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);
+  border:1px solid var(--lg-bd);
+  box-shadow:var(--lg-hi), var(--lg-lo), var(--lg-sh);
+}
+/* brilho diagonal que ATRAVESSA a peca · e ele que da a leitura
+   de bloco solido de material, nao de pelicula */
+.buy::before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(133deg, rgba(255,255,255,.34) 0%, rgba(255,255,255,.06) 34%,
+             rgba(255,255,255,0) 56%, rgba(255,255,255,.10) 100%);
+}
+/* fio especular · nasce e morre antes das quinas */
+.buy::after{
+  content:"";position:absolute;top:0;left:8%;right:8%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,1) 28%,rgba(255,255,255,.85) 72%,transparent);
+}
+.buy > *{position:relative;z-index:1}
+
+/* ---------- o localizador de CNPJ ---------- */
+.loc{
+  max-width:680px;position:relative;overflow:hidden;
+  border:1px solid var(--lg-bd);border-radius:24px;
+  padding:clamp(18px,3vw,26px);
+  background:linear-gradient(168deg, var(--lg-tint), var(--lg-tint-2));
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);
+  box-shadow:var(--lg-hi), var(--lg-lo), var(--lg-sh);
+}
+.loc::before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(133deg, rgba(255,255,255,.3) 0%, rgba(255,255,255,.05) 38%, rgba(255,255,255,0) 60%);
+}
+.loc::after{
+  content:"";position:absolute;top:0;left:10%;right:10%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,1) 28%,rgba(255,255,255,.85) 72%,transparent);
+}
+.loc > *{position:relative;z-index:1}
+/* a prova ja e vidro · dentro do cartao ela perde a moldura pra
+   nao virar borda dupla, e ganha tinta um pouco maior porque tem
+   texto pequeno (legibilidade acima de efeito) */
+.loc .prova-box{
+  border-color:transparent;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5), var(--lg-sh);
+  background:linear-gradient(168deg,rgba(255,255,255,.5),rgba(255,255,255,.34));
+}
+
+/* ---------- CAMPOS · a pastilha de vidro ----------
+   Tinta baixa + blur proprio. Como o pai agora e translucido, o
+   blur do campo le os ORBES e nao mais um branco liso: e dai que
+   vem a sensacao de profundidade em camadas. */
+.fi{
+  background:linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.2));
+  -webkit-backdrop-filter:var(--lg-blur-sm);backdrop-filter:var(--lg-blur-sm);
+  border:1px solid rgba(255,255,255,.6);border-radius:15px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92),
+             inset 0 -8px 16px -14px rgba(22,18,28,.34),
+             0 2px 10px -5px rgba(22,18,28,.14);
+  transition:border-color .22s var(--ease),background .22s var(--ease),
+             box-shadow .22s var(--ease),transform .22s var(--ease);
+}
+.fi::placeholder{color:rgba(22,22,26,.42)}
+/* foco: o vidro ENCHE de luz e levanta · gesto Apple de o
+   controle vir ate o dedo. Cor do foco segue GRAFITE (regra da
+   casa: vermelho em campo le como erro antes de errar). */
+.fi:focus{
+  outline:none;border-color:rgba(255,255,255,.95);
+  background:linear-gradient(180deg, rgba(255,255,255,.74), rgba(255,255,255,.56));
+  box-shadow:inset 0 1px 0 #fff,
+             0 0 0 4px rgba(22,22,26,.07),
+             0 14px 30px -12px rgba(22,18,28,.24);
+  transform:translateY(-1px);
+}
+.fi[aria-invalid="true"]{
+  border-color:var(--crimson);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 0 0 4px rgba(var(--crimson-rgb),.12);
+}
+@media (prefers-reduced-motion:reduce){.fi,.fi:focus{transform:none}}
+
+/* ---------- botoes do funil · vidro fume ----------
+   O primario continua GRAFITE (decisao da casa), mas agora e
+   material: translucido, com blur proprio e rim de luz. */
+.loc .btn, #comprar .btn{
+  border-radius:15px;border:1px solid rgba(10,10,14,.55);
+  background:linear-gradient(180deg, rgba(38,38,44,.82), rgba(14,14,18,.88));
+  -webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
+             inset 0 -1px 0 rgba(0,0,0,.34),
+             0 2px 4px rgba(0,0,0,.14),
+             0 14px 30px -10px rgba(0,0,0,.34);
+}
+.loc .btn:hover, #comprar .btn:hover{
+  background:linear-gradient(180deg, rgba(46,46,53,.88), rgba(18,18,23,.92));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),
+             inset 0 -1px 0 rgba(0,0,0,.34),
+             0 3px 6px rgba(0,0,0,.16),
+             0 18px 38px -10px rgba(0,0,0,.38);
+}
+
+/* adicionar e-mail · capsula de vidro */
+.add-mail{
+  border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:9px 16px;
+  background:linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,.18));
+  -webkit-backdrop-filter:var(--lg-blur-sm);backdrop-filter:var(--lg-blur-sm);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.88), 0 2px 8px -4px rgba(22,18,28,.14);
+  transition:background .22s var(--ease),box-shadow .22s var(--ease),transform .22s var(--ease);
+}
+.add-mail:hover{
+  border-color:rgba(255,255,255,.95);transform:translateY(-1px);
+  background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.4));
+  box-shadow:inset 0 1px 0 #fff, 0 8px 18px -7px rgba(22,18,28,.2);
+}
+@media (prefers-reduced-motion:reduce){.add-mail:hover{transform:none}}
+
+/* ---------- interruptor do WhatsApp ----------
+   VERDE DA APPLE (#34C759), nao crimson: pedido do Joao, e e o
+   certo — crimson aqui lia como alerta, e ligar o WhatsApp e uma
+   acao positiva. Trilho de vidro; quando liga, vira verde solido
+   com brilho interno, igual ao switch do iOS. */
+.sw{
+  background:linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.2));
+  -webkit-backdrop-filter:blur(12px) saturate(180%);backdrop-filter:blur(12px) saturate(180%);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:inset 0 1px 3px rgba(22,18,28,.10);
+}
+.sw::after{box-shadow:0 1px 3px rgba(22,18,28,.3), 0 0 0 .5px rgba(0,0,0,.04)}
+.sw:checked{
+  background:linear-gradient(180deg, #3FD35F, var(--apple-green));
+  border-color:rgba(0,0,0,.06);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 2px 8px -3px rgba(52,199,89,.5);
+}
+.sw:checked::after{background:#fff}
+.sw:focus-visible{outline:2px solid var(--apple-green);outline-offset:3px}
+
+/* ---------- resumo do pedido · lista agrupada estilo Ajustes ---------- */
+.tot{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(255,255,255,.55);border-radius:20px;
+  padding:clamp(16px,2.6vw,22px);
+  background:linear-gradient(172deg, rgba(255,255,255,.34), rgba(255,255,255,.2));
+  -webkit-backdrop-filter:var(--lg-blur-sm);backdrop-filter:var(--lg-blur-sm);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 6px 18px -8px rgba(22,18,28,.14);
+}
+.tot::after{
+  content:"";position:absolute;top:0;left:10%;right:10%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.95) 30%,rgba(255,255,255,.8) 70%,transparent);
+}
+
+/* barra fixa do celular · mesmo material */
+.tot-bar{
+  background:rgba(250,250,248,.58);
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);
+  border-top:1px solid rgba(255,255,255,.8);
+  box-shadow:0 -1px 0 rgba(255,255,255,.6), 0 -16px 40px rgba(22,18,28,.16);
+}
+
+
+/* ---------- piso de legibilidade sobre vidro ----------
+   Medido em PIXEL (nao em CSS composto): sobre o pedaco mais escuro
+   dos orbes o cinza padrao caia a 2,7:1. Sobre vidro o contraste e
+   VARIAVEL, entao o texto pequeno do funil escurece para aguentar o
+   PIOR pedaco do fundo, nao a media. O efeito continua; quem cede e
+   a cor do texto, nunca a legibilidade. */
+#comprar .fhint, #comprar .fl, #comprar .tot-det, #comprar .tot-u,
+#comprar .tot-plan, #comprar .buy-trust, #comprar .add-mail .pr,
+.loc .fl, .loc .fnote, .loc .prova-c, .loc .prova-n .u{
+  color:#3F3F47;
+}
+#comprar .fi::placeholder, .loc .fi::placeholder{color:rgba(22,22,26,.68)}
+
+/* ---------- SEM backdrop-filter (Firefox antigo) ----------
+   Sem o blur, tinta baixa vira texto solto no fundo. O fallback
+   FECHA o vidro: opacidade alta, efeito zero, legibilidade
+   intacta. Nunca deixar o usuario sem contraste por causa de
+   enfeite. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .buy,.loc{background:rgba(255,255,255,.9)}
+  .fi,.tot,.add-mail{background:rgba(255,255,255,.94)}
+  .tot-bar{background:rgba(250,250,248,.97)}
+  .loc .prova-box{background:rgba(255,255,255,.93)}
+}
+
+
+/* ============================================================
+   LIQUID GLASS v2 · EXTENSAO AO RESTO DA LANDING
+   ------------------------------------------------------------
+   Depois de refazer o funil, a pagina ficou com DOIS materiais:
+   funil em vidro de verdade (tinta 42%) e cartoes de plano ainda
+   em 70%. Mesma pagina, materiais diferentes — e isso le como
+   descuido, nao como hierarquia. Aqui tudo passa a sair da mesma
+   receita.
+
+   DUAS TINTAS, DE PROPOSITO:
+   · --lg-tint (42%)   superficie com POUCO texto e fonte grande
+                       (funil, botoes, capsulas)
+   · --lg-tint-c (58%) superficie com MUITO texto pequeno
+                       (cartao de plano tem 11 linhas de checklist)
+     Nao e capricho: sobre vidro o contraste e VARIAVEL, e lista
+     longa em corpo 13px nao aguenta a mesma transparencia de um
+     titulo de 40px. A tinta cede onde o texto precisa.
+
+   O QUE **NAO** VIRA VIDRO, e de proposito:
+   · rodape e textos corridos — conteudo fica no chao; vidro e
+     para superficie que FLUTUA. A propria Apple alerta que vidro
+     em tudo vira ruido visual.
+   · a folha do relatorio (deck) — e a foto do produto, tem que
+     ser lida como papel, nao como interface.
+   ============================================================ */
+
+:root{
+  --lg-tint-c:rgba(255,255,255,.58);
+  --lg-tint-c2:rgba(255,255,255,.44);
+}
+
+/* ---------- cartoes de plano · mesma receita do funil ---------- */
+.plan{
+  border:1px solid var(--lg-bd);
+  background:linear-gradient(168deg, var(--lg-tint-c) 0%, var(--lg-tint-c2) 56%, rgba(255,255,255,.5) 100%);
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);
+  box-shadow:var(--lg-hi), var(--lg-lo), var(--lg-sh);
+}
+/* o brilho diagonal que atravessa a peca · mesmo gesto do painel do
+   funil. Vai no ::after porque o ::before do cartao ja e a luz que
+   segue o ponteiro. */
+.plan::after{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;z-index:0;
+  background:linear-gradient(133deg, rgba(255,255,255,.3) 0%, rgba(255,255,255,.05) 36%,
+             rgba(255,255,255,0) 58%, rgba(255,255,255,.09) 100%);
+}
+.plan > *{position:relative;z-index:1}
+/* SELECIONADO · o jeito Apple/Higgsfield: elevacao + anel do acento +
+   marca de conferido que cresce no canto. NUNCA borda vermelha — vermelho
+   le como ERRO, e escolher um plano e uma acao positiva.
+   (A pagina ja fazia isso em lime; eu tinha sobrescrito com crimson no
+   bloco de extensao do vidro. Aqui o estado volta, agora somando os
+   tokens novos de material.) */
+.plan.sel{
+  border-color:rgba(209,254,23,.85);
+  box-shadow:
+    var(--lg-hi),
+    0 0 0 3px rgba(209,254,23,.30),
+    0 2px 6px rgba(24,20,32,.08),
+    0 26px 60px -18px rgba(24,20,32,.22);
+}
+/* o anual segue sendo o vidro mais bem acabado: mesma tinta, rim mais vivo */
+.plan--ano{box-shadow:var(--lg-hi), var(--lg-lo), 0 14px 44px -14px rgba(22,18,28,.24)}
+
+/* ---------- a prova (frota localizada) ---------- */
+.prova-box{
+  border:1px solid var(--lg-bd);
+  background:linear-gradient(168deg, var(--lg-tint-c), var(--lg-tint-c2));
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);
+  box-shadow:var(--lg-hi), var(--lg-lo), var(--lg-sh);
+}
+
+/* ---------- botao secundario (fantasma) ---------- */
+.btn--ghost{
+  background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.34));
+  -webkit-backdrop-filter:var(--lg-blur-sm);backdrop-filter:var(--lg-blur-sm);
+  border-color:rgba(255,255,255,.7);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),
+             inset 0 -8px 16px -14px rgba(22,18,28,.3),
+             0 2px 10px -5px rgba(22,18,28,.14);
+}
+.btn--ghost:hover{
+  background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.54));
+  border-color:rgba(255,255,255,.95);
+  box-shadow:inset 0 1px 0 #fff, 0 12px 26px -10px rgba(22,18,28,.2);
+}
+
+/* ---------- as 12 etiquetas do "o que vem dentro" ----------
+   Eram pastilhas quase opacas. Viram capsulas de vidro, com o mesmo
+   rim de luz. Raio sobe de 3px para pilula: aresta dura nao le como
+   material, le como adesivo. */
+.tag.ghost{
+  border-radius:999px;padding:7px 12px 6px;
+  background:linear-gradient(180deg, rgba(255,255,255,.44), rgba(255,255,255,.28));
+  -webkit-backdrop-filter:var(--lg-blur-sm);backdrop-filter:var(--lg-blur-sm);
+  border-color:rgba(255,255,255,.68);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92), 0 2px 8px -4px rgba(22,18,28,.12);
+}
+/* no celular as etiquetas viram grade de 2 colunas e ficam MAIORES:
+   a pilula acompanha, senao o texto encosta na borda curva */
+@media(max-width:760px){ .chips .tag.ghost{padding:10px 12px;border-radius:16px} }
+
+/* O aviso de cancelamento NAO vira bandeja: virar inline-block tirava
+   ele do fluxo e mudava a posicao (o Joao reprovou). Ele e texto
+   corrido centralizado e continua assim, como antes. */
+
+/* ---------- piso de legibilidade na vitrine ----------
+   Medido em pixel POR CARTAO (a cor de tras muda muito de um pro
+   outro): o cinza --muted caia a 2,9-3,3:1 sobre os pedacos mais
+   escuros. Mesma regra do funil — quem cede e a cor do texto,
+   nunca a legibilidade. O item do checklist ja passava (7:1+) e
+   fica como esta. */
+#planos .plans-note,
+.plan .p-sub, .plan .p-anchor, .plan .p-pay, .plan .p-cond{
+  color:#3F3F47;
+}
+
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .plan,.prova-box{background:rgba(255,255,255,.93)}
+  .btn--ghost,.tag.ghost{background:rgba(255,255,255,.95)}
+}
+
+
+/* ============================================================
+   BOTOES · linguagem Apple (Liquid Glass), com uma ressalva
+   ------------------------------------------------------------
+   Tres marcas do botao da Apple: CAPSULA (pilula, nao retangulo),
+   material com RIM ESPECULAR, e o SQUEEZE na pressao.
+
+   A RESSALVA, e ela e de acessibilidade: botao primario 100%
+   translucido = contraste VARIAVEL no clique mais importante da
+   pagina. A Apple tambem nao faz isso — botao proeminente dela e
+   solido/tingido COM acabamento de vidro; o vidro translucido
+   fica nos secundarios. Entao:
+
+   PRIMARIO   grafite solido (cor da casa) + rim especular + sheen
+              diagonal + squeeze. Contraste garantido.
+   SECUNDARIO vidro translucido de verdade (.btn--ghost).
+
+   O squeeze usa cubic-bezier com leve overshoot: o botao volta
+   passando um fio do lugar, que e o que da a sensacao de material
+   com elasticidade em vez de imagem que pisca.
+   ============================================================ */
+.btn{
+  border-radius:999px;                      /* capsula */
+  position:relative;overflow:hidden;
+  transition:transform .34s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .28s var(--ease), background .28s var(--ease);
+}
+/* sheen diagonal · o mesmo gesto dos paineis, para o botao ler
+   como o MESMO material da pagina, so que fechado */
+.btn::after{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(133deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,.04) 38%,
+             rgba(255,255,255,0) 62%);
+}
+.btn:active{transform:scale(.965);transition-duration:.09s}
+@media (prefers-reduced-motion:reduce){.btn:active{transform:none}}
+
+/* primario · grafite com rim de luz mais vivo na aresta de cima */
+.loc .btn, #comprar .btn, .plan .p-cta{
+  border-radius:999px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30),
+             inset 0 -1px 0 rgba(0,0,0,.34),
+             0 2px 4px rgba(0,0,0,.14),
+             0 14px 30px -10px rgba(0,0,0,.34);
+}
+.plan .p-cta{
+  position:relative;overflow:hidden;
+  transition:transform .34s cubic-bezier(.34,1.56,.64,1), box-shadow .28s var(--ease);
+}
+.plan .p-cta:active{transform:scale(.965);transition-duration:.09s}
+
+/* secundario · aqui sim o vidro translucido de verdade */
+.btn--ghost{border-radius:999px}
+
+
+/* ============================================================
+   CARTAO DE PLANO · piso de tamanho de texto
+   ------------------------------------------------------------
+   As medidas do cartao sao FRACOES de --w porque vieram tracadas
+   da peca original (PNG 4096). Isso mantem a proporcao linda no
+   cartao grande, mas no desktop a vitrine tem 4 colunas e --w cai
+   para ~269px: o subtitulo virava 10,4px, o rotulo do botao 12px
+   e a forma de pagamento 8,1px. Pequeno demais para ler.
+
+   Multiplicar as fracoes quebraria a proporcao herdada da peca.
+   A saida e max(): a FRACAO continua mandando quando o cartao e
+   grande, e o PISO protege quando ele encolhe. Nenhuma medida
+   original foi apagada.
+   ============================================================ */
+.plan .p-sub   {font-size:max(13.5px, calc(var(--w) * .0385))}
+.plan .p-eq    {font-size:max(14px,   calc(var(--w) * .0425))}
+.plan .p-save  {font-size:max(14px,   calc(var(--w) * .0463))}
+.plan .p-off   {font-size:max(13.5px, calc(var(--w) * .0435))}
+.plan .p-anchor{font-size:max(13.5px, calc(var(--w) * .0400))}
+.plan .p-cta   {font-size:max(15px,   calc(var(--w) * .0445))}
+.plan .p-pay   {font-size:max(11px,   calc(var(--w) * .0300))}
+.plan .p-per   {font-size:max(13px,   calc(var(--w) * .0418))}
+/* 10.5px e o teto que mantem a etiqueta na MESMA linha do titulo em
+   "A PARTIR DE 71 VEICULOS" (a mais longa). Em 11px ela quebra, ganha
+   uma linha e desalinha o botao daquele cartao dos outros dois. */
+.plan .p-chip  {font-size:max(10.5px, calc(var(--w) * .0353))}
+.plan .p-was   {font-size:max(15px,   calc(var(--w) * .0631))}
+.plan .p-list li     {font-size:max(13.5px, calc(var(--w) * .0405))}
+.plan .p-list li.add {font-size:max(12.5px, calc(var(--w) * .0378))}
+.plan .p-name  {font-size:max(22px,   calc(var(--w) * .0819))}
+.plan .p-val   {font-size:max(32px,   calc(var(--w) * .1182))}
+.plan .p-cond  {font-size:inherit}
+
+
+/* O rodape do cartao ancora no FUNDO de verdade.
+   A regra antiga era `margin-top:clamp(0px, auto, ...)` — `auto` nao e
+   valor valido dentro de clamp, entao a declaracao inteira caia e o
+   rodape ficava boiando logo depois da lista. Com texto pequeno isso
+   nao aparecia; com o texto maior, o cartao de 71+ (que tem um item a
+   mais quebrando em duas linhas) desalinhou o botao dos vizinhos.
+   Ancorando de verdade, os quatro botoes fecham na mesma linha. */
+.plan:not(.plan--ano) .p-foot{margin-top:auto}
+
+
+/* ============================================================
+   VIDRO MAIS DISCRETO FORA DOS CARTOES DE PLANO
+   ------------------------------------------------------------
+   Pedido do Joao: baixar o liquid glass no resto da pagina e NAO
+   tocar nos cartoes de plano.
+
+   Por isso a reducao vem em tokens PROPRIOS (--lg-*-soft) e nas
+   regras de cada superficie, nunca mexendo em --lg-tint-c,
+   --lg-tint-c2 nem --lg-blur — que sao exatamente os que o
+   cartao usa. Assim a vitrine fica intacta por construcao, nao
+   por sorte.
+
+   O que "diminuir" significa aqui, em numero: tinta ~+40%
+   (mais fechada, ve-se menos atraves), blur de 28 para 22px e
+   saturacao de 210% para 165% (a saturacao e o que faz a cor de
+   tras sangrar; baixando ela, o efeito recua sem sumir).
+   ============================================================ */
+:root{
+  --lg-blur-soft:blur(22px) saturate(165%);
+  --lg-blur-soft-sm:blur(14px) saturate(155%);
+}
+
+/* paineis do funil */
+.buy{
+  background:linear-gradient(168deg, rgba(255,255,255,.60), rgba(255,255,255,.48) 62%, rgba(255,255,255,.44));
+  -webkit-backdrop-filter:var(--lg-blur-soft);backdrop-filter:var(--lg-blur-soft);
+}
+.buy::before{
+  background:linear-gradient(133deg, rgba(255,255,255,.24) 0%, rgba(255,255,255,.04) 34%,
+             rgba(255,255,255,0) 56%, rgba(255,255,255,.07) 100%);
+}
+.loc{
+  background:linear-gradient(168deg, rgba(255,255,255,.60), rgba(255,255,255,.48));
+  -webkit-backdrop-filter:var(--lg-blur-soft);backdrop-filter:var(--lg-blur-soft);
+}
+.loc::before{
+  background:linear-gradient(133deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.04) 38%, rgba(255,255,255,0) 60%);
+}
+
+/* a prova mora dentro do localizador · acompanha o resto, nao o cartao */
+.loc .prova-box{
+  background:linear-gradient(168deg, rgba(255,255,255,.66), rgba(255,255,255,.54));
+  -webkit-backdrop-filter:var(--lg-blur-soft);backdrop-filter:var(--lg-blur-soft);
+}
+
+/* campos de escrever */
+.fi{
+  background:linear-gradient(180deg, rgba(255,255,255,.52), rgba(255,255,255,.40));
+  -webkit-backdrop-filter:var(--lg-blur-soft-sm);backdrop-filter:var(--lg-blur-soft-sm);
+}
+.fi:focus{
+  background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.72));
+}
+
+/* resumo do pedido */
+.tot{
+  background:linear-gradient(172deg, rgba(255,255,255,.52), rgba(255,255,255,.40));
+  -webkit-backdrop-filter:var(--lg-blur-soft-sm);backdrop-filter:var(--lg-blur-soft-sm);
+}
+
+/* capsula de adicionar e-mail */
+.add-mail{
+  background:linear-gradient(180deg, rgba(255,255,255,.50), rgba(255,255,255,.38));
+  -webkit-backdrop-filter:var(--lg-blur-soft-sm);backdrop-filter:var(--lg-blur-soft-sm);
+}
+.add-mail:hover{background:linear-gradient(180deg, rgba(255,255,255,.74), rgba(255,255,255,.58))}
+
+/* interruptor (o verde ligado nao muda) */
+.sw{
+  background:linear-gradient(180deg, rgba(255,255,255,.52), rgba(255,255,255,.40));
+  -webkit-backdrop-filter:var(--lg-blur-soft-sm);backdrop-filter:var(--lg-blur-soft-sm);
+}
+
+/* botao secundario */
+.btn--ghost{
+  background:linear-gradient(180deg, rgba(255,255,255,.66), rgba(255,255,255,.52));
+  -webkit-backdrop-filter:var(--lg-blur-soft-sm);backdrop-filter:var(--lg-blur-soft-sm);
+}
+.btn--ghost:hover{background:linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.68))}
+
+/* as 12 etiquetas */
+.tag.ghost{
+  background:linear-gradient(180deg, rgba(255,255,255,.60), rgba(255,255,255,.46));
+  -webkit-backdrop-filter:var(--lg-blur-soft-sm);backdrop-filter:var(--lg-blur-soft-sm);
+}
+
+/* barra fixa do celular */
+.tot-bar{
+  background:rgba(250,250,248,.74);
+  -webkit-backdrop-filter:var(--lg-blur-soft);backdrop-filter:var(--lg-blur-soft);
+}
+
+/* os orbes do #comprar tambem recuam · eram eles a luz que o vidro
+   refratava, entao baixar so a tinta deixaria o fundo forte demais
+   para um vidro agora mais fechado */
+#comprar .orbes i:nth-child(1){background:radial-gradient(circle at 50% 50%, rgba(var(--good-rgb),.24), rgba(var(--good-rgb),0) 70%)}
+#comprar .orbes i:nth-child(2){background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.26), rgba(209,254,23,0) 70%)}
+#comprar .orbes i:nth-child(3){background:radial-gradient(circle at 50% 50%, rgba(var(--crimson-rgb),.10), rgba(var(--crimson-rgb),0) 70%)}
+
 </style>
 </head>
 <body>
@@ -1491,7 +2076,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <li><span class="ck" aria-hidden="true"></span><span>Sem limite de veículos</span></li>
             </ul>
             <div class="p-foot">
-              <p class="p-anchor">Frota de 80 ou de 800, o mesmo estudo completo.</p>
+              <p class="p-anchor">Uma operação desse tamanho merece ser lida por inteiro.</p>
               <button class="p-cta" type="button" aria-pressed="false">Escolher este plano</button>
               <div class="p-pays"><p class="p-pay">Cartão e boleto</p></div>
             </div>
@@ -1536,20 +2121,21 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
               <li data-so-grande hidden><span class="ck" aria-hidden="true"></span><span>Sem limite de veículos</span></li>
             </ul>
             <div class="p-foot">
-              <p class="p-anchor">Doze estudos completos da frota. Você paga uma vez e não pensa mais nisso por doze meses.</p>
+              <p class="p-anchor">Doze estudos completos da frota. O ano inteiro resolvido de uma vez.</p>
               <button class="p-cta" type="button" aria-pressed="false">Escolher este plano</button>
               <div class="p-pays"><p class="p-pay">Cartão, boleto e <b>Pix</b></p></div>
             </div>
           </article>
 
         </div>
-        <p class="plans-canc"><b>Sem fidelidade e sem multa de cancelamento.</b> Cancele quando quiser.</p>
-        <p class="plans-note">O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.<span class="nota-add">Cada e-mail ou WhatsApp a mais: R$ 15/mês nos mensais. Nos anuais, que já incluem 1 WhatsApp e 2 e-mails, cada e-mail a mais sai por R$ 180 por 12 meses.</span></p>
+        <p class="plans-canc"><b>Sem fidelidade e sem multa de cancelamento.</b> Os planos renovam automaticamente, e você cancela quando quiser.</p>
+        <p class="plans-note">O relatório chega no e-mail que você informar, todo mês. E no WhatsApp, se for o caso.<span class="nota-add">Cada e-mail ou WhatsApp a mais: R$ 15/mês nos mensais. Nos anuais, que já incluem 1 WhatsApp e 2 e-mails, cada e-mail a mais sai por R$ 180 ao ano.</span></p>
       </div>
     </section>
 
     <!-- o funil CNPJ, prova, dados, pagamento -->
     <section id="comprar" aria-label="Assinar">
+      <div class="orbes" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="wrap">
         <span class="eyebrow rv">Assinatura</span>
         <h2 class="sec-h rv" style="--d:.06s">Ative sua assinatura</h2>
@@ -1636,6 +2222,12 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       <span>CNPJ 10.142.559/0001-00</span>
       <a href="tel:+551231579090">(12) 3157-9090</a>
       <a href="https://rastcar.com.br" target="_blank" rel="noopener">rastcar.com.br</a>
+      <!-- LGPD · a pagina coleta CNPJ, e-mail e WhatsApp e envia ao Stripe.
+           Coleta de dado pessoal sem politica acessivel e exposicao. A politica
+           canonica e a do site principal, entao o link aponta para la em vez de
+           duplicar texto juridico (duas versoes divergem e a divergencia e que
+           vira problema). -->
+      <a href="https://rastcar.com.br/privacidade.html" target="_blank" rel="noopener">Política de privacidade</a>
     </div>
   </footer>
 
@@ -1753,120 +2345,428 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
   }
 
   /* ============================================================
-     Gota d agua · o clique so ondula a superficie.
-     A folha NAO escala, NAO se move e NAO troca de conteudo: a onda
-     mora num canvas por cima, do mesmo tamanho da imagem. Varias
-     gotas podem correr ao mesmo tempo (uma lista, um rAF so).
-     ============================================================ */
-  var ondas = [], ondaRAF = 0;
+     DESINTEGRACAO · o painel vira poeira e a poeira SAI do quadro
+     ------------------------------------------------------------
+     POR QUE A VERSAO ANTERIOR PARECIA FRACA · a causa era
+     estrutural, nao de gosto:
 
-  function pinta(ts){
-    ondaRAF = 0;
-    var vivas = 0, i, o;
-    for(i=0;i<ondas.length;i++){
-      o = ondas[i];
-      if(!o.t0) o.t0 = ts;
-      o.t = (ts - o.t0)/o.dur;
-      if(o.t < 1) vivas++;
-    }
-    /* uma passada por folha com onda viva */
-    var porFolha = {};
-    for(i=0;i<ondas.length;i++){
-      o = ondas[i];
-      if(o.t >= 1) continue;
-      (porFolha[o.id] = porFolha[o.id] || []).push(o);
-    }
-    for(var id in porFolha){
-      var lista = porFolha[id], p0 = lista[0];
-      var ctx = p0.ctx, img = p0.img, W = p0.W, H = p0.H, TAU = Math.PI*2;
-      /* A TELA NAO MUDA. O canvas fica TRANSPARENTE e so recebe a onda por cima.
-         A versao anterior refratava a imagem (redesenhava escalada anel a anel) e
-         isso lia como ZOOM · ordem do dono: "nao e pra dar zoom, e so pra dar o
-         efeito de gota, mas nao e pra mudar nada a tela". Sem drawImage aqui,
-         o quadro tambem fica muito mais barato. */
-      ctx.clearRect(0,0,W,H);
-      for(var k=0;k<lista.length;k++){
-        var w = lista[k], t = w.t, vida = 1-t;
-        var frente = t*w.maxR*1.12;
-        /* Em papel CLARO o que faz a agua aparecer e a SOMBRA do vale, nao o
-           realce · branco sobre branco some. Cada crista e um anel tracado
-           (stroke), que fica nitido, em vez de um degrade largo que se dilui.
-           Tres cristas: a da frente forte, duas atras decaindo. */
-        /* Anel SOLIDO vira alvo de tiro · agua precisa de falloff. Cada crista
-           e um gradiente radial ESTREITO: some, escurece no vale, clareia na
-           crista e some de novo. Delicado de perto, visivel de longe. */
-        for(var s=0; s<3; s++){
-          var fr = frente - s*54;
-          if(fr <= 6) continue;
-          var forca = vida*vida*(s===0 ? 1 : (s===1 ? .46 : .2));
-          var r0 = Math.max(0, fr-26), r1 = fr+16;
-          var gc = ctx.createRadialGradient(w.cx,w.cy,r0,w.cx,w.cy,r1);
-          gc.addColorStop(0,   'rgba(26,22,34,0)');
-          gc.addColorStop(.34, 'rgba(26,22,34,'+(0.13*forca).toFixed(3)+')');
-          gc.addColorStop(.62, 'rgba(255,255,255,'+(0.30*forca).toFixed(3)+')');
-          gc.addColorStop(.80, 'rgba(255,255,255,'+(0.10*forca).toFixed(3)+')');
-          gc.addColorStop(1,   'rgba(255,255,255,0)');
-          ctx.fillStyle = gc;
-          ctx.fillRect(0,0,W,H);
-        }
-        /* fio crimson na crista da frente · um so, bem fino, da o desenho */
-        if(frente > 8){
-          ctx.beginPath();
-          ctx.arc(w.cx, w.cy, frente, 0, TAU);
-          ctx.strokeStyle = 'rgba(200,20,48,'+(0.16*vida*vida).toFixed(3)+')';
-          ctx.lineWidth = 1.6;
-          ctx.stroke();
-        }
-        /* brilho curto no ponto do toque · morre rapido, marca de onde veio */
-        if(t < .34){
-          var vt = 1 - t/.34;
-          var gp = ctx.createRadialGradient(w.cx,w.cy,0,w.cx,w.cy,52);
-          gp.addColorStop(0,'rgba(255,255,255,'+(0.72*vt).toFixed(3)+')');
-          gp.addColorStop(.55,'rgba(255,255,255,'+(0.16*vt).toFixed(3)+')');
-          gp.addColorStop(1,'rgba(255,255,255,0)');
-          ctx.fillStyle = gp;
-          ctx.fillRect(0,0,W,H);
-        }
-      }
-    }
-    /* limpa o que terminou · o canvas sai junto com a ultima onda da folha */
-    for(i=ondas.length-1;i>=0;i--){
-      if(ondas[i].t >= 1){
-        var fim = ondas[i];
-        ondas.splice(i,1);
-        var resta = false;
-        for(var j=0;j<ondas.length;j++) if(ondas[j].id === fim.id) resta = true;
-        if(!resta && fim.cv.parentNode) fim.cv.parentNode.removeChild(fim.cv);
-      }
-    }
-    if(vivas > 0) ondaRAF = requestAnimationFrame(pinta);
+       a) o canvas tinha exatamente o tamanho do painel e `.chap`
+          e overflow:hidden. TODA particula que voava para fora
+          morria encostando na moldura. O "estouro" acontecia
+          dentro de uma caixa de 700x450 e nunca se via de fato.
+       b) o teto de 2400 particulas so dava para ladrilhar a
+          cratera com blocos de ~9px, e bloco nao le como poeira.
+          O teto existia porque cada particula trocava fillStyle e
+          globalAlpha do canvas, e essa troca de estado, nao a
+          conta, era o gargalo.
+
+     O QUE MUDA
+       1. a poeira migra para um canvas FIXO do tamanho da JANELA,
+          que ninguem corta (z-index 39, abaixo do cabecalho). E
+          daqui que vem o "gigante": a particula atravessa a tela.
+       2. desenho por ImageData com mistura na mao em typed array.
+          Sem troca de estado do canvas cabem DEZENAS DE MILHARES
+          no lugar de milhares, e o pixel de 1px vira po de verdade.
+       3. campo de turbulencia (tabela de seno, porque 30 mil x 2
+          trig por quadro custa caro em JS) da o rodopio; cada
+          particula tem uma LEVEZA propria, entao parte sobe como
+          cinza e parte cai. E essa separacao que faz parecer
+          materia virando po em vez de confete.
+       4. o buraco deixa de ser circulo perfeito: poligono de raio
+          irregular por angulo, borda borrada, e ele CICATRIZA no
+          fim em vez de a imagem voltar de estalo.
+
+     O painel local continua sendo imagem + buraco em coordenada
+     local, que e exata. So a poeira vai para a janela, projetada
+     pelo MESMO transform 3D do deck e medida com sondas de tamanho
+     zero: o getBoundingClientRect de um PONTO nao sofre o problema
+     da caixa da projecao que atrapalha a moldura.
+     ============================================================ */
+  var telas = {};              /* estado por painel: imagem + buraco */
+  var desRAF = 0;
+  var CAP = (window.innerWidth < 760 || (navigator.hardwareConcurrency||4) <= 4) ? 13000 : 42000;
+  var DUR = 2400;              /* ciclo do painel: abre, segura, cicatriza */
+
+  var SENO = new Float32Array(1024);
+  for(var si=0; si<1024; si++) SENO[si] = Math.sin(si*Math.PI*2/1024);
+  function sen(v){ return SENO[(v*162.9746617 | 0) & 1023]; }
+  function cosn(v){ return SENO[((v*162.9746617 | 0) + 256) & 1023]; }
+
+  /* ---------- poeira global · um canvas do tamanho da janela ---------- */
+  var PO = null;
+  /* ESC=2 · o buffer vive em METADE da resolucao e o drawImage sobe para o
+     tamanho da tela. Medido: o putImageData de 1440x900 era o gargalo do
+     quadro (25fps). Em meia resolucao ele custa 1/4, e po nao tem detalhe
+     de subpixel para perder · a escala suave ate ajuda, deixa o graozinho
+     macio em vez de serrilhado. */
+  var ESC = 2;
+  function medePo(){
+    if(!PO) return;
+    var w = window.innerWidth, h = window.innerHeight;
+    if(w === PO.w && h === PO.h) return;
+    PO.w = w; PO.h = h;
+    PO.bw = Math.ceil(w/ESC); PO.bh = Math.ceil(h/ESC);
+    PO.cv.width = w; PO.cv.height = h;
+    PO.cv.style.width = w+'px'; PO.cv.style.height = h+'px';
+    PO.off.width = PO.bw; PO.off.height = PO.bh;
+    var ab = new ArrayBuffer(PO.bw*PO.bh*4);
+    PO.u8 = new Uint8ClampedArray(ab);
+    PO.u32 = new Uint32Array(ab);
+    PO.im = new ImageData(PO.u8, PO.bw, PO.bh);
+    PO.dy0 = 0; PO.dy1 = 0;
+  }
+  function poeira(){
+    if(PO) return PO;
+    var cv = document.createElement('canvas');
+    cv.setAttribute('aria-hidden','true');
+    cv.style.cssText = 'position:fixed;left:0;top:0;pointer-events:none;z-index:39';
+    document.body.appendChild(cv);
+    var off = document.createElement('canvas');
+    PO = { cv:cv, ctx:cv.getContext('2d'), off:off, offctx:off.getContext('2d'),
+           w:0, h:0, bw:0, bh:0, u8:null, u32:null, im:null,
+           n:0, raf:0, ph:0, ult:0, dy0:0, dy1:0,
+           x:new Float32Array(CAP),  y:new Float32Array(CAP),
+           bx:new Float32Array(CAP), by:new Float32Array(CAP),
+           vx:new Float32Array(CAP), vy:new Float32Array(CAP),
+           ini:new Float32Array(CAP), vida:new Float32Array(CAP),
+           tur:new Float32Array(CAP), lev:new Float32Array(CAP),
+           r:new Uint8Array(CAP), g:new Uint8Array(CAP),
+           b:new Uint8Array(CAP), s:new Uint8Array(CAP) };
+    medePo();
+    window.addEventListener('resize', medePo);
+    return PO;
   }
 
-  function gota(fig, x, y){
+  function quadroPo(ts){
+    var P = PO; P.raf = 0;
+    var dt = P.ult ? Math.min(0.05, (ts - P.ult)/1000) : 1/60;
+    P.ult = ts; P.ph += dt*0.85;
+    var bw = P.bw, bh = P.bh, u8 = P.u8;
+
+    /* RASTRO · em vez de limpar, o quadro anterior DESBOTA. Cada grao passa
+       a deixar um risco curto atras de si, e e o risco, nao o ponto, que faz
+       a nuvem parecer continua em vez de chuvisco de televisao. Sai quase de
+       graca porque e uma passada de multiplicacao no canal alfa, so nas
+       linhas sujas. O piso em 10 evita o rastro que nunca acaba de sumir. */
+    if(P.dy1 > P.dy0){
+      var fim = P.dy1*bw*4;
+      for(var o8 = P.dy0*bw*4; o8 < fim; o8 += 4){
+        var av = u8[o8+3];
+        if(av){ av = (av*158) >> 8; u8[o8+3] = av < 10 ? 0 : av; }
+      }
+    }
+    var ly0 = P.dy0, ly1 = P.dy1;
+    var y0 = bh, y1 = 0, n = P.n, i = 0;
+
+    while(i < n){
+      var idade = (ts - P.ini[i]) / P.vida[i];
+      if(idade >= 1){                    /* morreu · troca com a ultima viva */
+        n--;
+        P.x[i]=P.x[n];     P.y[i]=P.y[n];     P.vx[i]=P.vx[n];   P.vy[i]=P.vy[n];
+        P.bx[i]=P.bx[n];   P.by[i]=P.by[n];
+        P.ini[i]=P.ini[n]; P.vida[i]=P.vida[n]; P.tur[i]=P.tur[n]; P.lev[i]=P.lev[n];
+        P.r[i]=P.r[n];     P.g[i]=P.g[n];     P.b[i]=P.b[n];     P.s[i]=P.s[n];
+        continue;
+      }
+      if(idade < 0){ i++; continue; }    /* ainda nao partiu · e a ONDA */
+
+      var px = P.x[i], py = P.y[i], tu = P.tur[i];
+      var ax = sen(py*0.0090 + P.ph)      * 330 * tu + 52;   /* +52 = vento constante · a pluma tem direcao, nao e explosao simetrica */
+      var ay = cosn(px*0.0104 - P.ph*0.8) * 330 * tu;
+      var amort = 1 - 0.50*dt;   /* medido: a 0,95 a nuvem so alcancava 705x669 de 1440x900 · o 'gigante' mora aqui */
+      var vx = (P.vx[i] + ax*dt) * amort;
+      var vy = (P.vy[i] + (ay + P.lev[i])*dt) * amort;
+      px += vx*dt; py += vy*dt;
+      P.x[i]=px; P.y[i]=py; P.vx[i]=vx; P.vy[i]=vy;
+
+      /* SURGIMENTO POR DISTANCIA · enquanto o grao esta parado em cima do
+         proprio pixel de origem ele nao pode aparecer: pintaria o painel com
+         uma copia do painel, que foi exatamente o chuvisco branco que cobria
+         o relatorio. Ele nasce invisivel e ganha corpo conforme DESCOLA. */
+      var ddx = px - P.bx[i], ddy = py - P.by[i];
+      var d2 = ddx*ddx + ddy*ddy;
+      var surge = d2 >= 484 ? 1 : Math.sqrt(d2)/22;
+      var f = idade < 0.30 ? 1 : 1 - (idade-0.30)/0.70;
+      var al = f*f*surge;
+      var ix = (px/ESC)|0, iy = (py/ESC)|0, tam = P.s[i];
+      if(al < 0.02 || ix < 0 || iy < 0 || ix+tam > bw || iy+tam > bh){ i++; continue; }
+      if(iy < y0) y0 = iy;
+      if(iy+tam > y1) y1 = iy+tam;
+
+      /* pintor por alpha maximo · o certo seria source-over com divisao por
+         canal, mas po quase nao se sobrepoe e o olho nao separa os dois.
+         Isto e 1 comparacao no lugar de 3 divisoes por pixel. */
+      var a255 = (al*255)|0, cr = P.r[i], cg = P.g[i], cb = P.b[i];
+      for(var oy=0; oy<tam; oy++){
+        var o = ((iy+oy)*bw + ix)*4;
+        for(var ox=0; ox<tam; ox++, o+=4){
+          if(a255 >= u8[o+3]){ u8[o]=cr; u8[o+1]=cg; u8[o+2]=cb; u8[o+3]=a255; }
+        }
+      }
+      i++;
+    }
+    P.n = n;
+
+    var sy0 = Math.max(0, Math.min(ly0, y0)), sy1 = Math.min(bh, Math.max(ly1, y1));
+    if(sy1 > sy0) P.offctx.putImageData(P.im, 0, 0, 0, sy0, bw, sy1-sy0);
+    /* a faixa suja engloba a anterior: o rastro ainda esta desbotando la */
+    P.dy0 = Math.max(0, Math.min(y0, ly0)); P.dy1 = Math.min(bh, Math.max(y1, ly1));
+
+    /* SOMBRA · o painel e quase branco sobre fundo quase branco, entao a
+       particula com a COR REAL do painel fica invisivel assim que sai da
+       moldura. Escurecer a particula seria falsear a cor, que e justamente
+       o que se pediu para preservar. A saida e a de composicao de cinema:
+       a cor continua exata e quem da forma ao grao claro e uma sombra
+       propria. Sai de graca porque e UM drawImage com sombra na GPU, nao
+       um segundo passe de pixel na CPU. */
+    var ctx = P.ctx;
+    ctx.clearRect(0, 0, P.w, P.h);
+    ctx.shadowColor = 'rgba(52,44,64,0.30)';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetY = 1.5;
+    ctx.drawImage(P.off, 0, 0, P.w, P.h);
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+    if(n > 0) P.raf = requestAnimationFrame(quadroPo);
+    else { P.ult = 0; P.ctx.clearRect(0,0,P.w,P.h); P.dy0 = P.dy1 = 0; }
+  }
+
+  /* mapa local -> janela pelo mesmo transform 3D do deck.
+     Sonda de tamanho zero: o rect de um PONTO e o ponto projetado, sem a
+     ambiguidade da caixa que a moldura rotacionada tem. Tres pontos dao a
+     parte linear inteira (escala, rotacao e cisalhamento). */
+  function projeta(fig, img, W, H){
+    var d = document.createElement('div');
+    d.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0';
+    fig.appendChild(d);
+    function pt(x,y){
+      d.style.transform = 'translate('+(img.offsetLeft+x)+'px,'+(img.offsetTop+y)+'px)';
+      var r = d.getBoundingClientRect();
+      return [r.left, r.top];
+    }
+    var o = pt(0,0), ex = pt(W,0), ey = pt(0,H);
+    fig.removeChild(d);
+    return { ox:o[0], oy:o[1],
+             xx:(ex[0]-o[0])/W, xy:(ex[1]-o[1])/W,
+             yx:(ey[0]-o[0])/H, yy:(ey[1]-o[1])/H };
+  }
+
+  /* ---------- o painel local: imagem + buraco que cicatriza ---------- */
+  function pintaDes(ts){
+    desRAF = 0;
+    var vivas = 0, id;
+    for(id in telas){
+      var T = telas[id];
+      if(!T) continue;
+      var ctx = T.ctx, W = T.W, H = T.H;
+      var ativas = [];
+      for(var c=0;c<T.cr.length;c++){
+        var K = T.cr[c];
+        if(!K.t0) K.t0 = ts;
+        K.t = (ts - K.t0)/K.dur;
+        if(K.t < 1) ativas.push(K);
+      }
+      T.cr = ativas;
+      if(!ativas.length){
+        T.img.style.visibility = '';
+        if(T.cv.parentNode) T.cv.parentNode.removeChild(T.cv);
+        telas[id] = null;
+        continue;
+      }
+      vivas++;
+
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0,0,W,H);
+      ctx.drawImage(T.img, 0, 0, W, H);
+
+      /* BORDA IRREGULAR E MACIA NA MESMA PASSADA · a versao com
+         ctx.filter='blur(7px)' foi medida em 5,86ms por quadro (11,7 com as
+         duas crateras) e era ela, nao a poeira, que derrubava o quadro pela
+         metade. O degrade radial usado como fillStyle do proprio poligono
+         entrega as duas coisas por 1,77ms: o poligono da o recorte
+         irregular, o degrade da o esfumado da borda. */
+      ctx.globalCompositeOperation = 'destination-out';
+      for(c=0;c<ativas.length;c++){
+        var K2 = ativas[c], t = K2.t, fr;
+        if(t < K2.abre)      fr = t/K2.abre;              /* abre com a onda   */
+        else if(t < K2.cura) fr = 1;                      /* segura aberto     */
+        else                 fr = 1 - Math.pow((t-K2.cura)/(1-K2.cura), 0.7);
+        var frente = fr * K2.raio;
+        if(frente <= 1) continue;
+        var borda = frente*1.03;
+        var gr = ctx.createRadialGradient(K2.cx,K2.cy,frente*0.955,K2.cx,K2.cy,borda);
+        gr.addColorStop(0,'rgba(0,0,0,1)');
+        gr.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle = gr;
+        ctx.beginPath();
+        var rg = K2.rg, m = rg.length;
+        for(var q=0;q<m;q++){
+          var an = q*6.283185307/m, rr = borda*rg[q];
+          var qx = K2.cx + Math.cos(an)*rr, qy = K2.cy + Math.sin(an)*rr;
+          if(q) ctx.lineTo(qx,qy); else ctx.moveTo(qx,qy);
+        }
+        ctx.closePath();
+        ctx.fill();
+        K2.borda = borda;
+      }
+      /* CHAMUSCADO · o painel e papel branco sobre pagina branca, entao
+         tirar branco de branco nao se ve: sem isto o buraco nao existe para
+         o olho. `source-atop` faz a sombra cair SO no que sobrou da folha.
+
+         PEGADINHA que custou uma rodada: a primeira versao usava um degrade
+         RADIAL, que e um circulo, contra uma mordida que e um POLIGONO
+         IRREGULAR. Nos angulos em que o poligono era menor que o raio
+         interno do degrade sobrava papel pintado com a cor cheia, e apareciam
+         cunhas cinzas nos cantos do painel. A borda queimada tem de seguir a
+         MESMA borda rasgada · por isso agora sao tracos sobre o proprio
+         caminho do poligono, do mais largo e fraco ao mais estreito e forte,
+         que e o que faz o esfumado. */
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.lineJoin = 'round';
+      var CAMADAS = [[30,'rgba(34,26,44,0.07)'],[17,'rgba(34,26,44,0.13)'],[7,'rgba(34,26,44,0.22)']];
+      for(c=0;c<ativas.length;c++){
+        var K4 = ativas[c];
+        if(!K4.borda) continue;
+        ctx.beginPath();
+        var rg4 = K4.rg, m4 = rg4.length;
+        for(var q4=0;q4<m4;q4++){
+          var an4 = q4*6.283185307/m4, rr4 = K4.borda*0.97*rg4[q4];
+          var x4 = K4.cx + Math.cos(an4)*rr4, y4 = K4.cy + Math.sin(an4)*rr4;
+          if(q4) ctx.lineTo(x4,y4); else ctx.moveTo(x4,y4);
+        }
+        ctx.closePath();
+        for(var cm=0; cm<3; cm++){
+          ctx.lineWidth = CAMADAS[cm][0];
+          ctx.strokeStyle = CAMADAS[cm][1];
+          ctx.stroke();
+        }
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    if(vivas > 0) desRAF = requestAnimationFrame(pintaDes);
+  }
+
+  function gota(fig, x, y){        /* nome mantido: o handler ja chama assim */
     var img = fig.querySelector('img');
     if(!img || !img.complete || !img.naturalWidth) return;
     var W = img.clientWidth, H = img.clientHeight;
     if(!W || !H) return;
     var id = fig.getAttribute('data-i');
-    var cv = fig.querySelector('canvas.rip'), ctx;
-    if(!cv){
+
+    var T = telas[id];
+    if(!T){
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cv = document.createElement('canvas');
+      var cv = document.createElement('canvas');
       cv.className = 'rip';
       cv.width  = Math.round(W*dpr);
       cv.height = Math.round(H*dpr);
+      cv.style.width  = W+'px';       /* sem isto o canvas fica no dobro */
+      cv.style.height = H+'px';
       fig.appendChild(cv);
-      ctx = cv.getContext('2d');
+      var ctx = cv.getContext('2d');
       ctx.scale(dpr,dpr);
-      cv.__ctx = ctx;
-    } else ctx = cv.__ctx;
-    /* o clique JA chega no espaco da imagem (o handler converte) · o canvas
-       cobre exatamente a imagem, entao nao ha moldura a descontar aqui */
-    var cx = x, cy = y;
-    var dx = Math.max(cx, W-cx), dy = Math.max(cy, H-cy);
-    ondas.push({id:id, cv:cv, ctx:ctx, img:img, W:W, H:H, cx:cx, cy:cy,
-                maxR:Math.sqrt(dx*dx + dy*dy) + 20, dur:1200, t0:0, t:0});
-    if(!ondaRAF) ondaRAF = requestAnimationFrame(pinta);
+      T = telas[id] = {cv:cv, ctx:ctx, img:img, W:W, H:H, cr:[]};
+      img.style.visibility = 'hidden';   /* o canvas passa a ser o painel */
+    }
+    if(T.cr.length >= 2) return;         /* no maximo 2 crateras por painel */
+
+    /* pixels de origem · uma leitura por painel, guardada na imagem */
+    var px = img.__px;
+    if(px === undefined){
+      px = null;
+      try{
+        var lw = Math.min(img.naturalWidth, 1000);
+        var lh = Math.round(img.naturalHeight * lw / img.naturalWidth);
+        var oc = document.createElement('canvas');
+        oc.width = lw; oc.height = lh;
+        var octx = oc.getContext('2d', {willReadFrequently:true});
+        octx.drawImage(img, 0, 0, lw, lh);
+        px = {d: octx.getImageData(0,0,lw,lh).data, w: lw, h: lh};
+      }catch(e){ px = null; }
+      img.__px = px;
+    }
+
+    /* borda irregular · harmonicas inteiras para fechar a volta sem emenda */
+    var rg = new Float32Array(44), h1 = Math.random()*6.28, h2 = Math.random()*6.28, h3 = Math.random()*6.28;
+    for(var q=0;q<44;q++){
+      var an = q*6.283185307/44;
+      rg[q] = 1 + 0.12*Math.sin(an*3+h1) + 0.07*Math.sin(an*5+h2) + 0.045*Math.sin(an*8+h3);
+    }
+
+    var raio = Math.max(W,H) * 0.60;     /* GRANDE de proposito */
+    T.cr.push({cx:x, cy:y, raio:raio, rg:rg, abre:0.30, cura:0.62, dur:DUR, t0:0, t:0});
+    if(!desRAF) desRAF = requestAnimationFrame(pintaDes);
+
+    /* ---- semeia a poeira no canvas da janela ---- */
+    var P = poeira();
+    if(!P.w) return;
+    var M = projeta(fig, img, W, H);
+    var passo = 2.8;
+    var livre = CAP - P.n;
+    if(livre < 200) return;
+    var prob = Math.min(1, livre / (Math.PI*raio*raio/(passo*passo) * 0.20));  /* 0,20 = fracao media que a peneira de tinta deixa passar */
+    var agora = performance.now();
+    var ex = px ? px.w/W : 0, ey = px ? px.h/H : 0;
+    var n = P.n;
+
+    for(var sy = y-raio; sy <= y+raio; sy += passo){
+      for(var sx = x-raio; sx <= x+raio; sx += passo){
+        if(n >= CAP) break;
+        if(Math.random() > prob) continue;   /* peneira grossa · a fina, por tinta, vem depois da leitura da cor */
+        var dx = sx-x, dy = sy-y;
+        var r = Math.sqrt(dx*dx+dy*dy);
+        if(r > raio) continue;
+        var jx = sx + (Math.random()-0.5)*passo, jy = sy + (Math.random()-0.5)*passo;
+        if(jx < 0 || jy < 0 || jx > W || jy > H) continue;
+
+        var cr = 210, cg = 206, cb = 216;
+        if(px){
+          var bx = Math.min(px.w-1, Math.max(0, Math.round(jx*ex)));
+          var by = Math.min(px.h-1, Math.max(0, Math.round(jy*ey)));
+          var o = (by*px.w + bx)*4;
+          cr = px.d[o]; cg = px.d[o+1]; cb = px.d[o+2];   /* COR REAL do painel */
+        }
+
+        var fr = r/raio;                                  /* 0 no centro, 1 na borda */
+
+        /* PESO POR TINTA · o painel e um relatorio em papel branco, entao a
+           amostragem uniforme fazia 9 em cada 10 particulas serem brancas ·
+           po branco sobre pagina branca e po invisivel, e foi por isso que a
+           nuvem anterior parecia chuvisco. A cor de cada grao continua sendo
+           a cor EXATA do pixel de origem, o que muda e QUAIS pixels viram
+           grao: os que tem tinta (numero, texto, o crimson da marca) entram
+           quase todos, os de papel entram peneirados. O que se desfaz passa
+           a ser o DADO do relatorio, nao a folha. */
+        var tinta = (765 - (cr+cg+cb)) / 255;             /* 0 no branco puro */
+        var peso = 0.05 + Math.min(1, tinta*1.6)*0.95;
+        /* e mais denso perto do toque, como pluma de verdade */
+        if(Math.random() > peso * (1 - fr*0.40)) continue;
+
+        /* GRAO PESADO CAI, GRAO FINO VOA · e essa correlacao, e nao a
+           variedade em si, que faz o olho ler materia virando po */
+        var gr = 1 + ((Math.random()*Math.random()*Math.random())*3.4 | 0);   /* 1..4 */
+        var pesado = (gr-1)/3;
+        var ang = Math.atan2(dy, dx) + (Math.random()-0.5)*1.9;
+        var vel = 18 + (1-fr)*60 + Math.pow(Math.random(),2.0)*380*(1 - 0.55*pesado);
+        var lvx = Math.cos(ang)*vel, lvy = Math.sin(ang)*vel - 55;
+
+        P.x[n]  = P.bx[n] = M.ox + jx*M.xx + jy*M.yx;
+        P.y[n]  = P.by[n] = M.oy + jx*M.xy + jy*M.yy;
+        P.vx[n] = lvx*M.xx + lvy*M.yx;                    /* a explosao segue a perspectiva */
+        P.vy[n] = lvx*M.xy + lvy*M.yy;
+        P.ini[n]  = agora + fr*DUR*0.30 + Math.random()*DUR*0.05;
+        P.vida[n] = DUR*(0.95 + Math.random()*1.15);
+        P.tur[n]  = (0.35 + Math.random()*1.1) * (1 - 0.5*pesado);
+        P.lev[n]  = 160*pesado - Math.random()*470*(1-pesado);   /* o grao fino sobe muito · e ele que leva a nuvem tela afora */
+        P.r[n] = cr; P.g[n] = cg; P.b[n] = cb;
+        P.s[n] = gr;
+        n++;
+      }
+      if(n >= CAP) break;
+    }
+    P.n = n;
+    if(!P.raf && n > 0){ P.ult = 0; P.raf = requestAnimationFrame(quadroPo); }
   }
 
   /* movimento reduzido: nenhuma onda · o clique nao faz nada */
@@ -2371,7 +3271,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       eq:'pagamento anual à vista, menos de R$ 7 por dia',
       save:'À vista, economize R$ 1.427 <span class="un">no ano</span>',
       off:'36% de desconto por pagar à vista',
-      anchor:'Doze estudos completos da frota. Você paga uma vez e não pensa mais nisso por doze meses.'
+      anchor:'Doze estudos completos da frota. O ano inteiro resolvido de uma vez.'
     },
     grande:{
       chave:'anual590',
@@ -2387,7 +3287,7 @@ footer a:focus-visible,.hero a:focus-visible{outline:2px solid var(--crimson);ou
       eq:'pagamento anual à vista, equivale a R$ 412,50 por mês',
       save:'À vista, economize R$ 2.310 <span class="un">no ano</span>',
       off:'31% de desconto por pagar à vista',
-      anchor:'Doze estudos da frota inteira, sem limite de veículos. Um pagamento no ano, e o assunto está resolvido.'
+      anchor:'Doze estudos da frota inteira, sem limite de veículos. O ano inteiro resolvido de uma vez.'
     }
   };
   function morfaAnual(grande){
