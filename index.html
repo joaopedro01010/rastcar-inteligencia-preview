@@ -27,24 +27,62 @@
 <link rel="stylesheet" href="assets/fonts/fonts.css">
 <style>
 :root{
-  --bg:#080608;
-  --bg2:#0d0509;
-  --panel:rgba(255,255,255,.028);
-  --panel-b:rgba(255,255,255,.09);
+  /* ESCURO NO CINZA DO PHANTOM. Medi duas vezes e a primeira estava errada.
+     Na primeira eu amostrei por FAIXA DE ALTURA e misturei o fundo escurecido
+     que fica ATRAS da folha (#010101, so o overlay) com a folha da frente.
+     Peguei #0F0F0F de fundo, que e a base da folha, e a pagina ficou escura
+     demais. Medindo por SUPERFICIE, dentro da folha, em 4 telas:
+
+         #0F0F0F  40,0% dos pixels   base da folha
+         #1C1C1C  31,3%              O CARTAO, e o que o olho de fato ve
+         #282828   0,4%              unica superficie acima dele
+
+     O usuario do Phantom passa a vida olhando #1C1C1C, nao #0F0F0F. Entao o
+     fundo da pagina e #1C1C1C e o cartao sobe pra #282828. Conferido: tinta
+     14,57:1, verde 10,83:1, vermelho 4,08:1, tudo acima do piso.
+     O que estava aqui antes de tudo era #080608, quase preto e ARROXEADO. */
+  --bg:#1C1C1C;
+  --bg2:#1F1F1F;
+  --panel:#282828;
+  --panel-b:rgba(255,255,255,.06);
   --bordo:#4A0010;
-  --crimson:#FF2D4B;
-  --crimson-2:#E01E37;
-  --magenta:#FF4FA0;
+  --crimson:#EC1222;
+  --crimson-2:#DC1021;
+  --magenta:#D1B0D7;
   --ice:#5FE0FF;
   --offwhite:#F8F4EE;
   --ink:#F3ECE6;
-  --muted:#9b9096;
-  --muted-2:#8D848B;   /* medido: o tom antigo dava 3,5:1 · minimo legivel e 4,5:1 */
+  /* O vermelho da marca (#EC1222) e cor de PREENCHIMENTO. Como texto sobre o
+     cinza do painel ele rende 3,79:1, contra 4,5 exigidos. O tema claro ja
+     tinha esse par (#EC1222 pinta, #B80D1A escreve); o escuro nao tinha, e por
+     isso eyebrow, numero da navegacao e "o que isso diz" reprovavam. */
+  /* #FF4E58 rende 5,03:1 sobre o painel, mas cai a 3,69:1 quando o texto mora
+     numa superficie mais clara que o painel, como o bloco de comparacao. No
+     tema escuro clarear e seguro em toda parte, porque o fundo e sempre mais
+     escuro que a letra: o pior caso manda, e ele pede este tom. */
+  --crimson-txt:#FF7A82;
+  --muted:#A79CA2;
+  --muted-2:#9C939A;   /* subiu de #9b9096/#8D848B: no tamanho de rotulo eles
+                          davam 3,7:1 sobre o cinza do painel, nao 4,5:1 */
   --hair:rgba(255,255,255,.08);
   --glow:none;
-  --head:'Archivo',system-ui,sans-serif;
-  --title:'D-DIN','D-DIN Exp',system-ui,sans-serif;
-  --mono:'Roboto Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  /* INTER com eixo optico · a receita oficial da casa (09/08/2026), a mesma
+     dos criativos: `opsz` 32 + peso 900 + tracking -2,5% reproduz a Helvetica
+     Now Display. Antes daqui passou D-DIN (engenharia), Archivo (grotesca
+     neutra) e Figtree (meu palpite de "fonte do Instagram"), e a receita certa
+     ja estava escrita no repo o tempo todo.
+     Roboto Mono FICA nos rotulos tecnicos: la o mono e sinal de dado. */
+  --head:'Inter',system-ui,sans-serif;
+  --title:'Inter',system-ui,sans-serif;
+  /* A MONO SAI DOS ROTULOS. Eu tinha defendido Roboto Mono em caixa alta a
+     10,5px como "sinal de dado"; o Joao apontou e ele esta certo: mono em
+     caixa alta com tracking largo, repetida em centenas de rotulos, e o visual
+     que envelheceu mal. Quem faz produto de dado hoje (Stripe, Linear) usa a
+     mesma grotesca do resto em peso medio e tamanho pequeno.
+     `--mono` continua existindo para PLACA e numero de serie, onde largura
+     fixa e funcional de verdade. */
+  --mono:'Inter',system-ui,sans-serif;
+  --placa:'Roboto Mono',ui-monospace,'SF Mono',Menlo,monospace;
   --maxw:1080px;
   --pad:clamp(18px,4vw,44px);
   --nav-h:56px;
@@ -65,9 +103,13 @@ body{
 .veil{
   position:fixed;inset:0;z-index:1;pointer-events:none;
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(255,45,75,.06), transparent 55%),
-    radial-gradient(100% 60% at 50% 120%, rgba(74,0,16,.35), transparent 60%),
-    linear-gradient(180deg, rgba(8,6,8,.30), rgba(8,6,8,.62));
+    /* Os dois radiais pintavam vermelho no topo e BORDO no rodape, e o
+       linear fechava com o quase-preto antigo. Era daqui que vinha a mancha
+       avermelhada que sobrou depois de eu esconder os orbes. O Phantom nao
+       tem cor nenhuma no fundo: e cinza neutro chapado, e e isso que faz a
+       interface parecer calma. Fica so uma leve profundidade neutra. */
+    linear-gradient(180deg, rgba(255,255,255,.014), transparent 40%),
+    linear-gradient(180deg, transparent 70%, rgba(0,0,0,.16));
 }
 .stage{position:relative;z-index:2}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
@@ -80,10 +122,59 @@ body{
 /* risco antes do eyebrow · mesma assinatura estrutural do site */
 .eyebrow::before{content:"";width:22px;height:1px;background:currentColor;opacity:.6;flex:0 0 auto}
 .seal .eyebrow::before{display:none}
+/* GRADIENTE DE TEXTO. O anterior ia de coral a vermelho a MAGENTA, e o mapa de
+   cores trocou magenta por lilas #D1B0D7. Medido sobre o fundo claro:
+
+       #FD6D5D coral    2,67:1   reprova
+       #EC1222 vermelho 4,30:1   ok
+       #D1B0D7 lilas    1,84:1   reprova
+
+   Duas das tres paradas ilegiveis, e era isso que fazia o texto "sumir" nas
+   pontas. Gradiente de LETRA exige que TODAS as paradas passem, nao so a do
+   meio: a ponta fraca nao fica bonita, fica invisivel.
+   O coral foi escurecido preservando o matiz ate cruzar 3,0:1, que e o piso de
+   texto grande. Agora: 3,01 / 4,30 / 6,46. */
+/* A RECEITA DE DISPLAY. `opsz` 32 fecha as letras e sobe o contraste; sem ele
+   a Inter e so mais uma grotesca. Tracking -2,5% e o que a receita manda. */
+h1,h2,.big,.dline .v,.hero-stat .big,.tag{
+  font-variation-settings:'opsz' 32;letter-spacing:-.025em}
+h1,.big,.hero-stat .big{font-weight:900}
+h2{font-weight:800}
+.dline .v{font-weight:800;letter-spacing:-.02em}
+.tag{letter-spacing:.13em;font-variation-settings:'opsz' 14}
+
+
+/* Todos os rotulos que eram mono passam a Inter 600 com tracking de 5,5%: em
+   mono o tracking de 13% era necessario pra letra nao colar; em grotesca ele
+   vira espacamento gratuito e o rotulo perde a forma de palavra. */
+.dgt,.km-cap,.heat-cap,.alerts-cap,.ctl-label,.bm-l,.hm-leg,.hm-ph,.mono,
+.dline .k,.eyebrow,.lbl,.u{
+  font-weight:600;letter-spacing:.055em;font-variation-settings:'opsz' 14}
+.dgt,.km-cap,.heat-cap,.alerts-cap{font-size:12px}
+/* ENCOSTADOS. O detector achou 11 pares com menos de 4px de folga, um deles
+   com folga ZERO (uma estatistica colada na legenda de alertas) e seis fichas
+   de motorista com nome a 3px da descricao. Texto que encosta em texto le como
+   erro de montagem, e o leitor tenta ligar as duas coisas. */
+.cp{margin-bottom:7px}
+/* O VERDE CLARO SO VALE NO ESCURO. #6BE863 e o verde do Phantom e la ele mede
+   12,58:1 sobre preto; sobre o fundo claro desta pagina ele da 1,51:1 e
+   desaparece. O `.dot` estava pintado com ele nos dois temas: no claro o ponto
+   sumia. Par completo: claro usa #0AA800 (mesmo matiz, 4,71:1). */
+body.light .dot,body.light .dot.good,body.light .cs.good,body.light .bbar>i.you.ok{
+  color:#0AA800}
+body.light .dot{background:#0AA800}
+body.light .bbar>i.you.ok{background:linear-gradient(90deg,#0AA800,#4FC247)}
+
 .grad{
-  background:linear-gradient(96deg,#FF5A72 0%,var(--crimson) 42%,var(--magenta) 100%);
+  background:linear-gradient(96deg,#EE6657 0%,var(--crimson) 46%,#B80D1A 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
+/* A FAIXA DA REFERENCIA, no lugar certo dela. Este e o gradiente do orcamento
+   Leve Imersivo, vermelho a coral a azul. Ele reprova em texto (o azul da
+   1,84:1) e e perfeito em BARRA, que e como o orcamento o usa: divisor
+   colorido, nao letra. */
+.faixa-leve{height:3px;border-radius:2px;border:0;margin:0;
+  background:linear-gradient(90deg,var(--crimson) 0%,#FF795F 46%,#88BFFF 100%)}
 
 /* ---------- Etiquetas · veredito curto, sempre ancorado num dado real ---------- */
 .tag{
@@ -93,7 +184,47 @@ body{
   transform:skewX(-4deg);white-space:nowrap;vertical-align:middle;
 }
 .tag.solid{background:linear-gradient(96deg,var(--crimson-2),var(--crimson));color:#fff}
-.tag.good{color:#37D18A;background:rgba(55,209,138,.12);border-color:rgba(55,209,138,.40)}
+/* AMOSTRA nao e enfase de conteudo, e rotulo de ESTADO: diz que este documento
+   e um exemplo. Em vermelho ele competia com a wordmark logo ao lado, e o
+   vermelho aqui e a cor de acao. Vai a contorno grafite, formando par com o
+   selo DADOS, que tambem e meta. `.tag.solid` continua vermelho porque marca
+   conteudo de verdade: "Mais rodado", "Comecar por aqui". */
+#hdBadge.tag.solid{background:none;color:var(--muted);border:1px solid currentColor;opacity:.85}
+/* O SIMBOLO R ao lado da wordmark. E o R NOVO, `assets/logo-R-rastcar.png`, que
+   e regra permanente desde 13/07/2026: o antigo esta aposentado. Vem com
+   alt vazio e aria-hidden porque a wordmark ao lado ja diz "Rastcar", e um
+   leitor de tela anunciando a marca duas vezes e ruido.
+   A altura acompanha a da wordmark pela mesma variavel, entao os dois crescem
+   juntos e nunca saem de escala um em relacao ao outro. */
+/* PROPORCOES MEDIDAS NO LOCKUP OFICIAL (rastcar-oficial-preta.png, 4000x790,
+   o mesmo que o orcamento Leve Imersivo usa):
+       altura do R  = 2,189 x a altura da wordmark
+       vao          = 0,440 x a altura da wordmark
+       alinhamento  = centro vertical (213px acima, 214px abaixo: simetrico)
+   Eu tinha composto no olho e saiu 1,57x com vao de 113%: R pequeno demais e
+   longe demais. A marca ja tinha a resposta num arquivo. */
+/* O `gap:0` que eu tinha posto aqui matou o respiro da LINHA INTEIRA: a
+   wordmark encostava em "Inteligencia", que encostava em "Dados". Eu queria
+   zerar so o vao entre o R e a wordmark, e o gap do flex vale entre TODOS os
+   filhos. A solucao certa e o R sair do fluxo do gap com margem negativa
+   igual a ele, ficando com a margem propria que segue a proporcao oficial. */
+.seal{gap:15px}
+.seal .logo-r{margin-right:calc(var(--wm-h) * 0.545 - 15px)}
+/* 1,45 e vao de 0,545, que sao os numeros da LANDING · o Joao aprovou o
+   lockup de la ("100% otimas proporcionalmente") e pediu o mesmo aqui.
+   De onde saem: na landing uma variavel unica manda na largura da wordmark
+   (`--wmw`), o emblema tem 0,201 dessa largura e a wordmark tem proporcao
+   8,016 (1018 por 127 de tinta). Entao
+       altura do R / altura da wordmark = (0,201 / 1,111) x 8,016 = 1,450
+       vao         / altura da wordmark = 0,068 x 8,016            = 0,545
+   Aqui a variavel e a ALTURA (`--wm-h`), entao os fatores entram direto.
+   Antes eram 1,95 e 0,44, herdados do lockup impresso · na tela o R ficava
+   grande demais e colado. */
+.logo-r{height:calc(var(--wm-h) * 1.45);width:auto;display:block;
+  align-self:center;flex:0 0 auto;margin-right:calc(var(--wm-h) * 0.545)}
+@media print{ .logo-r{height:calc(23px * 1.45);margin-right:calc(23px * .545)} }
+body.light #hdBadge.tag.solid{color:#5C5761;border-color:rgba(23,18,20,.28);background:rgba(23,18,20,.035)}
+.tag.good{color:#6BE863;background:rgba(107,232,99,.12);border-color:rgba(107,232,99,.40)}
 .tag.warn{color:#FF9E7A;background:rgba(255,122,77,.13);border-color:rgba(255,122,77,.40)}
 .tag.ghost{color:var(--muted);background:rgba(255,255,255,.04);border-color:var(--hair)}
 .tag + .tag{margin-left:6px}
@@ -103,6 +234,8 @@ body{
 header.top{padding:34px 0 26px}
 header.top .wrap{display:flex;flex-direction:column;gap:14px}
 .seal{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+:root{--wm-h:23px}
+@media (max-width:640px){ :root{--wm-h:20px} }
 .seal img.wm{width:clamp(158px,30vw,184px);height:auto;display:block}
 .seal img.wm-print{display:none}
 .seal .eyebrow{font-size:11px}
@@ -145,8 +278,12 @@ header.top .wrap{display:flex;flex-direction:column;gap:14px}
 .h-meta b{color:var(--ink);font-weight:500}
 
 /* ---------- Nav de segmentos (controle) ---------- */
+/* A nav tinha fundo rgba(8,6,8,.72), que era do tema quase-preto anterior:
+   sobre o #1C1C1C novo ela virava uma FAIXA PRETA atravessando a pagina. No
+   Phantom a barra de secao nao e um bloco de cor, e a mesma superficie com um
+   fio de separacao. */
 nav.seg{
-  background:rgba(8,6,8,.72);
+  background:transparent;
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
 }
@@ -161,18 +298,72 @@ nav.seg .wrap::-webkit-scrollbar{display:none}
 @media (min-width:820px){
   nav.seg .wrap{flex-wrap:wrap;height:auto;overflow:visible;row-gap:4px;padding-top:13px;padding-bottom:13px}
 }
+/* ORFAO. Quebrando por flex-wrap as 9 secoes caiam 7 + 2: as duas ultimas
+   ficavam soltas numa segunda linha e desequilibravam o bloco. Grid com
+   coluna de largura minima distribui as 9 em linhas cheias, e o numero de
+   colunas se ajusta sozinho a qualquer largura e a qualquer quantidade de
+   secoes. Abaixo de 820px continua o rolo horizontal, que no dedo e natural. */
+/* A NAVEGACAO EM DUAS LINHAS CHEIAS.
+   Tres tentativas ate acertar, e as duas primeiras ensinam o porque:
+     flex-wrap                          caía 7 + 2, com dois orfaos soltos
+     grid auto-fit com 1fr              equilibrou em 5 + 4 mas ESTICOU as
+                                        colunas ate 1440px, e "05 VIGILANCIA"
+                                        foi parar na borda, longe do conteudo
+     grid auto-fill com max-content     compactou, mas caiu em 6 + 3
+   Deixar o navegador contar dava sempre um numero que nao era o desejado,
+   porque os itens tem larguras diferentes (MOVIMENTO contra COMPORTAMENTO).
+   Entao a contagem e explicita: 5 colunas dao 5 + 4 e 3 dao 3 + 3 + 3, os
+   dois unicos cortes equilibrados de 9. Se um dia o numero de secoes mudar,
+   este e o lugar de revisar, e o comentario esta aqui pra isso. */
+@media (min-width:820px){
+  nav.seg .wrap{display:grid;grid-template-columns:repeat(3,max-content);
+    justify-content:start;gap:8px 30px;align-items:stretch}
+  nav.seg a{display:flex;align-items:center;justify-content:flex-start}
+}
+@media (min-width:1120px){
+  nav.seg .wrap{grid-template-columns:repeat(5,max-content);gap:8px 26px}
+}
+/* A secao ativa era uma pilula: fundo vermelho fraco mais borda arredondada.
+   Pilula e componente de filtro, nao de indice, e num fundo com gradiente ela
+   vira um borrao. O ativo agora se anuncia por tres coisas somadas, nenhuma
+   delas caixa: o texto sobe de apagado pra tinta cheia, o numero acende em
+   vermelho e uma regua de 2px cresce por baixo.
+   O peso da fonte NAO muda entre ativo e inativo de proposito: mudar peso
+   muda a largura, e com 9 itens em grade o indice inteiro tremeria a cada
+   secao que passa no scroll. */
 nav.seg a{
-  flex:0 0 auto;font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--muted);text-decoration:none;padding:7px 14px;border-radius:999px;
-  border:1px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s,background .2s;
+  position:relative;flex:0 0 auto;font-family:var(--head);font-weight:600;font-size:11px;
+  letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:7px 14px 9px;
+  border:0;border-radius:0;background:none;white-space:nowrap;transition:color .22s ease;
+}
+nav.seg a::after{
+  content:"";position:absolute;left:14px;right:14px;bottom:2px;height:2px;border-radius:2px;
+  background:var(--crimson);opacity:0;transform:scaleX(0);transform-origin:left center;
+  transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .22s ease;
 }
 nav.seg a:hover{color:var(--ink)}
-nav.seg a.active{color:#fff;border-color:rgba(255,45,75,.55);background:rgba(255,45,75,.10)}
-nav.seg a .n{font-family:var(--mono);font-weight:500;letter-spacing:.06em;color:var(--crimson);margin-right:7px}
+nav.seg a:hover::after{opacity:.34;transform:scaleX(1)}
+nav.seg a.active{color:var(--ink)}
+nav.seg a.active::after{opacity:1;transform:scaleX(1)}
+nav.seg a:focus-visible{outline:2px solid var(--crimson);outline-offset:3px;border-radius:4px}
+nav.seg a .n{font-family:var(--mono);font-weight:500;letter-spacing:.06em;
+  color:var(--muted-2);margin-right:7px;transition:color .22s ease}
+nav.seg a:hover .n,nav.seg a.active .n{color:var(--crimson)}
+@media (prefers-reduced-motion:reduce){ nav.seg a::after{transition:opacity .22s ease} }
 
 /* ---------- Seções ---------- */
 main{padding:8px 0 60px}
 section.block{padding:56px 0 8px;scroll-margin-top:12px}
+/* PISO DE RESPIRO ENTRE BLOCOS IRMAOS.
+   A secao e `display:block` sem gap: o espacamento vinha de margem posta peca a
+   peca, e quem nascesse sem margem colava na anterior. Foi assim que os 3
+   cartoes de resumo grudaram na lista de maquinas (vao medido: 0px) e a lista
+   grudou no "ver todos" (0px).
+   Vai dentro de `:where()` DE PROPOSITO: especificidade zero, entao qualquer
+   regra que ja defina a propria margem continua vencendo. Isto e piso, nao
+   decisao de layout, e serve pra peca nova nao nascer colada. */
+:where(section.block > * + *){margin-top:20px}
 main section.block:empty{display:none}
 main section.block + section.block{border-top:1px solid var(--hair)}
 .block-head{margin-bottom:26px;max-width:64ch}
@@ -184,7 +375,8 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 .block-head .sub{color:var(--muted);font-size:15px;margin-top:8px}
 
 /* dominante: número/insight-herói */
-.hero-stat{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;margin:6px 0 4px}
+.hero-stat{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;
+  margin:10px 0 6px;padding:22px 24px 20px;border-radius:16px}
 .hero-stat .big{
   font-family:var(--title);font-variant-numeric:tabular-nums;
   font-size:clamp(52px,13.6vw,116px);font-weight:700;line-height:.88;letter-spacing:-.022em;
@@ -208,20 +400,25 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 /* callout de insight */
 .callout{
   margin-top:22px;display:flex;gap:14px;align-items:flex-start;
-  background:linear-gradient(100deg, rgba(255,45,75,.10), rgba(255,45,75,.02));
-  border:1px solid rgba(255,45,75,.28);border-radius:12px;padding:16px 20px;
+  background:linear-gradient(100deg, rgba(236,18,34,.10), rgba(236,18,34,.02));
+  border:1px solid rgba(236,18,34,.28);border-radius:12px;padding:16px 20px;
 }
 .callout .bolt{width:8px;align-self:stretch;border-radius:6px;background:linear-gradient(var(--crimson),var(--magenta));box-shadow:var(--glow);flex:0 0 auto}
 .callout .ck{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);display:block;margin-bottom:5px}
 .callout .ct{font-size:16px;font-weight:500;line-height:1.4;color:var(--ink)}
 /* insight "o que isso diz" · discreto (bg mais suave que o callout base) */
-.callout.insight{background:linear-gradient(100deg, rgba(255,45,75,.055), rgba(255,45,75,.012));border-color:rgba(255,45,75,.20);margin-top:24px}
+.callout.insight{background:linear-gradient(100deg, rgba(236,18,34,.055), rgba(236,18,34,.012));border-color:rgba(236,18,34,.20);margin-top:24px}
 .callout.insight .ct{font-size:15px}
-.alerts-cap{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin:0 0 12px}
+/* margin-top de 16px: esta legenda encostava com folga ZERO na estatistica
+   logo acima. Texto colado em texto le como erro de montagem. */
+.alerts-cap{font-family:var(--head);font-weight:600;font-size:12px;letter-spacing:.055em;
+  text-transform:uppercase;color:var(--muted-2);margin:16px 0 12px}
 .rank-hint{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted-2);align-self:center;margin-left:2px}
 
 /* ---------- Controles (segmented + toggle) ---------- */
-.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:6px 0 20px}
+/* margem de cima era 6px e, com o topo agora em cartao, virou encostamento
+   visivel entre o cartao e a fileira de filtros. */
+.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:20px 0 20px}
 .segset{display:inline-flex;background:rgba(255,255,255,.04);border:1px solid var(--hair);border-radius:999px;padding:3px}
 .segset button{
   font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
@@ -232,15 +429,28 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 .ctl-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
 
 /* ---------- Ranking ---------- */
-.rank{display:flex;flex-direction:column}
+.rank{display:flex;flex-direction:column;gap:10px}   /* as 3 maquinas colavam uma na outra */
 .rrow{
-  display:grid;grid-template-columns:98px 1fr auto;align-items:center;gap:16px;
+  /* A COLUNA DO IDENTIFICADOR NAO PODE SER FIXA. Ela era `98px` chumbados, e
+     `.plate` nao quebrava nem cortava: com placa de sete caracteres cabia, e
+     com nome de maquina - "RE-02 - RETROESCAVADEIRA" pede 159px, "MN-02 -
+     MOTONIVELADORA" pede 147 - o texto PINTAVA POR CIMA da barra e do nome
+     ao lado. So apareceu na MSG, que e a primeira frota de maquinas com nome
+     por extenso; em frota de placa nunca estourou. Medido em 14/09/2026.
+     `minmax` deixa a coluna crescer ate um teto e o nome quebrar em duas
+     linhas - ninguem perde informacao e nada monta em cima de nada. */
+  display:grid;grid-template-columns:minmax(98px,152px) 1fr auto;align-items:center;gap:16px;
   padding:13px 12px;border-radius:10px;border:1px solid transparent;cursor:pointer;
   transition:background .2s,border-color .2s,transform .15s;
 }
-.rrow:hover,.rrow:focus-visible{background:rgba(255,45,75,.06);border-color:rgba(255,45,75,.22);outline:none}
+.rrow:hover,.rrow:focus-visible{background:rgba(236,18,34,.06);border-color:rgba(236,18,34,.22);outline:none}
 .rrow:hover .bar>i{filter:brightness(1.25)}
-.rrow .plate{font-family:var(--title);font-weight:700;font-size:15px;letter-spacing:.01em;color:var(--ink)}
+.rrow .plate{font-family:var(--title);font-weight:700;font-size:15px;letter-spacing:.01em;color:var(--ink);
+             /* `break-word` e nao `anywhere`: o `anywhere` encolhe a caixa ao
+                minimo e parte a palavra mesmo quando ela caberia inteira -
+                saiu "RETROESCAVADEIR / A". Com `break-word` a palavra so
+                quebra se sozinha nao couber. */
+             min-width:0;overflow-wrap:break-word;line-height:1.22}
 .rrow .who{min-width:0}
 .rrow .model{font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:6px}
 .rrow .mname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -253,9 +463,9 @@ main section.block + section.block{border-top:1px solid var(--hair)}
 .rrow .kv small{display:block;font-size:10px;color:var(--muted-2);letter-spacing:.1em;text-transform:uppercase;font-weight:400;margin-top:2px}
 .more{
   margin-top:14px;font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--crimson);
-  background:none;border:1px solid rgba(255,45,75,.3);border-radius:999px;padding:9px 18px;cursor:pointer;transition:.2s;
+  background:none;border:1px solid rgba(236,18,34,.3);border-radius:999px;padding:9px 18px;cursor:pointer;transition:.2s;
 }
-.more:hover{background:rgba(255,45,75,.08);color:#fff}
+.more:hover{background:rgba(236,18,34,.08);color:#fff}
 
 /* ---------- Heatmap ---------- */
 .heat-wrap{margin-top:34px;position:relative}
@@ -273,30 +483,66 @@ body.light #rzMap{background:#ECEBE8}
 .mchips button{flex:0 0 auto;font-family:var(--title);font-weight:700;font-size:12.5px;letter-spacing:.01em;color:var(--muted);
   background:none;border:1px solid var(--hair);border-radius:999px;padding:6px 12px;cursor:pointer;
   transition:color .18s,border-color .18s,background .18s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
-.mchips button:hover{color:var(--ink);border-color:rgba(255,45,75,.4)}
-.mchips button.on{color:#fff;border-color:rgba(255,45,75,.55);background:rgba(255,45,75,.12)}
-body.light .mchips button.on{color:#C81430;background:rgba(224,30,55,.08);border-color:rgba(200,20,48,.4)}
+.mchips button:hover{color:var(--ink);border-color:rgba(236,18,34,.4)}
+.mchips button.on{color:#fff;border-color:rgba(236,18,34,.55);background:rgba(236,18,34,.12)}
+body.light .mchips button.on{color:#B80D1A;background:rgba(220,16,33,.08);border-color:rgba(184,13,26,.4)}
 .map-tools{position:absolute;top:10px;right:10px;z-index:930;display:flex;flex-direction:column;gap:6px}
 .map-tools button{font-family:var(--head);font-weight:600;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
   color:#F3ECE6;background:rgba(14,10,14,.82);border:1px solid rgba(255,255,255,.16);border-radius:8px;
   padding:7px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.map-tools button:hover{border-color:rgba(255,45,75,.5)}
+.map-tools button:hover{border-color:rgba(236,18,34,.5)}
 body.light .map-tools button{background:rgba(255,255,255,.92);color:#16161A;border-color:rgba(0,0,0,.16)}
 #rzMap.exp{height:min(78vh,720px)}
 .hc.link{cursor:pointer;transition:border-color .18s,color .18s}
-.hc.link:hover{border-color:rgba(255,45,75,.45);color:var(--ink)}
+.hc.link:hover{border-color:rgba(236,18,34,.45);color:var(--ink)}
 .map-lock{position:absolute;inset:0;z-index:920;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;cursor:pointer}
 .map-lock span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:#fff;background:rgba(14,10,14,.85);border:1px solid rgba(255,45,75,.4);border-radius:999px;padding:8px 14px}
-body.light .map-lock span{background:rgba(255,255,255,.95);color:#16161A;border-color:rgba(200,20,48,.35)}
-.dlt{display:inline-block;font-family:var(--head);font-weight:600;font-size:10.5px;letter-spacing:.02em;border-radius:999px;padding:2px 8px;margin-left:8px;vertical-align:middle;border:1px solid;white-space:nowrap}
-.dlt.good{color:#37D18A;border-color:rgba(55,209,138,.4)}
-.dlt.bad{color:#FF5A78;border-color:rgba(255,45,75,.4)}
-.dlt.neu{color:var(--muted);border-color:var(--hair)}
-body.light .dlt.good{color:#1C7A45;border-color:rgba(28,122,69,.4)}
-body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
-#rzMap .leaflet-tooltip{font-family:var(--head);font-weight:500;font-size:12.5px;line-height:1.5;border-radius:8px;border:1px solid rgba(224,30,55,.45);background:rgba(255,255,255,.96);color:#16161A;box-shadow:0 6px 22px rgba(0,0,0,.25)}
-#rzMap .leaflet-tooltip b{color:#C81430}
+  color:#fff;background:rgba(14,10,14,.85);border:1px solid rgba(236,18,34,.4);border-radius:999px;padding:8px 14px}
+body.light .map-lock span{background:rgba(255,255,255,.95);color:#16161A;border-color:rgba(184,13,26,.35)}
+/* Sem fundo, sem borda, sem raio: so texto colorido entre parenteses, como o
+   Phantom faz. A pilula tinha peso de componente e roubava a leitura do numero
+   que ela qualifica; o parentese e subordinado por natureza. */
+/* 19px em peso 700 nao e capricho: a regra de contraste para TEXTO GRANDE
+   (piso 3,0 em vez de 4,5) vale a partir de 18,66px em negrito. Com o selo
+   pequeno, o verde nao podia passar de #088500, que le escuro. Crescendo o
+   selo, ele se qualifica e o verde pode ir a #0AA800, bem mais vivo, sem
+   virar ilegivel. O tamanho paga a cor. */
+.dlt{display:inline;font-family:var(--head);font-weight:700;font-size:19px;
+  letter-spacing:0;margin-left:9px;white-space:nowrap;
+  font-variation-settings:'opsz' 14;background:none;border:0;padding:0;border-radius:0}
+.dlt.good{color:#6BE863}
+/* VERMELHO DE PERDA DO PHANTOM: #EA3336, medido em cinco telas do Joao,
+   16.494 pixels, matiz 359. No escuro ele mede 4,59:1 e vai direto. No claro
+   da 4,00:1, abaixo do piso de corpo, entao escurece pro mesmo matiz ate 4,67.
+   Par completo com o verde: #6BE863 no escuro, #0AA800 no claro. */
+.dlt.bad{color:#EA3336}
+.dlt.neu{color:var(--muted)}
+/* COR E ESTADO, NAO ENFEITE (pedido do Joao: "que de vontade dos dados ficarem
+   verdes"). O selo era so contorno e o olho passava batido; agora tem fundo, e
+   direcao se le antes do numero. Fica a trava: nada aqui pode ler como falha da
+   Rastcar, entao `bad` e sobrio e nunca alarmante, e a copy que acompanha
+   enquadra como oportunidade. */
+
+/* VERDE DE GANHO, medido nas telas do Phantom do proprio Joao: #6BE863, matiz
+   de 116 graus, verde-LIMAO. O verde que estava aqui era #0AA800, matiz 151,
+   verde-azulado de bandeira: nao le como ganho, le como institucional.
+   #6BE863 sobre fundo claro da 1,51:1, ilegivel. Escurecido preservando o
+   matiz ate 4,71:1, que passa ate em corpo de texto. No tema ESCURO fica o
+   #6BE863 original, que la mede 12,58:1. */
+/* #0AA800 rendia 2,89 a 3,15:1 conforme o cartao pegasse mais ou menos cor do
+   fundo, contra piso de 3,0 pra texto grande: passava raspando ou nao passava.
+   Um degrau mais escuro mantem o verde da Phantom e sai do limite. */
+body.light .dlt.good{color:#089100}
+body.light .dlt.bad{color:#FF1216}
+body.light .dlt.neu{color:#6E6E76}
+.dlt.good{color:#6BE863}
+/* VERMELHO DE PERDA DO PHANTOM: #EA3336, medido em cinco telas do Joao,
+   16.494 pixels, matiz 359. No escuro ele mede 4,59:1 e vai direto. No claro
+   da 4,00:1, abaixo do piso de corpo, entao escurece pro mesmo matiz ate 4,67.
+   Par completo com o verde: #6BE863 no escuro, #0AA800 no claro. */
+.dlt.bad{color:#EA3336}
+#rzMap .leaflet-tooltip{font-family:var(--head);font-weight:500;font-size:12.5px;line-height:1.5;border-radius:8px;border:1px solid rgba(220,16,33,.45);background:rgba(255,255,255,.96);color:#16161A;box-shadow:0 6px 22px rgba(0,0,0,.25)}
+#rzMap .leaflet-tooltip b{color:#B80D1A}
 #rzMap .leaflet-interactive{cursor:pointer}
 /* controles do Leaflet vem com fonte propria (Lucida Console / Helvetica) · trazidos pro sistema */
 #rzMap .leaflet-control-zoom a{font-family:var(--title);font-weight:700;text-decoration:none}
@@ -311,12 +557,21 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .ring .trk{fill:none;stroke:rgba(255,255,255,.08);stroke-width:11}
 .ring .arc{fill:none;stroke:url(#gArc);stroke-width:11;stroke-linecap:round}
 .ring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.ring .ctr .p{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:38px;font-weight:700;letter-spacing:-.015em;line-height:1}
-.ring .ctr .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:7px;max-width:100px;line-height:1.3}
+/* O CONTEUDO CABE NO CIRCULO, e a conta e essa.
+   Anel de 168px com traco de 11px deixa raio interno de 73px. O canto mais
+   distante do texto estava a 71px do centro: 2px de folga, ou seja, encostando
+   no aro dos dois lados e embaixo. O erro nao era o anel, era o conteudo:
+   38px de numero mais um rotulo de 100px de largura estouram a corda de um
+   circulo de 146px de diametro util.
+   Numero e rotulo encolhem ate sobrar folga de verdade. Alvo: 10px em todos os
+   cantos, aferido em 1440px e em 390px. */
+.ring .ctr{padding:14px}
+.ring .ctr .p{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:33px;font-weight:700;letter-spacing:-.015em;line-height:1}
+.ring .ctr .l{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-top:6px;max-width:88px;line-height:1.28}
 .indics{display:flex;flex-direction:column;gap:15px}
 .indic{display:flex;align-items:baseline;gap:12px}
 .indic.p1{flex-wrap:wrap;row-gap:9px}
-.dot{width:9px;height:9px;border-radius:50%;background:#37d18a;flex:0 0 auto;position:relative;top:1px}
+.dot{width:9px;height:9px;border-radius:50%;background:#6BE863;flex:0 0 auto;position:relative;top:1px}
 .indic .it{font-size:14.5px;color:var(--ink)}
 .indic .it b{font-family:var(--title);font-variant-numeric:tabular-nums;font-weight:700;font-size:1.08em;color:#fff}
 .anchor{margin:26px 0 6px;font-family:var(--title);font-size:clamp(19px,3vw,28px);font-weight:700;letter-spacing:-.005em;line-height:1.12;text-wrap:balance}
@@ -334,12 +589,15 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .gauge .gbar>i{display:block;height:100%;width:0;border-radius:4px;background:linear-gradient(90deg,var(--crimson),var(--magenta));box-shadow:var(--glow);transition:width 1s cubic-bezier(.22,1,.36,1)}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .col h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:500}
-.col.attn h3{color:var(--crimson)}
+/* mesma regra de sempre: #EC1222 pinta, --crimson-txt escreve. Este titulo
+   estava escondido atras do corte do relatorio e so apareceu quando os outros
+   sairam da lista: rendia de 2,71 a 4,21:1 conforme a parte do fundo. */
+.col.attn h3{color:var(--crimson-txt)}
 .crow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:.18s}
-.crow:hover{background:rgba(255,45,75,.06);border-color:rgba(255,45,75,.2)}
+.crow:hover{background:rgba(236,18,34,.06);border-color:rgba(236,18,34,.2)}
 .crow .cp{font-family:var(--title);font-weight:700;font-size:15px;color:var(--ink)}
 .crow .cs{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;padding:2px 10px;border-radius:6px;min-width:44px;text-align:center}
-.cs.good{color:#37d18a;background:rgba(55,209,138,.12)}
+.cs.good{color:#6BE863;background:rgba(107,232,99,.12)}
 .cs.mid{color:var(--ink);background:rgba(255,255,255,.07)}
 .cs.warn{color:#ff7a4d;background:rgba(255,122,77,.14)}
 .crow .cx{font-family:var(--head);font-weight:500;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--muted);white-space:nowrap}
@@ -358,14 +616,14 @@ body.light .dlt.bad{color:#C81430;border-color:rgba(200,20,48,.35)}
 .ovl.open{opacity:1;pointer-events:auto}
 .sheet{
   position:fixed;z-index:61;top:0;right:0;height:100%;width:min(420px,92vw);
-  background:linear-gradient(180deg,#120810,#0a060a);border-left:1px solid rgba(255,45,75,.28);
+  background:linear-gradient(180deg,#120810,#0a060a);border-left:1px solid rgba(236,18,34,.28);
   transform:translateX(100%);transition:transform .3s cubic-bezier(.22,1,.36,1);
   padding:28px var(--pad);overflow-y:auto;box-shadow:-30px 0 60px rgba(0,0,0,.5);
 }
 .sheet.open{transform:none}
 .sheet .x{position:absolute;top:18px;right:18px;background:none;border:1px solid var(--hair);color:var(--muted);
   width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;transition:.2s}
-.sheet .x:hover{color:#fff;border-color:rgba(255,45,75,.5)}
+.sheet .x:hover{color:#fff;border-color:rgba(236,18,34,.5)}
 .sheet .sk{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson)}
 .sheet .sp{font-family:var(--title);font-size:34px;font-weight:700;letter-spacing:-.01em;margin:6px 0 2px;color:#fff}
 .sheet .sm{color:var(--muted);font-size:14px;margin-bottom:22px}
@@ -401,14 +659,39 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .dgt{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--crimson);margin:0 0 14px;
   display:flex;align-items:center;gap:11px}
 .dgt::before{content:"";width:22px;height:1px;background:currentColor;opacity:.6;flex:0 0 auto}
-.dgrid{display:flex;flex-direction:column;border-radius:14px}
-.dline{display:flex;align-items:baseline;gap:12px;padding:14px 18px;text-decoration:none}
-.dline .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);flex:1 1 auto;min-width:0}
-.dline .v{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:19px;font-weight:700;color:var(--ink);white-space:nowrap}
-.dline .go{font-family:var(--head);color:var(--crimson);font-size:16px;flex:0 0 auto;align-self:center}
-.dline.act{flex-wrap:wrap}
-.dline.act .k{flex-basis:100%}
-.dline.act .v{white-space:normal;font-family:var(--head);font-size:14.5px;font-weight:500;line-height:1.4;flex:1 1 0;min-width:0}
+.dgrid{display:flex;flex-direction:column;border-radius:14px;gap:6px}
+/* DISTRIBUICAO. O rotulo tinha flex:1 1 auto e ESTICAVA: ele empurrava o numero
+   contra a borda e sobravam ~700px de nada no meio, entao o olho atravessava a
+   tela pra ligar "KM RODADOS NO MES" a "48.230". Agora a coluna do rotulo tem
+   teto em 34ch: os numeros de todas as linhas alinham na MESMA vertical, perto
+   do rotulo, e a seta fica sozinha na borda. Uma coluna alinhada le-se de cima
+   a baixo; um numero solto na borda, nao. */
+.dline{display:grid;grid-template-columns:minmax(0,34ch) auto 1fr auto;
+  align-items:baseline;gap:0 18px;padding:16px 18px;text-decoration:none}
+.dline .k{font-family:var(--head);font-weight:600;font-size:12px;letter-spacing:.055em;
+  text-transform:uppercase;color:var(--muted);min-width:0;font-variation-settings:'opsz' 14}
+/* O NUMERO E O HEROI. Ele e o produto deste relatorio e tinha 19px contra 10,5px
+   do rotulo: salto pequeno demais pra hierarquia imediata. */
+.dline .v{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:26px;font-weight:700;
+  color:var(--ink);white-space:nowrap;line-height:1.05;letter-spacing:-.015em}
+.dline .go{font-family:var(--head);color:var(--crimson);font-size:16px;align-self:center;
+  grid-column:4;opacity:.5;transition:opacity .18s var(--ease),transform .18s var(--ease)}
+.dline:hover .go,.dline:focus-visible .go{opacity:1;transform:translateX(3px)}
+/* O selo de variacao cai na coluna 1fr e ESTICAVA ate 505px, virando uma pilula
+   vazia atravessando a linha. Ele tem largura propria e e assim que se le. */
+.dline .dlt{justify-self:start;align-self:baseline;margin-left:0}
+/* linha de acao: texto longo, entao o valor ocupa a largura e nao vira coluna */
+.dline.act{grid-template-columns:1fr auto}
+.dline.act .k{grid-column:1/-1;margin-bottom:9px}
+.dline.act .v{white-space:normal;font-family:var(--head);font-size:15px;font-weight:500;line-height:1.45;grid-column:1;min-width:0}
+.dline.act .go{grid-column:2}
+@media (max-width:640px){
+  /* no celular 34ch nao cabe: rotulo em cima, numero embaixo, sem vao nenhum */
+  .dline{grid-template-columns:1fr auto;gap:0 14px;padding:14px 16px}
+  .dline .k{grid-column:1/-1;margin-bottom:4px}
+  .dline .v{grid-column:1;font-size:23px}
+  .dline .go{grid-column:2;grid-row:1/3}
+}
 
 /* ---------- Gráficos desenhados à mão (km/dia, calendário, benchmark, mapa de calor) ---------- */
 .km-cap{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:12px}
@@ -421,13 +704,78 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .kmgrid{stroke:var(--hair);stroke-width:1;opacity:.6}
 .kmbar{fill:var(--crimson);opacity:.82}
 .kmbar.we{fill:var(--muted-2);opacity:.55}
-.kmbar.pk{fill:var(--magenta);opacity:1}
+/* VELA. Corpo = abertura ate fechamento da semana; pavio = pior ao melhor dia.
+   Mesmo par de verde e vermelho das barras, que sao os tons medidos da Phantom. */
+.kmvela.up{fill:#6BE863}
+.kmvela.dn{fill:#EA3336}
+.kmpavio{stroke-width:1.3;opacity:.9}
+.kmpavio.up{stroke:#6BE863}
+.kmpavio.dn{stroke:#EA3336}
+body.light .kmvela.up{fill:#0AA800}
+body.light .kmvela.dn{fill:#FF1216}
+body.light .kmpavio.up{stroke:#0AA800}
+body.light .kmpavio.dn{stroke:#FF1216}
+/* um modo por vez */
+.g-velas{display:none}
+.kmchart.velas .g-barras{display:none}
+.kmchart.velas .g-velas{display:block}
+/* o rotulo do pico aponta um DIA, entao nao faz sentido na leitura semanal */
+.kmchart.velas ~ .km-peak,.kmwrap.velas .km-peak{display:none}
+.km-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.km-top .km-cap{margin-bottom:0}
+.km-modo{flex:0 0 auto}
+.km-leg.leg-velas{display:none}
+.kmwrap.velas .km-leg.leg-barras{display:none}
+.kmwrap.velas .km-leg.leg-velas{display:flex}
+.km-sw.pav{width:3px;height:14px;border-radius:2px;background:var(--muted-2)}
+.km-tip i{display:block;font-style:normal;font-weight:500;font-size:11px;
+  color:var(--muted-2);letter-spacing:0;margin-top:1px}
+.kmbar.up{fill:#6BE863;opacity:.9}
+.kmbar.dn{fill:#EA3336;opacity:.72}
+body.light .kmbar.up{fill:#0AA800;opacity:.92}
+/* O pico tem que vir DEPOIS de .kmbar.up nos dois temas. Enquanto nao vinha,
+   `body.light .kmbar.up` (0,2,1) vencia `.kmbar.pk` (0,2,0) e a barra do dia
+   de pico saia VERDE no tema claro, enquanto a legenda ao lado prometia
+   vermelho: a legenda afirmava uma coisa que o grafico nao cumpria. */
+.kmbar.pk,body.light .kmbar.pk{fill:var(--crimson);opacity:1}
+body.light .kmbar.dn{fill:#FF1216;opacity:.78}
+.kmbar.pk{fill:var(--crimson);opacity:1}   /* pico e ENFASE: na linguagem Leve
+   Imersivo enfase e o vermelho. O mapa de cores trocou magenta por lilas e o
+   pico virou desbotado, que e o oposto de destaque. */
+/* A BARRA SOB O CURSOR. Sem isso o tooltip dizia "14/07" e o olho tinha que
+   adivinhar QUAL barra era: o numero aparecia sem o objeto a que se refere. */
+.kmbar{transition:opacity .12s linear}
+.kmbar.hov{opacity:1}
+.kmplot svg:hover .kmbar:not(.hov){opacity:.34}
+.kmplot svg:focus-visible{outline:2px solid var(--crimson);outline-offset:3px;border-radius:4px}
+/* O rotulo fixo do pico e o tooltip ocupam o MESMO lugar: com o cursor sobre a
+   barra mais alta os dois se sobrepunham e nenhum dos dois se lia. Quem manda
+   e o tooltip, porque responde ao gesto. */
+.kmchart:has(.km-tip.on) .km-peak{opacity:0;transition:opacity .12s linear}
+.km-peak{transition:opacity .18s linear}
 /* rótulos de escala (régua horizontal), no canto esquerdo sobre as linhas */
+/* Vela da trajetoria: corpo do mes anterior ao mes dela, SEM pavio. O nome
+   "Velas" e escolha do Joao, feita depois de eu mostrar o custo: o historico
+   guarda um numero por mes e pavio exige a variacao de dentro do mes, entao
+   aqui a vela nao tem como ter pavio. A pagina diz isso ao lado do grafico,
+   pra ninguem ler a ausencia do pavio como volatilidade zero. */
+.tjvela.up{fill:#6BE863}
+.tjvela.dn{fill:#EA3336}
+body.light .tjvela.up{fill:#0AA800}
+body.light .tjvela.dn{fill:#FF1216}
+.g-velas-tj{display:none}
+.traj.velas .g-velas-tj{display:block}
+.traj.velas .traj-line,.traj.velas .traj-area,.traj.velas .tj-dot,.traj.velas .tj-lab{display:none}
+.nota-velas{display:none}
+.traj.velas .nota-velas{display:block;margin-top:10px}
+.km-scale.sc-velas{display:none}
+.kmchart.velas .km-scale:not(.sc-velas){display:none}
+.kmchart.velas .km-scale.sc-velas{display:block}
 .km-scale{position:absolute;left:0;transform:translateY(-50%);font-family:var(--title);font-weight:700;font-size:10px;line-height:1;color:var(--muted-2);background:var(--bg);padding:1px 4px 1px 0;pointer-events:none}
 /* rótulo do dia de pico, ancorado sobre a barra mais alta */
-.km-peak{position:absolute;top:0;transform:translateX(-50%);font-family:var(--head);font-weight:500;font-size:11px;line-height:1.15;color:var(--muted);white-space:nowrap;text-align:center;pointer-events:none;z-index:2}
-.km-peak b{display:block;font-family:var(--title);color:var(--magenta);font-weight:700;font-size:14px}
-.km-peak::after{content:"";display:block;width:1px;height:8px;background:var(--magenta);margin:3px auto 0;opacity:.7}
+.km-peak{position:absolute;top:0;transform:translateX(-50%);font-family:var(--head);font-weight:500;font-size:11px;line-height:1.15;color:var(--ink);opacity:.82;white-space:nowrap;text-align:center;pointer-events:none;z-index:2}
+.km-peak b{display:block;font-weight:500;font-size:11px;color:inherit;letter-spacing:0}
+.km-peak::after{content:"";display:block;width:1px;height:8px;background:var(--crimson);margin:3px auto 0;opacity:.7}
 /* tooltip por barra · hover no desktop, toque no mobile */
 .km-tip{position:absolute;top:-2px;transform:translate(-50%,-100%);font-family:var(--head);font-weight:500;font-size:12px;white-space:nowrap;color:var(--ink);border-radius:8px;padding:5px 9px;pointer-events:none;opacity:0;transition:opacity .12s;z-index:3}
 .km-tip.on{opacity:1}
@@ -451,26 +799,36 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .traj-plot.in svg{clip-path:inset(-14px -8px -14px -8px);transition:clip-path 1.25s cubic-bezier(.22,1,.36,1) .1s}
 .traj-line{fill:none;stroke:url(#tjStroke);stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .traj-area{fill:url(#tjFill)}
-.tj-dot{position:absolute;width:8px;height:8px;border-radius:50%;transform:translate(-50%,-50%);background:var(--crimson);box-shadow:0 0 0 3px rgba(255,45,75,.15);cursor:pointer;opacity:0;transition:opacity .5s ease .35s;z-index:2}
+.tj-dot{position:absolute;width:8px;height:8px;border-radius:50%;transform:translate(-50%,-50%);background:var(--crimson);box-shadow:0 0 0 3px rgba(236,18,34,.15);cursor:pointer;opacity:0;transition:opacity .5s ease .35s;z-index:2}
 .tj-dot.last{width:11px;height:11px;background:var(--magenta);box-shadow:0 0 0 4px rgba(255,79,160,.16),0 0 18px rgba(255,79,160,.45)}
 .traj-plot.in .tj-dot{opacity:1}
 .tj-lab{position:absolute;transform:translate(-50%,-100%);margin-top:-9px;font-family:var(--head);font-weight:500;font-size:11px;line-height:1.15;color:var(--muted);text-align:center;pointer-events:none;white-space:nowrap;opacity:0;transition:opacity .5s ease .6s;z-index:2}
 .tj-lab b{display:block;font-family:var(--title);color:var(--magenta);font-weight:700;font-size:15px}
+/* O lilas --magenta rende 9,06:1 no tema escuro e 1,91:1 no claro, ou seja,
+   sumia. O comentario do gradiente de texto la em cima ja tinha medido esse
+   mesmo lilas em 1,84:1 e reprovado, mas o conserto nunca chegou neste rotulo,
+   que e o unico numero da pagina que ainda usava a cor crua. */
+body.light .tj-lab b{color:#B80D1A}
 .traj-plot.in .tj-lab{opacity:1}
 .traj-plot .km-tip{transform:translate(-50%,calc(-100% - 9px))}
 .traj-axis{position:relative;height:16px;margin-top:8px}
 .traj-axis span{position:absolute;transform:translateX(-50%);font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted-2);text-transform:lowercase;white-space:nowrap}
 .km-hint{display:block;margin-top:10px;font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted-2)}
 /* eixo de dias sob o gráfico */
-.km-axis{position:relative;height:14px;margin-top:6px}
+.km-axis{position:relative;height:14px;margin-top:11px}
 .km-axis span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--title);font-weight:700;font-size:11px;color:var(--muted-2)}
 .km-leg{margin-top:14px;font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .km-leg b{font-family:var(--title);color:var(--ink);font-weight:700}
 .km-leg .lg{display:inline-flex;align-items:center;gap:6px;margin-right:14px}
 .km-sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 auto}
 .km-sw.wk{background:var(--crimson);opacity:.82}
+.km-sw.at{background:none;border-top:1.6px solid var(--muted-2);height:0;align-self:center;opacity:.6;width:14px}
+.km-sw.up{background:#6BE863}
+.km-sw.dn{background:#EA3336}
+body.light .km-sw.up{background:#0AA800}
+body.light .km-sw.dn{background:#FF1216}
 .km-sw.we{background:var(--muted-2);opacity:.55}
-.km-sw.pk{background:var(--magenta)}
+.km-sw.pk{background:var(--crimson)}
 /* utilização · uma linha por veículo, número grande de dias + barrinha + quadradinhos */
 .km-sub{font-family:var(--head);font-weight:500;font-size:12.5px;letter-spacing:0;color:var(--muted);margin:-4px 0 16px}
 .urow{padding:16px 0}
@@ -499,11 +857,19 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .bbar{height:10px;background:var(--hair);border-radius:6px;overflow:hidden}
 .bbar>i{display:block;height:100%;width:0;border-radius:6px;transition:width .9s cubic-bezier(.22,1,.36,1)}
 .bbar>i.avg{background:linear-gradient(90deg,#7a7280,#9b9096)}
-.bbar>i.you.ok{background:linear-gradient(90deg,#2FB574,#37D18A)}
+.bbar>i.you.ok{background:linear-gradient(90deg,#4FC247,#6BE863)}
 .bbar>i.you.bad{background:linear-gradient(90deg,var(--crimson-2),var(--crimson))}
 .bm-v{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;color:var(--ink);text-align:right}
 .bm-read{font-family:var(--head);font-weight:500;font-size:14px;line-height:1.55;color:var(--muted);margin:12px 0 0}
-.bm-read a{color:var(--crimson);text-decoration:none;border-bottom:1px solid rgba(255,45,75,.35)}
+/* Um fio abaixo de --muted, SO NO CLARO: a frase tem 14px e ficava em 4,49:1
+   contra piso de 4,5, reprovando por 0,2%.
+   Escrever a cor crua aqui, sem separar por tema, foi erro meu de uma rodada
+   atras: um cinza escuro serve aos dois seletores e no tema ESCURO a mesma
+   frase caiu para 1,36:1. Cor fixa em folha de dois temas tem que vir com o
+   tema junto. */
+body.light .bm-read{color:#4A4A52}
+body:not(.light) .bm-read{color:#B4AAB0}   /* o par do escuro, pelo mesmo motivo */
+.bm-read a{color:var(--crimson);text-decoration:none;border-bottom:1px solid rgba(236,18,34,.35)}
 .bm-read a:hover{border-bottom-color:var(--crimson)}
 /* mapa de calor de alertas · 7 dias × 4 períodos, número dentro da célula */
 .hm-wrap{margin-top:8px}
@@ -514,9 +880,32 @@ section.dg{padding:34px 0 0;border-top:0 !important}
 .hm-day{font-family:var(--head);font-weight:500;font-size:12px;letter-spacing:0;color:var(--muted);display:flex;align-items:center}
 .hm-cell{min-height:40px;border-radius:7px;background:var(--hair);display:flex;align-items:center;justify-content:center;
   font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;font-weight:700;color:var(--ink)}
-.hm-cell.z{color:var(--muted-2);font-weight:400}
+/* Com a escala cheia as celulas quentes ficam escuras e o numero sumia dentro
+   do alerta que ele mede. Branco com sombra fina resolve nos dois extremos. */
+/* A celula recebe do JS so o matiz (--hm) e a posicao na rampa (--f). Quanto
+   do matiz entra e contra o que ele se dilui e decidido AQUI, por tema, e por
+   isso trocar de tema repinta o mapa sozinho.
+   Os pisos 62% e 80% nao sao gosto: sao o que faz o numero escuro passar 4,5:1
+   nos dois temas. Diluir no cinza do painel escurece muito mais do que diluir
+   no branco, entao o tema escuro precisa de um piso mais alto pra celula calma
+   nao virar um verde onde nenhuma cor de texto funciona. */
+.hm-cell{font-size:17px;min-height:46px;border-radius:8px;text-shadow:none;font-weight:700;
+  background:color-mix(in oklab, var(--hm,#12B806) calc(80% + var(--f,0) * 20%), #24242A);
+  color:#191310}
+body.light .hm-cell{
+  background:color-mix(in oklab, var(--hm,#12B806) calc(62% + var(--f,0) * 38%), #FFFFFF)}
+/* So o topo da rampa, ja vermelho cheio, inverte pro branco. */
+.hm-cell.quente,body.light .hm-cell.quente{color:#fff}
+/* Reserva pra navegador sem color-mix: cai no matiz cheio, que e legivel. */
+@supports not (background:color-mix(in oklab, red 50%, blue)){
+  .hm-cell,body.light .hm-cell{background:var(--hm,#12B806)}
+}
 .hm-leg{display:flex;align-items:center;gap:10px;margin-top:14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
-.hm-ramp{flex:0 0 120px;height:9px;border-radius:5px;background:linear-gradient(90deg,rgba(255,45,75,.14),var(--crimson))}
+.hm-ramp{flex:0 0 132px;height:10px;border-radius:5px;
+  /* Paradas com a MESMA gama 0,62 das celulas. A rampa reta de antes desenhava
+     uma escala linear que a grade nao usa: a legenda dizia que o meio era
+     amarelo quando na celula o meio ja era laranja. */
+  background:linear-gradient(90deg,rgb(18,184,6) 0%,rgb(215,201,10) 25%,rgb(251,147,13) 50%,rgb(244,85,21) 75%,rgb(234,27,18) 100%)}
 /* trilhos claros no modo claro (o crimson/verde dos preenchimentos é acento e não muda) */
 body.light .bbar{background:#E8E8E6}
 body.light .kmbase{stroke:rgba(0,0,0,.14)}
@@ -541,7 +930,7 @@ body.light .kmbase{stroke:rgba(0,0,0,.14)}
   .hm-ph small{display:none}
   .hm-cell{min-height:36px;font-size:14px}
   .udias b{font-size:20px}
-  .sheet{width:100%;top:auto;bottom:0;height:auto;max-height:86vh;border-left:0;border-top:1px solid rgba(255,45,75,.28);
+  .sheet{width:100%;top:auto;bottom:0;height:auto;max-height:86vh;border-left:0;border-top:1px solid rgba(236,18,34,.28);
     transform:translateY(100%);border-radius:18px 18px 0 0}
   .sheet.open{transform:none}
   .pdfbtn{right:12px;bottom:12px}
@@ -552,14 +941,59 @@ body.light .kmbase{stroke:rgba(0,0,0,.14)}
 /* ---------- Impressão / PDF · fundo CLARO + acentos CRIMSON/MAGENTA da web (web intocada) ---------- */
 /* ---------- MODO CLARO (toggle na tela; mesma regra do print: superfície clara,
    corpo escuro, ACENTOS crimson/magenta intactos) ---------- */
-body.light{--bg:#FAFAF8;--ink:#16161A;--muted:#63636A;--muted-2:#6E6E76;--hair:rgba(0,0,0,.10);--glow:none;background:var(--bg)}
+/* O GRADIENTE E O ARQUIVO DO ORCAMENTO, sem recriacao.
+   Duas tentativas erradas antes desta, e as duas ensinam:
+     1. orbes de CSS aproximando  -> radial-gradient nao reproduz transicao
+        moldada a mao; nunca ia bater.
+     2. a imagem certa com `cover` -> a referencia e RETRATO (1055x1491,
+        proporcao 0,708) e a janela e PAISAGEM (1,600). Cover corta 56% da
+        altura, e o coral da referencia vive de y=60% pra baixo: sumia inteiro.
+   A saida e `100% 100%`: estica pra caber. Em gradiente suave isso nao
+   distorce nada, porque nao ha detalhe pra deformar, e TODA a paleta da peca
+   entra em cena. `fixed` faz a pagina rolar por cima, como no orcamento. */
+/* --muted e --muted-2 escureceram um degrau (de #63636A/#6E6E76). Eles vestem
+   rotulo de 11 a 12,5px, tamanho em que cinza claro ja era limite mesmo sobre
+   papel liso; sobre o gradiente reprovava. */
+body.light{--bg:#FAFAF8;--ink:#16161A;--crimson-txt:#9F0B16;--muted:#4F4F57;--muted-2:#454550;--hair:rgba(0,0,0,.10);--glow:none;
+  /* O GRADIENTE CEDE ONDE O TEXTO MORA E FICA INTEIRO NA MARGEM.
+     Medido: o pior pixel do fundo dentro da coluna de conteudo tinha
+     luminancia 0,409 (um salmao forte). Sobre isso NENHUMA cor de rotulo
+     passava: cinza 2,94, vermelho 2,95, verde 1,81. Escurecer os rotulos ate
+     passarem la exigiria quase preto e acabaria com a leveza da pagina.
+     Este veu de 45% no meio da coluna leva aquele pior pixel a lum 0,652, que
+     e o que faz cinza e vermelho baterem 4,5:1. Ele SOME nas bordas (0% nos
+     dois extremos), que e onde a cor e so decoracao e nao tem texto por cima:
+     de lado o gradiente continua com a forca inteira.
+     A camada NAO pode morar no `.veil`, que roda com opacity .35 e transformaria
+     estes 45% em 15% efetivos. Ja aconteceu. */
+  background:
+    linear-gradient(90deg, rgba(250,250,248,0) 0%, rgba(250,250,248,.32) 6%,
+                           rgba(250,250,248,.45) 18%, rgba(250,250,248,.45) 82%,
+                           rgba(250,250,248,.32) 94%, rgba(250,250,248,0) 100%),
+    url('assets/fundo-orcamento.webp');
+  background-color:var(--bg);
+  background-size:100% 100%, 100% 100%;
+  background-position:center center, center center;
+  background-repeat:no-repeat, no-repeat;
+  background-attachment:fixed, fixed}
+@media (max-width:760px){ body.light{background-attachment:scroll, scroll} }
+/* com a imagem no lugar, os orbes viram ruido por cima dela */
+body.light #rcOrbes{display:none}
 body.light .veil{background:
-  radial-gradient(120% 80% at 50% -10%, rgba(224,30,55,.05), transparent 55%),
+  radial-gradient(120% 80% at 50% -10%, rgba(220,16,33,.05), transparent 55%),
   linear-gradient(180deg, rgba(250,250,248,.25), rgba(250,250,248,.68))}
 body.light .wm-screen{display:none}
 body.light .seal img.wm-print{display:block}
-body.light nav.seg{background:rgba(250,250,248,.86);border-top-color:rgba(0,0,0,.07);border-bottom-color:rgba(0,0,0,.07)}
-body.light nav.seg a.active{color:#C81430;border-color:rgba(200,20,48,.35);background:rgba(224,30,55,.08)}
+/* A FAIXA BRANCA SAI. Com o gradiente do orcamento no fundo, esse retangulo
+   opaco cortava a peca em duas e matava o degrade justamente na altura do
+   indice. A navegacao passa a flutuar sobre o gradiente, separada por um fio
+   fino embaixo e nada mais: e o mesmo principio do orcamento, onde nenhuma
+   faixa de cor interrompe o fundo. */
+body.light nav.seg{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
+  border-top:0;border-bottom:1px solid rgba(23,18,20,.09)}
+body.light nav.seg a.active{color:#0A0A0A}
+body.light nav.seg a::after{background:#B80D1A}
+body.light nav.seg a:hover .n,body.light nav.seg a.active .n{color:#B80D1A}
 body.light .segset{background:#fff;border-color:rgba(0,0,0,.14)}
 body.light .bar{background:#E8E8E6}
 body.light .ring .trk{stroke:#E8E8E6}
@@ -568,17 +1002,22 @@ body.light .seal-dados{box-shadow:inset 0 1px 0 rgba(255,255,255,.42), inset 0 -
 body.light .acard .aq{color:#16161A}
 body.light .indic .it b{color:#0A0A0A}
 body.light .gauge .gbar{background:#E8E8E6}
-body.light .cs.good{color:#1C7A45;background:#E8F5EE}
+/* 16px em negrito ainda NAO e "texto grande" (o piso da WCAG e 18,66px em
+   negrito), entao aqui vale 4,5:1 e nao 3,0. Com #0AA800 dava 3,04. Mesmo
+   verde da etiqueta pequena. */
+body.light .cs.good{color:#0A7A00;background:#E8F5EE}
 body.light .cs.mid{color:#16161A;background:#F1F1F1}
 body.light .cs.warn{color:#B5541C;background:#FBEEE6}
-body.light .anchor{color:#C81430}
-body.light .tag.good{color:#1C7A45;background:#E8F5EE;border-color:rgba(28,122,69,.35)}
+body.light .anchor{color:#B80D1A}
+/* 9,5px NAO e texto grande, entao o piso desta etiqueta e 4,5:1 e nao 3,0.
+   Com #0AA800 ela dava 3,04. Este verde e o mesmo da Phantom um degrau abaixo. */
+body.light .tag.good{color:#0A7A00;background:#E8F5EE;border-color:rgba(10,168,0,.35)}
 body.light .tag.warn{color:#B5541C;background:#FBEEE6;border-color:rgba(181,84,28,.35)}
 body.light .tag.ghost{color:#63636A;background:#F1F1F1;border-color:rgba(0,0,0,.12)}
-body.light .more:hover{background:rgba(224,30,55,.07);color:#C81430}
-body.light .sheet{background:#fff;border-left-color:rgba(224,30,55,.30);border-top-color:rgba(224,30,55,.30);box-shadow:-30px 0 60px rgba(0,0,0,.14)}
+body.light .more:hover{background:rgba(220,16,33,.07);color:#B80D1A}
+body.light .sheet{background:#fff;border-left-color:rgba(220,16,33,.30);border-top-color:rgba(220,16,33,.30);box-shadow:-30px 0 60px rgba(0,0,0,.14)}
 body.light .sheet .sp{color:#0A0A0A}
-body.light .sheet .x:hover{color:#C81430;border-color:rgba(200,20,48,.5)}
+body.light .sheet .x:hover{color:#B80D1A;border-color:rgba(184,13,26,.5)}
 .themebtn{position:fixed;right:16px;bottom:66px;z-index:40;font-family:var(--head);font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
   background:rgba(20,16,20,.82);color:#F3ECE6;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:10px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .themebtn:hover{border-color:rgba(255,255,255,.4)}
@@ -608,7 +1047,7 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .wm-screen{display:none !important}
   .wm-print{display:block !important}
   /* header · texto de corpo escuro; eyebrow/·/badge seguem crimson (nao sobrescritos) */
-  header.top{padding:0 0 14px;border-bottom:1px solid rgba(255,45,75,.35);margin-bottom:6px}
+  header.top{padding:0 0 14px;border-bottom:1px solid rgba(236,18,34,.35);margin-bottom:6px}
   .client{color:#0A0A0A !important}
   .hook{color:#333 !important}                 /* o span .grad "frota" continua crimson */
   .h-meta{color:#7a7a7a !important}
@@ -646,10 +1085,10 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .ring .ctr .l{color:#8a8a8a !important}
   .indic .it{color:#111 !important}
   .indic .it b{color:#0A0A0A !important}
-  .anchor{color:#FF2D4B !important}            /* frase-âncora em crimson (é acento) */
+  .anchor{color:#EC1222 !important}            /* frase-âncora em crimson (é acento) */
   /* etiquetas · o skew e a cor sao a assinatura, sobrevivem ao papel */
-  .tag.solid{background:#E01E37 !important;color:#fff !important;border-color:#E01E37 !important}
-  .tag.good{color:#1c7a45 !important;background:#e8f5ee !important;border-color:#a9d6bd !important}
+  .tag.solid{background:#DC1021 !important;color:#fff !important;border-color:#DC1021 !important}
+  .tag.good{color:#0AA800 !important;background:#e8f5ee !important;border-color:#a9d6bd !important}
   .tag.warn{color:#b5541c !important;background:#fbeee6 !important;border-color:#e2c3ae !important}
   .tag.ghost{color:#5a5a5a !important;background:#f1f1f1 !important;border-color:#d8d8d8 !important}
   /* o metal é reflexo de tela · no papel vira chapa sólida */
@@ -669,11 +1108,11 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .traj-plot svg{clip-path:none !important}
   .tj-dot,.tj-lab{opacity:1 !important}
   /* no PDF o clip do gradiente vaza um fio na base do numeral · crimson solido resolve */
-  .traj-now .tn{background:none !important;-webkit-background-clip:initial !important;background-clip:initial !important;color:#E01E37 !important}
+  .traj-now .tn{background:none !important;-webkit-background-clip:initial !important;background-clip:initial !important;color:#DC1021 !important}
   .col h3{color:#8a8a8a !important}             /* .col.attn h3 segue crimson (nao sobrescrito) */
   .crow{border:0 !important;border-bottom:1px solid #ededed !important;border-radius:0 !important;background:none !important}
   .crow .cp{color:#0A0A0A !important}
-  .cs.good{color:#1c7a45 !important;background:#e8f5ee !important}
+  .cs.good{color:#0AA800 !important;background:#e8f5ee !important}
   .cs.mid{color:#0A0A0A !important;background:#f1f1f1 !important}
   .cs.warn{color:#b5541c !important;background:#fbeee6 !important}
   .crow .cx{color:#5a5a5a !important}
@@ -700,13 +1139,12 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .km-tip{display:none !important}
   .km-sub{color:#5a5a5a !important}
   .ucell{background:#e6e6e6 !important}
-  .ucell.on{background:#FF2D4B !important}
+  .ucell.on{background:#EC1222 !important}
   .uplate{color:#0A0A0A !important}
   .udias{color:#5a5a5a !important}
   .udias b{color:#0A0A0A !important}
   .ubar{background:#e6e6e6 !important}
   .km-cap,.hm-day,.hm-ph,.hm-ph small,.hm-leg,.bm-l,.km-axis span,.km-peak{color:#5a5a5a !important}
-  .km-peak b{color:#C81430 !important}
   .km-leg{color:#5a5a5a !important}
   .km-leg b{color:#0A0A0A !important}
   .bbar{background:#e6e6e6 !important}
@@ -714,8 +1152,11 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
   .bm-name{color:#0A0A0A !important}
   .bm-v{color:#0A0A0A !important}
   .bm-read{color:#444 !important}
-  .hm-cell{color:#0A0A0A !important}
-  .hm-cell.z{background:#ececec !important;color:#9a9a9a !important}
+  /* A cor de fundo e a do numero agora vem inline, calculadas pela rampa.
+     As regras !important que moravam aqui venciam o inline e devolviam o
+     mapa inteiro pro vermelho de antes justo no PDF, que e o que o cliente
+     recebe. Nao repor: o print-color-adjust:exact la em cima ja garante
+     que o fundo saia impresso. */
   .kmwrap,.utilwrap,.mnt-wrap,.bm,.hm-wrap{break-inside:avoid;page-break-inside:avoid}
 }
 @media (prefers-reduced-motion: reduce){
@@ -745,8 +1186,8 @@ body.light .themebtn{background:#fff;color:#16161A;border-color:rgba(0,0,0,.18)}
    --------------------------------------------------------------- */
 body{
   --ease:cubic-bezier(.22,1,.36,1);
-  --lime:#D1FE17;
-  --rosa:#E70055;
+  --coral:#FDAD99;   /* era --lime #D1FE17 */
+  --coral-fundo:#C90E1C;  /* era --rosa #E70055 */
   /* ESCURO · vidro fumê: o brilho mora na aresta de cima, nao na face */
   --glass-b:  rgba(255,255,255,.10);
   --glass-bg: linear-gradient(168deg, rgba(255,255,255,.062) 0%, rgba(255,255,255,.030) 54%, rgba(255,255,255,.048) 100%);
@@ -761,14 +1202,27 @@ body{
     0 26px 56px -20px rgba(0,0,0,.70);
 }
 body.light{
-  /* CLARO · vidro leitoso da landing */
-  --glass-b:  rgba(255,255,255,.72);
-  --glass-bg: linear-gradient(168deg, rgba(255,255,255,.70) 0%, rgba(255,255,255,.50) 54%, rgba(255,255,255,.58) 100%);
+  /* CLARO · vidro leitoso.
+     O cartao era branco translucido a 70% e DEPENDIA do que estava atras: com
+     o gradiente real no lugar, medi 1,02:1 sobre o perola da esquerda (some) e
+     1,58:1 sobre o coral da direita. A mesma linha lia diferente do inicio ao
+     fim, e a culpa nao e do gradiente, e do cartao nao se sustentar sozinho.
+     Agora ele e quase opaco e ganha um fio proprio: passa a ler igual em
+     qualquer ponto, e o gradiente volta a ser pano de fundo em vez de definir
+     a legibilidade do conteudo por cima dele. */
+  --glass-b:  rgba(255,255,255,.94);
+  /* O vidro do tema claro subiu de .955/.90/.93 para quase opaco. Translucido,
+     o cartao deixava a parte laranja do fundo atravessar, e o terceiro cartao
+     de cada fileira, que e o que fica na direita, ficava visivelmente mais rosa
+     que os dois ao lado, derrubando o texto dentro dele para 3,33:1. Cartao e
+     superficie: o que da o efeito de vidro aqui e a sombra e o brilho da borda,
+     nao deixar o fundo passar por dentro do conteudo. */
+  --glass-bg: linear-gradient(168deg, rgba(255,255,255,.995) 0%, rgba(255,255,255,.975) 54%, rgba(255,255,255,.99) 100%);
   --glass-sh:
+    inset 0 0 0 1px rgba(24,20,32,.055),
     inset 0 1px 0 rgba(255,255,255,.95),
-    inset 0 -1px 0 rgba(24,20,32,.045),
-    0 1px 2px rgba(24,20,32,.06),
-    0 18px 44px -16px rgba(24,20,32,.16);
+    0 1px 2px rgba(24,20,32,.05),
+    0 14px 34px -14px rgba(24,20,32,.13);
   --glass-sh-alta:
     inset 0 1px 0 rgba(255,255,255,.95),
     0 2px 4px rgba(24,20,32,.07),
@@ -790,25 +1244,40 @@ body.light{
    Sobre branco, alpha .20 ja pinta; sobre preto o mesmo alpha some, entao
    aqui a luz e mais forte pra CHEGAR na mesma presenca (medida: media de
    diferenca entre a pagina com e sem os orbes, ~2,3 nos dois temas). */
+/* NO ESCURO OS ORBES SOMEM. Eles foram compostos para o tema CLARO, onde o
+   coral e a linguagem Leve Imersivo. Sobre o cinza #0F0F0F do Phantom eles
+   viravam mancha avermelhada subindo pela direita: sujavam justamente o
+   neutro que faz a interface parecer calma em vez de cavernosa. */
+body:not(.light) #rcOrbes{display:none}
 #rcOrbes i:nth-child(1){
   width:46%;height:52%;left:-10%;top:8%;
-  background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.075), rgba(209,254,23,0) 74%);
+  background:radial-gradient(circle at 50% 50%, rgba(253,173,153,.075), rgba(253,173,153,0) 74%);
   animation:rcOrb1 40s ease-in-out infinite alternate;
 }
 #rcOrbes i:nth-child(2){
   width:56%;height:56%;right:-14%;top:34%;
-  background:radial-gradient(circle at 50% 50%, rgba(255,0,91,.20), rgba(255,0,91,0) 76%);
+  background:radial-gradient(circle at 50% 50%, rgba(252,107,93,.20), rgba(252,107,93,0) 76%);
   animation:rcOrb2 48s ease-in-out infinite alternate;
 }
 #rcOrbes i:nth-child(3){
   width:42%;height:52%;left:28%;bottom:-10%;
-  background:radial-gradient(circle at 50% 50%, rgba(255,45,75,.22), rgba(255,45,75,0) 74%);
+  background:radial-gradient(circle at 50% 50%, rgba(143,195,246,.26), rgba(143,195,246,0) 74%);
   animation:rcOrb3 44s ease-in-out infinite alternate;
 }
-/* no claro entra o lime · e o que da o ar da landing */
-body.light #rcOrbes i:nth-child(1){background:radial-gradient(circle at 50% 50%, rgba(209,254,23,.20), rgba(209,254,23,0) 74%)}
-body.light #rcOrbes i:nth-child(2){background:radial-gradient(circle at 50% 50%, rgba(255,0,91,.11), rgba(255,0,91,0) 76%)}
-body.light #rcOrbes i:nth-child(3){background:radial-gradient(circle at 50% 50%, rgba(200,20,48,.13), rgba(200,20,48,0) 74%)}
+/* CLARO · a composicao do orcamento Leve Imersivo, medida no fundo-leve-v2:
+   perola ocupa a esquerda e o centro (repouso), o coral entra pela DIREITA e
+   aprofunda descendo (volume), lilas e azul so aparecem no rodape como
+   reflexo. A troca anterior manteve as posicoes antigas e o fundo virou
+   quase branco: a cor certa no lugar errado nao reproduz a linguagem. */
+body.light #rcOrbes i:nth-child(1){
+  width:58%;height:64%;left:auto;right:-16%;top:-6%;
+  background:radial-gradient(circle at 50% 50%, rgba(253,173,153,.55), rgba(253,173,153,0) 72%)}
+body.light #rcOrbes i:nth-child(2){
+  width:52%;height:58%;left:auto;right:-10%;top:38%;
+  background:radial-gradient(circle at 50% 50%, rgba(252,107,93,.42), rgba(252,107,93,0) 74%)}
+body.light #rcOrbes i:nth-child(3){
+  width:64%;height:44%;left:26%;bottom:-14%;
+  background:radial-gradient(circle at 50% 50%, rgba(209,176,215,.34), rgba(143,195,246,.20) 46%, rgba(143,195,246,0) 76%)}
 @keyframes rcOrb1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(12vw,8vh,0) scale(1.16)}}
 @keyframes rcOrb2{from{transform:translate3d(0,0,0) scale(1.08)}to{transform:translate3d(-10vw,-7vh,0) scale(.94)}}
 @keyframes rcOrb3{from{transform:translate3d(0,0,0) scale(.96)}to{transform:translate3d(-8vw,-9vh,0) scale(1.18)}}
@@ -855,6 +1324,7 @@ footer.bot{border-top:0;margin-top:64px}
 .rrow,
 .crow,
 .km-tip,
+.hero-stat,
 .bm-read{
   border:1px solid var(--glass-b);
   border-radius:16px;
@@ -892,7 +1362,7 @@ footer.bot{border-top:0;margin-top:64px}
 .rrow:focus-visible,
 .crow:focus-visible,
 .dgrid > .dline:focus-visible{outline:2px solid var(--crimson);outline-offset:2px}
-body.light .callout .bolt{background:linear-gradient(180deg,#F2144F,#E70055);box-shadow:none}
+body.light .callout .bolt{background:linear-gradient(180deg,#EC1222,#C90E1C);box-shadow:none}
 .urow,
 .bm{
   border:1px solid var(--glass-b);border-radius:16px;
@@ -904,14 +1374,17 @@ body.light .callout .bolt{background:linear-gradient(180deg,#F2144F,#E70055);box
 #rzMap{border:1px solid var(--glass-b);box-shadow:var(--glass-sh)}
 
 /* ---------------------------------------------------------------
-   4 · NUMERO-HEROI SOLTO  ·  pedido do Joao, vale nos dois temas
-   O `.hero-stat` (48.230 km · MET-4C22 · R$ 1.133) fica sem bloco
-   atras: no escuro ele ja era assim e e o que da a forca do numero.
+   4 · NUMERO-HEROI, AGORA EM CARTAO  ·  01/09/2026
+   Aqui morava a regra "numero-heroi SOLTO", que o Joao tinha pedido
+   com o argumento de que moldura rouba forca do numero. Ele mesmo
+   reverteu, e por um motivo medido: solto, o `.hero-stat` era o
+   UNICO bloco de metrica da pagina flutuando direto sobre o fundo,
+   e nas larguras de tablet o verde do delta caia sobre a faixa viva
+   do gradiente e desabava para 1,64:1, contra piso de 3,0.
+   Em cartao ele para de depender de onde o gradiente esta e fica
+   igual as outras nove fileiras. Se um dia voltar a ficar solto,
+   volta o problema junto: o fundo e um degrade, nao uma cor.
    --------------------------------------------------------------- */
-.hero-stat{
-  background:none;border:0;box-shadow:none;
-  -webkit-backdrop-filter:none;backdrop-filter:none;
-}
 
 /* ---------------------------------------------------------------
    5 · CONTROLES DE VIDRO  ·  chips, filtros e cidades (so no claro:
@@ -988,7 +1461,7 @@ body.light .themebtn:active{transform:translateY(0) scale(.988);transition-durat
    7 · ETIQUETAS  ·  cor viva como SUPERFICIE, texto claro por cima
    --------------------------------------------------------------- */
 body.light .tag{
-  background:linear-gradient(180deg,#F2144F,#E70055);color:#fff;border:0;
+  background:linear-gradient(180deg,#EC1222,#C90E1C);color:#fff;border:0;
   box-shadow:0 6px 16px -8px rgba(231,0,85,.55);
 }
 body.light .tag.ghost{
@@ -1014,7 +1487,7 @@ body.light .tag.ghost{
     rgba(255,255,255,.17)  48%,
     rgba(255,255,255,0)    54%,
     rgba(255,255,255,.10)  59%,
-    rgba(255,45,75,.30)    63%,
+    rgba(236,18,34,.30)    63%,
     rgba(255,255,255,.26)  66%,
     rgba(255,255,255,0)    74%);
   animation:rcGota .82s var(--ease) forwards;
@@ -1047,7 +1520,7 @@ body.light .rc-gota{
 /* O fundo e o blur moram num pseudo-elemento MASCARADO. Se ficassem na
    propria nav, o blur terminaria numa aresta reta de ponta a ponta — que
    e exatamente o fio divisorio que esta camada existe pra nao ter. */
-body.light nav.seg{background:transparent;box-shadow:none;isolation:isolate}
+body.light nav.seg{box-shadow:none;isolation:isolate}
 body.light nav.seg::before{
   content:"";position:absolute;inset:0 0 -22px 0;z-index:-1;pointer-events:none;
   /* A lamina e OPACA na altura dos rotulos e so desvanece num rabo de
@@ -1063,21 +1536,45 @@ body.light nav.seg::before{
    11 · LEGIBILIDADE NO CLARO
    O claro deixou de ser opcao e virou o padrao, entao o que passava
    por ser tema secundario agora precisa cumprir WCAG. O crimson de
-   TELA (#FF2D4B) da ~3,4:1 sobre o papel branco; a peca ja tinha o
-   tom certo pra texto no claro (#C81430, usado em `.anchor`).
+   TELA (#EC1222) da ~3,4:1 sobre o papel branco; a peca ja tinha o
+   tom certo pra texto no claro (#B80D1A, usado em `.anchor`).
    --------------------------------------------------------------- */
+/* #B80D1A ainda ficava em 3,97:1 no `.ck` sobre a parte quente do fundo.
+   Um degrau: e a mesma familia de vermelho, so que sobrevive ao gradiente. */
+/* REGRA DE COR: #EC1222 PINTA, --crimson-txt ESCREVE.
+   O vermelho da marca rende 3,4:1 como letra sobre papel branco e 2,65:1 sobre
+   a parte quente do fundo. Toda vez que ele apareceu como texto nesta pagina
+   reprovou: eyebrow, "o que isso diz", "ver todos", o link do plano e a lista
+   de placas dos alertas. Cada tema tem o seu tom de letra, e e ele que se usa. */
 body.light .eyebrow,
 body.light .callout .ck,
 body.light .dgt,
-body.light .scr{color:#C81430}
-body.light .segset button[aria-pressed="true"]{background:linear-gradient(96deg,#A80D26,#C81430)}
+body.light .bm-read a,
+body.light main a:not(.dline):not(.seg-link){color:var(--crimson-txt)}
+/* o par equivalente no escuro */
+body:not(.light) .eyebrow,
+body:not(.light) .callout .ck,
+body:not(.light) .dgt,
+body:not(.light) nav.seg a:hover .n,
+body:not(.light) nav.seg a.active .n,
+body:not(.light) .bm-read a,
+body:not(.light) main a:not(.dline):not(.seg-link),
+body:not(.light) .more{color:var(--crimson-txt)}
+/* .scr sao as duas dicas de uso do grafico. Estavam pintadas no vermelho da
+   marca, o que fazia a instrucao gritar mais alto que o proprio dado e ler
+   como mensagem de erro. Dica e texto de apoio: fica no tom apagado.
+   REGRA PROPRIA de proposito: `.scr` era o ULTIMO seletor de um grupo separado
+   por virgula, e trocar a cor ali levou junto o eyebrow, o `.ck` e o `.dgt`,
+   que viraram cinza sem ninguem pedir. Grupo de virgula nao se edita pela
+   ponta. */
+body.light .scr{color:var(--muted-2)}
+body.light .segset button[aria-pressed="true"]{background:linear-gradient(96deg,#A80D26,#B80D1A)}
 body.light .tag.warn,
 body.light .cs.warn{color:#8A3E10}
 /* o "·" do mapa de calor sobre a celula mais clara dava 3,5:1 */
-body.light .hm-cell.z{color:#4F4F57}
 /* o "Baixar PDF" no escuro dava 4,44:1 · o crimson de tela e claro demais
    pra carregar texto branco em corpo pequeno */
-body:not(.light) .pdfbtn{background:linear-gradient(96deg,#C81430,#DD1B34)}
+body:not(.light) .pdfbtn{background:linear-gradient(96deg,#B80D1A,#DD1B34)}
 
 /* ---------------------------------------------------------------
    9b · CARREGANDO / ERRO  ·  a tela de servico segue o tema
@@ -1093,7 +1590,7 @@ body:not(.light) .pdfbtn{background:linear-gradient(96deg,#C81430,#DD1B34)}
 }
 body.light .rc-ovl{background:var(--bg);color:var(--ink)}
 .rc-ovl .k{font-family:var(--mono);font-size:12px;letter-spacing:.22em;color:var(--crimson);margin-bottom:12px}
-body.light .rc-ovl .k{color:#C81430}
+body.light .rc-ovl .k{color:#B80D1A}
 .rc-ovl .t{font-family:var(--title);font-size:19px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
 .rc-ovl .s{font-weight:500;font-size:14px;color:var(--muted);letter-spacing:0;line-height:1.5}
 
@@ -1151,6 +1648,7 @@ footer.bot{padding-bottom:104px}
 <header class="top">
   <div class="wrap">
     <div class="seal">
+      <img class="logo-r" src="assets/logo-R.png" alt="" aria-hidden="true">
       <img class="wm wm-screen" src="assets/wordmark-white.png" alt="Rastcar">
       <img class="wm wm-print" src="assets/wordmark-red.png" alt="Rastcar">
       <span class="eyebrow">Inteligência</span>
@@ -1228,10 +1726,22 @@ function __boot(){
     if(!ANT || ant==null || !isFinite(ant) || ant===0) return '';
     var p = Math.round((atual/ant - 1) * 100);
     var rot = ANT.periodo ? ' vs ' + ANT.periodo.toLowerCase().replace('·','de') : ' vs mês anterior';
-    if(p===0) return '<span class="dlt neu">= '+rot.trim()+'</span>';
+    /* FORMATO PHANTOM: sinal e percentual entre parenteses, sem pilula.
+       No app do Joao a leitura e "+R$ 31,37 (+73.57%)": a variacao vive DENTRO
+       de parenteses, colada ao valor, sem fundo nem borda. A pilula competia
+       com o proprio numero que ela qualifica. */
+    if(p===0) return '<span class="dlt neu">(estavel'+rot+')</span>';
     var sobe = p>0;
-    var cls = modo==='neutro' ? 'neu' : ((modo==='sobe-bom')===sobe ? 'good' : 'bad');
-    return '<span class="dlt '+cls+'">'+(sobe?'\u2191':'\u2193')+' '+Math.abs(p)+'%'+rot+'</span>';
+    /* CRESCIMENTO POSITIVO E SEMPRE VERDE (pedido do Joao). O modo 'neutro'
+       pintava de CINZA variacoes que sao boas: km rodado subindo e frota
+       trabalhando mais, horas de motor subindo e producao. Cinza nao le como
+       nada, e o leitor perdia a direcao do mes. Agora 'neutro' significa
+       apenas que a metrica nao tem lado ruim, e sobe = verde, desce = vermelho.
+       Quem tem lado ruim de verdade usa 'sobe-bom' ou 'desce-bom', e ai a cor
+       segue a semantica, nao o sinal. */
+    var cls = modo==='neutro' ? (sobe?'good':'bad')
+            : ((modo==='sobe-bom')===sobe ? 'good' : 'bad');
+    return '<span class="dlt '+cls+'">('+(sobe?'+':'\u2212')+Math.abs(p)+'%'+rot+')</span>';
   }
 
   // ---------- Trajet\u00f3ria da frota (D.historico, um ponto gravado por m\u00eas pelo Builder) ----------
@@ -1285,8 +1795,12 @@ function __boot(){
     var chip='';
     if(val(prev)>0){
       var pc=Math.round((val(atual)/val(prev)-1)*100), rotc=' vs '+mesNome(prev.mes);
-      chip = pc===0 ? '<span class="dlt neu">= '+rotc.trim()+'</span>'
-        : '<span class="dlt '+(usaScore?(pc>0?'good':'bad'):'neu')+'">'+(pc>0?'\u2191':'\u2193')+' '+Math.abs(pc)+'%'+rotc+'</span>';
+      /* PARENTESES, igual ao resto da pagina (pedido do Joao). Este era o
+         ultimo chip que tinha ficado no formato antigo de seta e pilula, e
+         justamente o que aparece ao lado do numero grande da trajetoria. */
+      chip = pc===0 ? '<span class="dlt neu">(est\u00e1vel'+rotc+')</span>'
+        : '<span class="dlt '+(usaScore?(pc>0?'good':'bad'):'neu')+'">('
+          +(pc>0?'+':'\u2212')+Math.abs(pc)+'%'+rotc+')</span>';
     }
     // conclusao factual, derivada da propria curva (nada fixo, nada inventado)
     var frase;
@@ -1300,29 +1814,60 @@ function __boot(){
         : 'De '+mesNome(pts[0].mes)+' a '+mesNome(atual.mes)+', a frota foi de '+nf(val(pts[0]))+' a '+nf(val(atual))+' km no m\u00eas.';
     }
     if(n===2) frase+=' O hist\u00f3rico da sua frota come\u00e7ou a ser escrito, um ponto novo entra a cada relat\u00f3rio.';
+    /* ---------- LEITURA EM VELA (mes a mes) ----------
+       O que ESTA vela tem e o que ela NAO tem, pra ninguem se enganar depois:
+       a trajetoria guarda UM numero por mes. O corpo e real, do mes anterior ao
+       mes dela. O PAVIO NAO EXISTE, porque nao ha serie dentro do mes no
+       historico, e pavio e exatamente a variacao interna do periodo.
+       Eu tinha construido isso como "Colunas" e mostrado o custo do nome; o
+       Joao escolheu "Velas" sabendo disso. A nota ao lado do grafico fica, e
+       ela e o que impede alguem de ler pavio ausente como oscilacao zero.
+       Se um dia entrar serie intra-mes no historico, o pavio nasce aqui. */
+    var colunas='';
+    (function(){
+      var larg=(W/n)*0.42;
+      colunas=pts.map(function(h,i){
+        if(i===0) return '';
+        var v0=val(pts[i-1]), v1=val(h);
+        var y0=Y(v0), y1=Y(v1);
+        var topo=Math.min(y0,y1), alt=Math.max(0.9,Math.abs(y1-y0));
+        var dir=(v1>=v0)?'up':'dn';
+        return '<rect class="tjvela '+dir+'" x="'+(X(i)/100*W-larg/2).toFixed(2)+'" y="'+topo.toFixed(2)
+             + '" width="'+larg.toFixed(2)+'" height="'+alt.toFixed(2)+'"></rect>';
+      }).join('');
+    })();
     TJ={now:val(atual), dec:0};
     return '<div class="traj reveal">'+
       '<div class="traj-head"><div>'+
-        '<div class="km-cap">Trajet\u00f3ria da frota</div>'+
+        '<div class="km-top">'+
+          '<div class="km-cap">Trajet\u00f3ria da frota</div>'+
+          '<div class="segset km-modo" id="tjModo" role="group" aria-label="Formato do gr\u00e1fico">'+
+            '<button type="button" data-modo="linha" aria-pressed="true">Linha</button>'+
+            '<button type="button" data-modo="velas" aria-pressed="false">Velas</button>'+
+          '</div>'+
+        '</div>'+
         '<div class="traj-now"><span class="tn grad" id="tjNow">0</span>'+
           '<span class="tu">'+(usaScore?'score de condu\u00e7\u00e3o, 0 a 100':'km rodados no m\u00eas')+chip+'</span></div>'+
       '</div></div>'+
       '<div class="traj-plot">'+
         '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="Evolu\u00e7\u00e3o mensal da frota">'+
           '<defs>'+
-            '<linearGradient id="tjStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF5A72"/><stop offset=".55" stop-color="#FF2D4B"/><stop offset="1" stop-color="#FF4FA0"/></linearGradient>'+
-            '<linearGradient id="tjFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF2D4B" stop-opacity=".16"/><stop offset="1" stop-color="#FF2D4B" stop-opacity="0"/></linearGradient>'+
+            '<linearGradient id="tjStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FD6D5D"/><stop offset=".55" stop-color="#EC1222"/><stop offset="1" stop-color="#D1B0D7"/></linearGradient>'+
+            '<linearGradient id="tjFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EC1222" stop-opacity=".16"/><stop offset="1" stop-color="#EC1222" stop-opacity="0"/></linearGradient>'+
           '</defs>'+
           '<path class="traj-area" d="'+dArea+'"></path>'+
           /* pathLength normaliza a regua do dash: com non-scaling-stroke o Chromium mede
              o dash em px de tela e a linha sairia falhada no path esticado */
           '<path class="traj-line" d="'+dLine+'" pathLength="100"></path>'+
+          '<g class="g-velas-tj">'+colunas+'</g>'+
         '</svg>'+
         dots+lab+
         '<span class="km-tip" id="tjTip"></span>'+
       '</div>'+
       '<div class="traj-axis">'+axis+'</div>'+
-      '<span class="km-hint scr">passe o mouse ou toque num ponto para ver o m\u00eas</span>'+
+      '<span class="km-hint scr">aponte um ponto para ver o m\u00eas</span>'+
+      '<p class="note nota-velas">Cada vela vai do m\u00eas anterior ao m\u00eas dela: verde subiu, vermelho caiu. '+
+        'Sem pavio, porque o hist\u00f3rico guarda um n\u00famero por m\u00eas e o pavio exige a varia\u00e7\u00e3o de dentro do m\u00eas.</p>'+
       insightHtml(frase)+
     '</div>';
   }
@@ -1419,7 +1964,7 @@ function __boot(){
     var h=''+
       '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['resumo']+' Resumo do mês</span>'+
         '<h2>O panorama de '+esc(mes)+'</h2>'+
-        '<p class="sub">O essencial primeiro, o detalhe está nas seções a seguir.</p></div>'+
+        '<p class="sub">Se você só ler esta seção, já sabe como foi o mês.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad" id="hzKm">0</span>'+
         '<span class="cap"><span class="u">km rodados no mês '+deltaChip(r.km_mes, ANT&&ANT.km_mes, 'neutro')+'</span><span class="lbl">frota sob monitoramento contínuo</span></span></div>';
     /* INDICE DE EFICIENCIA (toque Oracle): UM numero executivo 0 a 100, media simples das
@@ -1498,6 +2043,19 @@ function __boot(){
         requestAnimationFrame(function(){ tp.classList.add('in'); });
       });
       var tip=el('tjTip');
+      /* seletor Linha / Colunas · mesmo padrao do grafico de km: o estado vira
+         classe no `.traj` e o CSS troca curva por coluna, some com os pontos e
+         acende a nota que explica por que nao ha pavio aqui */
+      var tjm=el('tjModo'), trajBox=tp.closest('.traj');
+      if(tjm && trajBox){
+        tjm.addEventListener('click',function(ev){
+          var b=ev.target.closest('button[data-modo]'); if(!b) return;
+          trajBox.classList.toggle('velas', b.getAttribute('data-modo')==='velas');
+          Array.prototype.forEach.call(tjm.querySelectorAll('button'),function(x){
+            x.setAttribute('aria-pressed', String(x===b)); });
+          tip.classList.remove('on');
+        });
+      }
       function showTip(d){ tip.innerHTML=d.getAttribute('data-tip'); tip.style.left=d.style.left; tip.style.top=d.style.top; tip.classList.add('on'); }
       Array.prototype.forEach.call(tp.querySelectorAll('.tj-dot'),function(d){
         d.addEventListener('mouseenter',function(){ showTip(d); });
@@ -1515,14 +2073,109 @@ function __boot(){
   function kmChartHtml(){
     var arr=(D.km_diario||[]); if(!arr.length) return '';
     var max=arr.reduce(function(m,x){ return Math.max(m,x.km||0); },0); if(max<=0) return '';
+    /* QUANTOS VEICULOS RODARAM EM CADA DIA. A soma sozinha engana: no dia 4 a
+       frota fez 420 km, que no grafico e uma barra minuscula lendo como dia
+       ruim, mas foi UM veiculo sozinho fazendo 420 km, o maior por veiculo do
+       mes inteiro. O `mapa` de cada placa e binario (rodou ou nao), entao km
+       por veiculo nao existe; mas a CONTAGEM de ativos existe, e com ela a
+       media por ativo passa a ser calculavel. */
+    var UT=(D.utilizacao||{}), PP=(UT.por_placa||[]);
+    var ativos=arr.map(function(_,i){
+      return PP.reduce(function(s,v){ return s+(((v.mapa||[])[i])?1:0); },0); });
+    var porAtivo=arr.map(function(x,i){ return ativos[i]?Math.round((x.km||0)/ativos[i]):null; });
     var peakIdx=0; arr.forEach(function(x,i){ if((x.km||0)>(arr[peakIdx].km||0)) peakIdx=i; });
     var peak=arr[peakIdx];
     var n=arr.length, H=44, base=H-1, topPad=3, bw=0.66;
     function yOf(v){ return base-((v||0)/max)*(base-topPad); }
     var bars=arr.map(function(x,i){
       var alt=Math.max(0.7,((x.km||0)/max)*(base-topPad));
-      var cls='kmbar'+(isFimDeSemana(x.d)?' we':'')+(i===peakIdx?' pk':'');
-      return '<rect class="'+cls+'" x="'+(i+(1-bw)/2).toFixed(3)+'" y="'+(base-alt).toFixed(2)+'" width="'+bw+'" height="'+alt.toFixed(2)+'"></rect>';
+      /* DIRECAO NA COR (pedido do Joao): cada dia comparado ao anterior.
+         Rodou mais que ontem = verde; menos = vermelho. Fim de semana fica
+         cinza porque ali "menos" e esperado e nao e piora. */
+      var ant=i>0?(arr[i-1].km||0):null;
+      var dir=(ant===null||isFimDeSemana(x.d))?'':((x.km||0)>=ant?' up':' dn');
+      var cls='kmbar'+(isFimDeSemana(x.d)?' we':dir)+(i===peakIdx?' pk':'');
+      /* o contexto viaja NA BARRA. O tooltip vive noutro closure e nao enxerga
+         `ativos`; passar pelo DOM e o caminho curto e nao cria variavel global. */
+      return '<rect class="'+cls+'" data-i="'+i+'" data-at="'+ativos[i]+'"'
+        + (porAtivo[i]?' data-pa="'+porAtivo[i]+'"':'')
+        + ' x="'+(i+(1-bw)/2).toFixed(3)+'" y="'+(base-alt).toFixed(2)+'" width="'+bw+'" height="'+alt.toFixed(2)+'"></rect>';
+    }).join('');
+    /* A LINHA CINZA DOS "VEICULOS RODANDO" SAIU (pedido do Joao, 01/09).
+       Ela cruzava por cima das barras e virava ruido em cima do dado principal.
+       O numero NAO se perdeu: continua na dica ao apontar o dia, que ja diz
+       "15 veiculos, 179 km cada". Grafico mostra uma coisa; o detalhe fica no
+       toque, nao empilhado. */
+
+    /* ---------- LEITURA EM VELA ----------
+       Vela de verdade carrega QUATRO numeros por periodo: abertura, maxima,
+       minima e fechamento. O relatorio tem UM por dia. Entao a vela aqui e
+       SEMANAL, e os quatro numeros sao medidos de verdade: abre no primeiro dia
+       da semana, fecha no ultimo, e o pavio vai do pior ao melhor dia dela.
+       A alternativa seria vela diaria com abertura igual ao fechamento da
+       vespera: o corpo daria exatamente a barra que ja existe e o pavio seria
+       sempre zero, ou seja, uma vela que finge quatro numeros tendo dois. */
+    var semanas=[], sem=null;
+    arr.forEach(function(x,i){
+      var dow=new Date((x.d||'')+'T12:00:00').getDay();   // 0 = domingo
+      if(sem===null || dow===1){ sem={i0:i,i1:i,dias:[]}; semanas.push(sem); }
+      sem.i1=i; sem.dias.push(x);
+    });
+    /* ESCALA PROPRIA DA VELA.
+       Barra PRECISA nascer no zero, senao a altura mente sobre a proporcao.
+       Vela nao: ela mostra faixa, e comecar no zero jogava as cinco velas no
+       terco de cima do quadro e deixava 70% do grafico vazio. Aqui a escala vai
+       do menor ao maior valor das proprias velas, com uma folga de 8%, que e o
+       que a Phantom faz. Os dois modos tem grade e regua proprias por isso. */
+    var faixaV=(function(){
+      var lows=[], highs=[];
+      semanas.forEach(function(s){
+        var u=s.dias.filter(function(d){ return !isFimDeSemana(d.d); }).map(function(d){ return d.km||0; });
+        var ser=u.length?u:s.dias.map(function(d){ return d.km||0; });
+        lows.push(Math.min.apply(null,ser)); highs.push(Math.max.apply(null,ser));
+      });
+      var lo=Math.min.apply(null,lows), hi=Math.max.apply(null,highs);
+      var folga=Math.max(1,(hi-lo))*0.08;
+      return {lo:Math.max(0,lo-folga), hi:hi+folga};
+    })();
+    function yV(v){
+      var d=(faixaV.hi-faixaV.lo)||1;
+      return base-((v-faixaV.lo)/d)*(base-topPad);
+    }
+    var velas=semanas.map(function(s,k){
+      var v=s.dias.map(function(d){ return d.km||0; });
+      /* ABERTURA E FECHAMENTO SAO DIAS UTEIS, e isso nao e detalhe.
+         Com a semana abrindo na segunda e fechando no domingo, o fechamento
+         caia sempre num fim de semana parado e TODA vela do mes saia vermelha,
+         em todo mes: uma leitura que da a mesma resposta sempre nao informa
+         nada. Abre no primeiro dia util da semana e fecha no ultimo, entao o
+         corpo responde "a semana de trabalho terminou mais forte do que
+         comecou?". O pavio continua cobrindo os SETE dias, entao o fim de
+         semana parado aparece como minima, que e onde ele pertence. */
+      var uteisSem=s.dias.filter(function(d){ return !isFimDeSemana(d.d); })
+                         .map(function(d){ return d.km||0; });
+      var serie=uteisSem.length?uteisSem:v;
+      /* O PAVIO TAMBEM E SO DIA UTIL. Cobrindo os sete dias, a minima caia no
+         domingo parado em TODA semana e o pavio de baixo virava um traco
+         constante ate o chao: de novo uma marca que aparece sempre e por isso
+         nao informa nada, e que ainda espremia o corpo ate virar risco. Sendo
+         a semana de TRABALHO inteira, o pavio passa a medir a distancia entre
+         o melhor e o pior dia util, que e volatilidade de verdade. O fim de
+         semana continua visivel na leitura em barras, em cinza. */
+      var ab=serie[0], fe=serie[serie.length-1],
+          hi=Math.max.apply(null,serie), lo=Math.min.apply(null,serie);
+      var cx=(s.i0+s.i1+1)/2, larg=Math.max(0.5,(s.i1-s.i0+1)*0.44);
+      var yTopo=yV(Math.max(ab,fe)), yBase=yV(Math.min(ab,fe));
+      var alt=Math.max(0.8, yBase-yTopo);
+      var dir=(fe>=ab)?'up':'dn';
+      var d0=(s.dias[0].d||'').split('-'), d1=(s.dias[s.dias.length-1].d||'').split('-');
+      return '<line class="kmpavio '+dir+'" x1="'+cx.toFixed(3)+'" y1="'+yV(hi).toFixed(2)
+           + '" x2="'+cx.toFixed(3)+'" y2="'+yV(lo).toFixed(2)+'" vector-effect="non-scaling-stroke"></line>'
+           + '<rect class="kmvela '+dir+'" data-i0="'+s.i0+'" data-i1="'+s.i1
+           + '" data-ab="'+ab+'" data-fe="'+fe+'" data-hi="'+hi+'" data-lo="'+lo
+           + '" data-de="'+(d0[2]||'')+'/'+(d0[1]||'')+'" data-ate="'+(d1[2]||'')+'/'+(d1[1]||'')
+           + '" x="'+(cx-larg/2).toFixed(3)+'" y="'+yTopo.toFixed(2)
+           + '" width="'+larg.toFixed(3)+'" height="'+alt.toFixed(2)+'"></rect>';
     }).join('');
     // régua horizontal · passo "bonito" (múltiplo de 1/2/5 × 10^k) calculado do próprio dado
     var pow=Math.pow(10,Math.floor(Math.log10(max))), f=max/pow;
@@ -1533,6 +2186,19 @@ function __boot(){
       grid+='<line class="kmgrid" x1="0" y1="'+yy+'" x2="'+n+'" y2="'+yy+'" vector-effect="non-scaling-stroke"></line>';
       scale+='<span class="km-scale" style="top:'+((yOf(g)/H)*100).toFixed(2)+'%">'+nf(g)+'</span>';
     }
+    // a mesma regua "bonita", agora dentro da faixa das velas
+    var gridV='', scaleV='';
+    (function(){
+      var ext=faixaV.hi-faixaV.lo; if(ext<=0) return;
+      var pw=Math.pow(10,Math.floor(Math.log10(ext))), ff=ext/pw;
+      var st=(ff>=5?pw:(ff>=2.5?pw/2:(ff>=1.2?pw/5:pw/10)));
+      var g0=Math.ceil(faixaV.lo/st)*st;
+      for(var g=g0; g<faixaV.hi; g+=st){
+        var yy=yV(g).toFixed(2);
+        gridV+='<line class="kmgrid" x1="0" y1="'+yy+'" x2="'+n+'" y2="'+yy+'" vector-effect="non-scaling-stroke"></line>';
+        scaleV+='<span class="km-scale sc-velas" style="top:'+((yV(g)/H)*100).toFixed(2)+'%">'+nf(Math.round(g))+'</span>';
+      }
+    })();
     // eixo de dias visível · rótulos 1,5,10,15,20,25 e o último dia (mês curto mostra todos)
     var marcos={1:1,5:1,10:1,15:1,20:1,25:1};
     var axis=arr.map(function(x,i){
@@ -1555,22 +2221,32 @@ function __boot(){
         : ', fins de semana também rodando forte'; }
     var conc='Média de '+nf(medUtil)+' km por dia útil, pico de '+nf(peak.km)+' km em '+pkTxt+fdsFrase+'.';
     return '<div class="kmwrap reveal">'+
-      '<div class="km-cap">Quanto sua frota rodou por dia</div>'+
+      '<div class="km-top">'+
+        '<div class="km-cap">Quanto sua frota rodou por dia</div>'+
+        '<div class="segset km-modo" id="kmModo" role="group" aria-label="Formato do gráfico">'+
+          '<button type="button" data-modo="barras" aria-pressed="true">Barras</button>'+
+          '<button type="button" data-modo="velas" aria-pressed="false">Velas</button>'+
+        '</div>'+
+      '</div>'+
       '<div class="kmchart">'+
         '<span class="km-peak" style="left:'+peakLeft+'%"><b>'+nf(peak.km)+' km</b>'+pkTxt+'</span>'+
         '<div class="kmplot">'+
           '<svg viewBox="0 0 '+n+' '+H+'" preserveAspectRatio="none" role="img" aria-label="Quilômetros rodados pela frota em cada dia do mês">'+
-            grid+
-            '<line class="kmbase" x1="0" y1="'+base+'" x2="'+n+'" y2="'+base+'" vector-effect="non-scaling-stroke"></line>'+bars+'</svg>'+
-          scale+
+            '<g class="g-barras">'+grid+
+              '<line class="kmbase" x1="0" y1="'+base+'" x2="'+n+'" y2="'+base+'" vector-effect="non-scaling-stroke"></line>'+bars+'</g>'+
+            '<g class="g-velas">'+gridV+velas+'</g></svg>'+
+          scale+scaleV+
           '<span class="km-tip" id="kmTip"></span>'+
         '</div>'+
       '</div>'+
       '<div class="km-axis">'+axis+'</div>'+
-      '<div class="km-leg"><span class="lg"><span class="km-sw wk"></span>dias úteis</span>'+
+      '<div class="km-leg leg-barras"><span class="lg"><span class="km-sw up"></span>rodou mais que na véspera</span>'+'<span class="lg"><span class="km-sw dn"></span>rodou menos</span>'+
         '<span class="lg"><span class="km-sw we"></span>fins de semana</span>'+
         '<span class="lg"><span class="km-sw pk"></span>dia de pico</span></div>'+
-      '<span class="km-hint scr">passe o mouse ou toque numa barra para ver o dia</span>'+
+      '<div class="km-leg leg-velas"><span class="lg"><span class="km-sw up"></span>semana fechou acima de onde abriu</span>'+
+        '<span class="lg"><span class="km-sw dn"></span>fechou abaixo</span>'+
+        '<span class="lg"><span class="km-sw pav"></span>pavio, do pior ao melhor dia útil</span></div>'+
+      '<span class="km-hint scr">aponte um dia para ver o detalhe, ou percorra com as setas do teclado</span>'+
       insightHtml(conc)+
     '</div>';
   }
@@ -1643,7 +2319,7 @@ function __boot(){
     var h=''+
       '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['movimento']+' Frota em movimento</span>'+
         '<h2>Quem mais trabalhou no mês</h2>'+
-        '<p class="sub scr">Toque num veículo para ver a ficha completa.</p></div>'+
+        '<p class="sub scr">Abra qualquer veículo para a ficha completa.</p></div>'+
       '<div class="hero-stat reveal"><span class="big grad">'+esc(top1.placa)+'</span>'+
         '<span class="cap"><span class="u">'+esc(top1.modelo)+'</span><span class="lbl">'+
         (top1.km!=null ? ('o mais rodado, '+nf(top1.km)+' km') : ('o que mais trabalhou, '+nf(top1.horas||0)+' h de motor'))+
@@ -1658,7 +2334,7 @@ function __boot(){
           '<button data-t="maquinas" aria-pressed="false">Máquinas</button></div>'):'')+
         '<div class="segset" id="mvFilter" role="group" aria-label="Filtro de veículos">'+
           '<button data-f="todos" aria-pressed="true">Todos</button><button data-f="ociosos" aria-pressed="false">Só ociosos</button></div>'+
-        '<span class="rank-hint">toque numa linha para a ficha</span>'+
+        '<span class="rank-hint">abra uma linha para a ficha do veículo</span>'+
       '</div>'+
       '<div class="rank" id="mvRank"></div>'+
       '<div id="mvMoreWrap"></div>'+
@@ -1668,7 +2344,7 @@ function __boot(){
       mntHtml()+
       ((D.rotas_calor&&D.rotas_calor.pontos&&D.rotas_calor.pontos.length)?(
         '<div class="heat-wrap reveal">'+
-          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque">, toque numa placa ou numa cidade</span></div>'+
+          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque"> · abra uma placa ou uma cidade</span></div>'+
           '<div id="rzMap" role="img" aria-label="Mapa com a posição dos veículos da frota na zona onde ficaram mais tempo"></div>'+
           ((D.rotas_calor.cidades&&D.rotas_calor.cidades.length)?('<div class="heat-cities">'+
             D.rotas_calor.cidades.map(function(c){ return '<span class="hc"><b>'+esc(c.nome)+'</b> '+c.pct+'%</span>'; }).join('')+
@@ -1726,7 +2402,7 @@ function __boot(){
       el('utilRows').innerHTML=shown.map(function(pv){ return utilRowHtml(uU,pv,uNd); }).join('');
       var mw=el('utilMoreWrap');
       if(!showAll && uLista.length>5){
-        mw.innerHTML='<button class="more" id="utilMore">Ver todos os '+uLista.length+' veículos, expandir</button>';
+        mw.innerHTML='<button class="more" id="utilMore">Ver todos os '+uLista.length+' veículos</button>';
         el('utilMore').addEventListener('click',function(){ util.expanded=true; renderUtil(); });
       } else if(util.expanded && uLista.length>5){
         mw.innerHTML='<button class="more" id="utilLess">Mostrar só os 5 primeiros</button>';
@@ -1740,6 +2416,21 @@ function __boot(){
       var chart=sec.querySelector('.kmchart'); if(!chart) return;
       var svg=chart.querySelector('svg'), tip=el('kmTip'), arr=(D.km_diario||[]), n=arr.length;
       if(!svg||!tip||!n) return;
+      /* SELETOR BARRAS / VELAS. O estado mora numa classe no `.kmwrap`, nao numa
+         variavel: assim o CSS troca o desenho, a legenda e o rotulo do pico de
+         uma vez, e a dica so precisa perguntar em que modo esta. */
+      var wrap=chart.closest('.kmwrap'), modo=el('kmModo');
+      if(modo){
+        modo.addEventListener('click',function(ev){
+          var b=ev.target.closest('button[data-modo]'); if(!b) return;
+          var vela=b.getAttribute('data-modo')==='velas';
+          wrap.classList.toggle('velas',vela);
+          chart.classList.toggle('velas',vela);
+          Array.prototype.forEach.call(modo.querySelectorAll('button'),function(x){
+            x.setAttribute('aria-pressed', String(x===b)); });
+          hide();
+        });
+      }
       var kmMax=arr.reduce(function(m,x){ return Math.max(m,x.km||0); },0)||1;
       function fmtD(d){ var pp=(d||'').split('-'); return (pp[2]||'')+'/'+(pp[1]||''); }
       function show(clientX){
@@ -1747,14 +2438,71 @@ function __boot(){
         var idx=Math.floor(((clientX-r.left)/r.width)*n);
         if(idx<0) idx=0; if(idx>=n) idx=n-1;
         var x=arr[idx]; if(!x) return;
-        tip.innerHTML='<b>'+fmtD(x.d)+'</b>, '+nf(x.km||0)+' km';
-        tip.style.left=(((idx+0.5)/n)*100).toFixed(2)+'%';
-        // aparece logo acima do TOPO da barra do dia (perto de onde o olho está), não num topo fixo
-        var H=44, base=H-1, topPad=3, yTop=base-((x.km||0)/kmMax)*(base-topPad);
+        var H=44, base=H-1, topPad=3, yTop, esq;
+        if(chart.classList.contains('velas')){
+          /* na leitura semanal a dica fala da SEMANA que contem o dia apontado,
+             e mostra os quatro numeros que a vela desenha */
+          var v=null, cands=svg.querySelectorAll('.kmvela');
+          for(var q=0;q<cands.length;q++){
+            if(idx>=+cands[q].getAttribute('data-i0') && idx<=+cands[q].getAttribute('data-i1')){ v=cands[q]; break; }
+          }
+          if(!v) return;
+          var ab=+v.getAttribute('data-ab'), fe=+v.getAttribute('data-fe'),
+              hi=+v.getAttribute('data-hi'), lo=+v.getAttribute('data-lo'),
+              i0=+v.getAttribute('data-i0'), i1=+v.getAttribute('data-i1');
+          tip.innerHTML='<b>'+v.getAttribute('data-de')+' a '+v.getAttribute('data-ate')+'</b>'
+            + '<i>abriu '+nf(ab)+', fechou '+nf(fe)+' km'
+            + '<br>melhor dia '+nf(hi)+', pior '+nf(lo)+'</i>';
+          esq=(((i0+i1+1)/2)/n)*100;
+          yTop=base-(Math.max(ab,fe)/kmMax)*(base-topPad);
+          marcarVela(v);
+        } else {
+          var bar=svg.querySelector('.kmbar[data-i="'+idx+'"]');
+          var at=bar?bar.getAttribute('data-at'):null;
+          var pa=bar?bar.getAttribute('data-pa'):null;
+          tip.innerHTML='<b>'+fmtD(x.d)+'</b>, '+nf(x.km||0)+' km'
+            + (at!=null ? '<i>'+at+(at==='1'?' veículo':' veículos')
+                         + (pa? ', '+nf(pa)+' km cada':'') +'</i>' : '');
+          esq=((idx+0.5)/n)*100;
+          yTop=base-((x.km||0)/kmMax)*(base-topPad);
+        }
+        tip.style.left=esq.toFixed(2)+'%';
         tip.style.top=((yTop/H)*100).toFixed(2)+'%';
         tip.classList.add('on');
+        marcar(idx); iAtual=idx;
       }
-      function hide(){ tip.classList.remove('on'); }
+      function hide(){ tip.classList.remove('on'); marcar(-1); marcarVela(null); }
+      function marcarVela(v){
+        var vs=svg.querySelectorAll('.kmvela');
+        for(var q=0;q<vs.length;q++) vs[q].classList.toggle('hov', vs[q]===v);
+      }
+      /* MARCAR A BARRA, nao so mostrar o numero: o tooltip dizia "14/07" e o
+         leitor tinha que achar sozinho de qual barra falava. */
+      var barras=svg.querySelectorAll('.kmbar');
+      function marcar(i){
+        for(var k=0;k<barras.length;k++) barras[k].classList.toggle('hov', k===i);
+      }
+      /* TECLADO. O grafico so respondia a mouse e dedo; com 31 barras finas,
+         quem navega por teclado nao alcancava nenhuma. Setas andam dia a dia,
+         Home e End vao as pontas. */
+      var iAtual=-1;
+      svg.setAttribute('tabindex','0');
+      svg.setAttribute('aria-label', svg.getAttribute('aria-label')+'. Use as setas para percorrer os dias.');
+      function irPara(i){
+        if(i<0) i=0; if(i>=n) i=n-1;
+        iAtual=i;
+        var r=svg.getBoundingClientRect();
+        show(r.left + ((i+0.5)/n)*r.width);
+      }
+      svg.addEventListener('keydown',function(e){
+        var k=e.key;
+        if(k==='ArrowRight'||k==='ArrowUp'){ e.preventDefault(); irPara(iAtual+1); }
+        else if(k==='ArrowLeft'||k==='ArrowDown'){ e.preventDefault(); irPara(iAtual<0?n-1:iAtual-1); }
+        else if(k==='Home'){ e.preventDefault(); irPara(0); }
+        else if(k==='End'){ e.preventDefault(); irPara(n-1); }
+        else if(k==='Escape'){ hide(); iAtual=-1; svg.blur(); }
+      });
+      svg.addEventListener('blur',hide);
       svg.addEventListener('pointermove',function(e){ show(e.clientX); });
       svg.addEventListener('pointerover',function(e){ show(e.clientX); }); // entrar parado (ex.: rolagem de trackpad) também mostra
       svg.addEventListener('pointerleave',hide);
@@ -1908,6 +2656,37 @@ function __boot(){
     var max=0, mi=0, mj=0;
     for(var i=0;i<grid.length;i++){ for(var j=0;j<grid[i].length;j++){ if(grid[i][j]>max){ max=grid[i][j]; mi=i; mj=j; } } }
     if(max<=0) return '';
+    /* Semaforo, e por que o divisor NAO e so o pico do mes.
+       Escala 100% absoluta (12 alertas = vermelho) quebra nos dois extremos:
+       cliente calmo fica todo verde, cliente grande fica todo vermelho, e o
+       padrao, que e a unica coisa que esta secao serve pra ler, some.
+       Escala 100% relativa quebra no mes calmo: 2 alertas virariam vermelho.
+       Divisor = max(pico, 12): abaixo de 12 vale o significado absoluto,
+       acima disso a leitura volta a ser relativa e o padrao reaparece. */
+    var div=Math.max(max,12);
+    /* Rampa verde vivo -> vermelho, em 5 paradas.
+       CURVA, e por que ela nao e reta. Numa escala linear de 0 a 24, com 22 das
+       28 celulas valendo de 0 a 6, 78% do mapa se espremia no primeiro quarto
+       da rampa e saia tudo do mesmo verde: a grade ficava lisa e o padrao,
+       que e a unica coisa que esta secao serve pra ler, desaparecia. A gama
+       0,62 abre justamente a faixa baixa, que e onde os dados moram. */
+    var PARADAS=[[0,18,184,6],[.25,126,211,33],[.5,255,196,0],[.75,249,115,22],[1,234,27,18]];
+    function rampa(bruto){
+      var f=Math.pow(Math.max(0,Math.min(1,bruto)),0.62);
+      var a=PARADAS[0], b=PARADAS[PARADAS.length-1];
+      for(var s=0;s<PARADAS.length-1;s++){
+        if(f>=PARADAS[s][0]&&f<=PARADAS[s+1][0]){ a=PARADAS[s]; b=PARADAS[s+1]; break; } }
+      var g=(b[0]-a[0])?(f-a[0])/(b[0]-a[0]):0;
+      var r=Math.round(a[1]+(b[1]-a[1])*g),
+          v=Math.round(a[2]+(b[2]-a[2])*g),
+          z=Math.round(a[3]+(b[3]-a[3])*g);
+      /* Devolve so o MATIZ e a posicao na rampa. Quanto do matiz entra e
+         contra que fundo, e conta do CSS, porque a resposta muda com o tema:
+         no claro a celula se dilui no branco e no escuro no cinza do painel.
+         Fixar a proporcao aqui foi o erro que fez o numero branco reprovar em
+         9 das 11 celulas do tema escuro. */
+      return ['rgb('+r+','+v+','+z+')', f];
+    }
     var head='<div class="hm-corner"></div>'+periodos.map(function(p){
       return '<div class="hm-ph">'+p[0]+'<small>'+p[1]+'</small></div>'; }).join('');
     var corpo='';
@@ -1915,15 +2694,16 @@ function __boot(){
       corpo+='<div class="hm-day">'+(dias[d]||('D'+d))+'</div>';
       for(var k=0;k<4;k++){
         var val=grid[d][k];
-        if(val<=0){ corpo+='<div class="hm-cell z" title="'+(dias[d]||'')+', '+periodos[k][0]+', 0 alertas">·</div>'; }
-        else { var op=(0.14+0.5*(val/max)).toFixed(2);
-          corpo+='<div class="hm-cell" style="background:rgba(255,45,75,'+op+')" title="'+(dias[d]||'')+', '+periodos[k][0]+', '+val+' alertas">'+val+'</div>'; }
+        var c=rampa(val/div);
+        corpo+='<div class="hm-cell'+(val<=0?' z':'')+(c[1]>=0.94?' quente':'')
+             +'" style="--hm:'+c[0]+';--f:'+c[1].toFixed(3)+'" title="'
+             +(dias[d]||'')+', '+periodos[k][0]+', '+val+(val===1?' alerta':' alertas')+'">'+val+'</div>';
       }
     }
     var read='Seu risco se concentra na '+periodos[mj][0].toLowerCase()+' de '+diasFull[mi]+', é quando vale reforçar a atenção.';
     return '<p class="alerts-cap reveal">Quando os alertas acontecem, por período do dia</p>'+
       '<div class="hm-wrap reveal"><div class="hmgrid">'+head+corpo+'</div>'+
-        '<div class="hm-leg"><span>menos</span><span class="hm-ramp"></span><span>mais</span></div></div>'+
+        '<div class="hm-leg"><span>sem alerta</span><span class="hm-ramp"></span><span>'+div+' ou mais</span></div></div>'+
       insightHtml(read);
   }
   (function(){
@@ -1934,10 +2714,10 @@ function __boot(){
     var sinalTxt=v.sinal_qualidade_pct==null ? '—' : v.sinal_qualidade_pct+'%';
     var h=''+
       '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['vigilancia']+' Vigilância ativa</span>'+
-        '<h2>O escudo que rodou o mês inteiro</h2></div>'+
+        '<h2>A vigilância que não teve intervalo</h2></div>'+
       '<div class="vig-top reveal"><div class="ring">'+
         '<svg viewBox="0 0 168 168" aria-hidden="true"><defs><linearGradient id="gArc" x1="0" y1="0" x2="1" y2="1">'+
-          '<stop offset="0" stop-color="#E01E37"/><stop offset="1" stop-color="#FF4FA0"/></linearGradient></defs>'+
+          '<stop offset="0" stop-color="#DC1021"/><stop offset="1" stop-color="#D1B0D7"/></linearGradient></defs>'+
           '<circle class="trk" cx="84" cy="84" r="'+R+'"></circle>'+
           '<circle class="arc" id="rzArc" cx="84" cy="84" r="'+R+'" style="stroke-dasharray:'+C+';stroke-dashoffset:'+C+'"></circle></svg>'+
         /* TRAVA DE MARCA: o anel e os indicadores falam da ATIVIDADE DA FROTA, nunca de
@@ -1956,7 +2736,7 @@ function __boot(){
       v.alertas.forEach(function(a){ totalAlertas += (a.qtd||0); });
       h+='<p class="alerts-cap reveal">O que a central 24h viu e tratou</p>'+
          '<div class="alerts reveal">'+v.alertas.map(function(a){
-        var pl=(a.placas&&a.placas.length)?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+a.placas.map(esc).join(', ')+'</div>':'';
+        var pl=(a.placas&&a.placas.length)?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson-txt)">'+a.placas.map(esc).join(', ')+'</div>':'';
         return '<div class="acard"><div class="aq mono">'+nf(a.qtd)+'</div><div class="at">'+esc(a.tipo)+'</div>'+pl+'</div>';
       }).join('')+'</div>'+
       insightHtml('A central 24h tratou '+nf(totalAlertas)+' alertas neste mês, cada um é um olho que você não precisou ter.');
@@ -1975,7 +2755,7 @@ function __boot(){
         '<div class="alerts reveal">'+
           '<div class="acard"><div class="aq mono">'+nf(sd2.comunicando_total)+'</div><div class="at">Veículos sob monitoramento 24h</div></div>'+
           '<div class="acard"><div class="aq mono">'+bf.length+'</div><div class="at">Bateria de veículo fraca</div>'+
-            (bf.length?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson)">'+bfShow+'</div>':'')+'</div>'+
+            (bf.length?'<div class="at" style="margin-top:6px;font-family:var(--title);font-weight:700;letter-spacing:.01em;color:var(--crimson-txt)">'+bfShow+'</div>':'')+'</div>'+
           '<div class="acard"><div class="aq mono">'+(sd2.violacoes||0)+'</div><div class="at">Violações de equipamento</div></div>'+
         '</div>'+
         '<p class="note reveal" style="margin-top:12px">A tensão é da bateria do próprio veículo, medida pelo rastreador, bateria caindo é aviso antes da pane, não depois.</p>';
@@ -2108,7 +2888,7 @@ function __boot(){
     var h=''+
       '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['comportamento']+' Comportamento &amp; risco</span>'+
         '<h2>Como sua frota dirige</h2>'+
-        '<p class="sub">Score geral primeiro<span class="scr">, toque num veículo para o detalhe</span>.</p></div>'+
+        '<p class="sub">O score da frota primeiro<span class="scr"> · abra um veículo para ver de onde ele vem</span>.</p></div>'+
       '<div class="controls reveal"><span class="ctl-label">Ver</span>'+
         '<div class="segset" id="cpFilter" role="group" aria-label="Filtro de comportamento">'+
           '<button data-f="tudo" aria-pressed="true">Tudo</button><button data-f="atencao" aria-pressed="false">Só atenção</button></div></div>'+
@@ -2125,8 +2905,8 @@ function __boot(){
       if(cp.filter==='atencao'){
         cols.innerHTML='<div class="col attn"><h3>Atenção, precisam de olhar</h3>'+rowsHtml(c.piores)+'</div>';
       } else {
-        cols.innerHTML='<div class="cols"><div class="col attn"><h3>Atenção</h3>'+rowsHtml(c.piores)+'</div>'+
-          '<div class="col dest"><h3>Destaque</h3>'+rowsHtml(c.melhores)+'</div></div>';
+        cols.innerHTML='<div class="cols"><div class="col attn"><h3>O que vigiar</h3>'+rowsHtml(c.piores)+'</div>'+
+          '<div class="col dest"><h3>O que foi bem</h3>'+rowsHtml(c.melhores)+'</div></div>';
       }
     }
     renderCols();
@@ -2347,7 +3127,7 @@ function __boot(){
     /* a frase inteira num SO item de flex: solta, o "<span class=scr>" virava
        item proprio e o gap de 11px do .dgt caia ANTES da virgula ("SEGUNDOS ,
        TOQUE"). O gap existe pro risco do ::before e nao pode sair. */
-    sec.innerHTML='<p class="dgt reveal"><span>O mês em 30 segundos<span class="scr">, toque para ir à seção</span></span></p>'+
+    sec.innerHTML='<p class="dgt reveal"><span>O mês inteiro em nove linhas<span class="scr"> · abra qualquer uma</span></span></p>'+
       '<div class="dgrid reveal">'+rows.join('')+'</div>';
     mn.insertBefore(sec, mn.firstElementChild);
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
@@ -2375,8 +3155,8 @@ function __boot(){
           var marcadores={};
           var comPos=(D.veiculos||[]).filter(function(v){ return v.pos; });
           comPos.forEach(function(v){
-            marcadores[v.placa]=L.circleMarker([v.pos.lat,v.pos.lng],{radius:isTouch?8:6,color:'#FF2D4B',weight:2,
-              fillColor:'#FF4FA0',fillOpacity:.9})
+            marcadores[v.placa]=L.circleMarker([v.pos.lat,v.pos.lng],{radius:isTouch?8:6,color:'#EC1222',weight:2,
+              fillColor:'#D1B0D7',fillOpacity:.9})
              .addTo(m)
              .bindTooltip('<b>'+esc(v.placa)+'</b>, '+esc(v.modelo)+'<br>'+nf(v.km)+' km, '+nf(v.horas)+' h, '+esc(v.zona||''),
                {direction:'top',offset:[0,-6],opacity:1})
@@ -2440,7 +3220,7 @@ function __boot(){
           if(isTouch){
             m.dragging.disable(); m.touchZoom.disable(); m.doubleClickZoom.disable();
             var lock=document.createElement('div'); lock.className='map-lock';
-            lock.innerHTML='<span>Toque para explorar o mapa</span>';
+            lock.innerHTML='<span>Clique ou toque para explorar o mapa</span>';
             alvo.appendChild(lock);
             lock.addEventListener('click',function(){
               m.dragging.enable(); m.touchZoom.enable(); m.doubleClickZoom.enable(); lock.remove();
@@ -2476,8 +3256,8 @@ function __boot(){
       var a=r.pts[i0], bpt=r.pts[Math.min(i0+1,r.pts.length-1)];
       var cx=(a[0]+(bpt[0]-a[0])*f)*W, cy=(a[1]+(bpt[1]-a[1])*f)*H;
       var g=ctx.createRadialGradient(cx,cy,0,cx,cy,9);
-      g.addColorStop(0, claro?'rgba(224,30,55,0.38)':'rgba(255,90,120,0.55)');
-      g.addColorStop(1, claro?'rgba(224,30,55,0)':'rgba(255,45,75,0)');
+      g.addColorStop(0, claro?'rgba(220,16,33,0.38)':'rgba(255,90,120,0.55)');
+      g.addColorStop(1, claro?'rgba(220,16,33,0)':'rgba(236,18,34,0)');
       ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,9,0,Math.PI*2); ctx.fill(); }
     function paint(now){
       ctx.clearRect(0,0,W,H);

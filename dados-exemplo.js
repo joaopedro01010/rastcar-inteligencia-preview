@@ -67,22 +67,22 @@ window.RC_DADOS = {
   // Bloco 2 · frota em movimento (zona = onde o veiculo ficou mais tempo no mes)
   // v3.5 · tipo por veiculo; MAQUINA tem km:null (sem odometro, medida por horimetro)
   veiculos: [
-    { placa:"MET-4C22", modelo:"Scania R450",       tipo:"caminhao", km:6920, horas:305, ocioso:false, zona:"Campinas", pos:{lat:-22.925,lng:-47.080} },
-    { placa:"KLR-2F18", modelo:"Volvo FH",          tipo:"caminhao", km:5810, horas:268, ocioso:false, zona:"Ribeirão Preto", pos:{lat:-21.187,lng:-47.820} },
-    { placa:"BQT-9A07", modelo:"VW Constellation",  tipo:"caminhao", km:5120, horas:240, ocioso:false, zona:"Sorocaba", pos:{lat:-23.501,lng:-47.458} },
-    { placa:"RDZ-1K55", modelo:"Mercedes Actros",   tipo:"caminhao", km:4870, horas:222, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.213,lng:-45.891} },
-    { placa:"HNP-7G31", modelo:"Iveco Tector",      tipo:"caminhao", km:3990, horas:190, ocioso:false, zona:"Jundiaí", pos:{lat:-23.166,lng:-46.904} },
-    { placa:"TGV-3M09", modelo:"Ford Cargo",        tipo:"caminhao", km:3510, horas:171, ocioso:false, zona:"Santos", pos:{lat:-23.981,lng:-46.343} },
-    { placa:"CWX-8B44", modelo:"DAF XF",            tipo:"caminhao", km:3120, horas:150, ocioso:false, zona:"Guarulhos", pos:{lat:-23.464,lng:-46.533} },
-    { placa:"LMF-5D27", modelo:"Scania P320",       tipo:"caminhao", km:2740, horas:133, ocioso:false, zona:"Cajamar", pos:{lat:-23.356,lng:-46.866} },
-    { placa:"PVE-6H12", modelo:"Volvo VM",          tipo:"caminhao", km:2310, horas:118, ocioso:false, zona:"Piracicaba", pos:{lat:-22.715,lng:-47.669} },
-    { placa:"ZAB-4J88", modelo:"VW Delivery",       tipo:"caminhao", km:1980, horas:101, ocioso:false, zona:"Resende", pos:{lat:-22.449,lng:-44.456} },
+    { placa:"MET-4C22", modelo:"Scania R450",       tipo:"caminhao", km:7550, horas:305, ocioso:false, zona:"Campinas", pos:{lat:-22.925,lng:-47.080} },
+    { placa:"KLR-2F18", modelo:"Volvo FH",          tipo:"caminhao", km:6340, horas:268, ocioso:false, zona:"Ribeirão Preto", pos:{lat:-21.187,lng:-47.820} },
+    { placa:"BQT-9A07", modelo:"VW Constellation",  tipo:"caminhao", km:5590, horas:240, ocioso:false, zona:"Sorocaba", pos:{lat:-23.501,lng:-47.458} },
+    { placa:"RDZ-1K55", modelo:"Mercedes Actros",   tipo:"caminhao", km:5310, horas:222, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.213,lng:-45.891} },
+    { placa:"HNP-7G31", modelo:"Iveco Tector",      tipo:"caminhao", km:4350, horas:190, ocioso:false, zona:"Jundiaí", pos:{lat:-23.166,lng:-46.904} },
+    { placa:"TGV-3M09", modelo:"Ford Cargo",        tipo:"caminhao", km:3830, horas:171, ocioso:false, zona:"Santos", pos:{lat:-23.981,lng:-46.343} },
+    { placa:"CWX-8B44", modelo:"DAF XF",            tipo:"caminhao", km:3400, horas:150, ocioso:false, zona:"Guarulhos", pos:{lat:-23.464,lng:-46.533} },
+    { placa:"LMF-5D27", modelo:"Scania P320",       tipo:"caminhao", km:2990, horas:133, ocioso:false, zona:"Cajamar", pos:{lat:-23.356,lng:-46.866} },
+    { placa:"PVE-6H12", modelo:"Volvo VM",          tipo:"caminhao", km:2520, horas:118, ocioso:false, zona:"Piracicaba", pos:{lat:-22.715,lng:-47.669} },
+    { placa:"ZAB-4J88", modelo:"VW Delivery",       tipo:"caminhao", km:2160, horas:101, ocioso:false, zona:"Resende", pos:{lat:-22.449,lng:-44.456} },
     { placa:"ESC-0301", modelo:"Escavadeira CAT 320",     tipo:"maquina", km:null, horas:214, ocioso:false, zona:"São José dos Campos", pos:{lat:-23.245,lng:-45.912} },
     { placa:"RET-0302", modelo:"Retroescavadeira JCB 3CX", tipo:"maquina", km:null, horas:176, ocioso:false, zona:"Sorocaba", pos:{lat:-23.512,lng:-47.471} },
-    { placa:"OKT-2C63", modelo:"Iveco Daily",       tipo:"van", km:1540, horas:82,  ocioso:false, zona:"Duque de Caxias", pos:{lat:-22.805,lng:-43.305} },
-    { placa:"WSD-9E01", modelo:"Mercedes Accelo Basculante", tipo:"caminhao", op:true, km:1210, horas:64, ocioso:false, zona:"Betim", pos:{lat:-19.978,lng:-44.188} },
-    { placa:"FRN-7A19", modelo:"Ford Transit",      tipo:"van", km:640,  horas:31,  ocioso:true,  zona:"Uberlândia", pos:{lat:-18.919,lng:-48.297} },
-    { placa:"XUP-3B50", modelo:"Renault Master",    tipo:"van", km:450,  horas:23,  ocioso:true,  zona:"Campinas", pos:{lat:-22.895,lng:-47.070} },
+    { placa:"OKT-2C63", modelo:"Iveco Daily",       tipo:"van", km:1680, horas:82,  ocioso:false, zona:"Duque de Caxias", pos:{lat:-22.805,lng:-43.305} },
+    { placa:"WSD-9E01", modelo:"Mercedes Accelo Basculante", tipo:"caminhao", op:true, km:1320, horas:64, ocioso:false, zona:"Betim", pos:{lat:-19.978,lng:-44.188} },
+    { placa:"FRN-7A19", modelo:"Ford Transit",      tipo:"van", km:700,  horas:31,  ocioso:true,  zona:"Uberlândia", pos:{lat:-18.919,lng:-48.297} },
+    { placa:"XUP-3B50", modelo:"Renault Master",    tipo:"van", km:490,  horas:23,  ocioso:true,  zona:"Campinas", pos:{lat:-22.895,lng:-47.070} },
     { placa:"ROL-0303", modelo:"Rolo compactador CA25",   tipo:"maquina", km:null, horas:0,   ocioso:true,  zona:"Campinas", pos:{lat:-22.910,lng:-47.062} }
   ],
 
@@ -215,12 +215,12 @@ window.RC_DADOS = {
       "2026-07-29","2026-07-30","2026-07-31"
     ],
     por_placa: [
-      { placa:"MET-4C22", dias_rodados:24, mapa:[1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1] },
-      { placa:"KLR-2F18", dias_rodados:23, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1] },
-      { placa:"BQT-9A07", dias_rodados:23, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1] },
-      { placa:"RDZ-1K55", dias_rodados:22, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,0] },
-      { placa:"HNP-7G31", dias_rodados:21, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0] },
-      { placa:"TGV-3M09", dias_rodados:20, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0] },
+      { placa:"MET-4C22", dias_rodados:26, mapa:[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1] },
+      { placa:"KLR-2F18", dias_rodados:25, mapa:[1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,1,1,1] },
+      { placa:"BQT-9A07", dias_rodados:25, mapa:[1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1] },
+      { placa:"RDZ-1K55", dias_rodados:24, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0] },
+      { placa:"HNP-7G31", dias_rodados:22, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,1,1,1,0,0] },
+      { placa:"TGV-3M09", dias_rodados:21, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,0,0,0] },
       { placa:"CWX-8B44", dias_rodados:19, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,0,0,0,0] },
       { placa:"LMF-5D27", dias_rodados:18, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,0,0,0] },
       { placa:"PVE-6H12", dias_rodados:16, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0] },
@@ -230,8 +230,8 @@ window.RC_DADOS = {
       { placa:"FRN-7A19", dias_rodados:7,  mapa:[1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0] },
       { placa:"XUP-3B50", dias_rodados:5,  mapa:[0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0] },
       // maquinas: o dia aceso vem do HORIMETRO (trabalhou = rodou), nao do odometro
-      { placa:"ESC-0301", dias_rodados:22, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0] },
-      { placa:"RET-0302", dias_rodados:18, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0] },
+      { placa:"ESC-0301", dias_rodados:20, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0] },
+      { placa:"RET-0302", dias_rodados:16, mapa:[1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0] },
       { placa:"ROL-0303", dias_rodados:0,  mapa:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
     ]
   },

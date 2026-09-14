@@ -32,3 +32,20 @@
   font-display: swap;
   src: local('D-DIN Exp'), url('d-din-exp-400.woff') format('woff');
 }
+
+/* INTER, variavel, com eixo OPTICO. E a receita oficial de headline da casa,
+   aprovada em 09/08/2026 e ja usada nos criativos: Inter no eixo `opsz` 32,
+   peso 900 e tracking -2,5% reproduz a Helvetica Now Display, que e o corte
+   que o Joao reconhece.
+
+   O eixo `opsz` e o que faz a diferenca: sem ele a Inter e so mais uma
+   grotesca. Em 32 as letras fecham, o contraste sobe e o titulo ganha o
+   aspecto de display. Por isso o arquivo tem que ser o VARIAVEL, e por isso
+   `font-variation-settings:'opsz' 32` aparece nas regras de titulo.
+
+   Substitui a Figtree, que eu tinha escolhido antes tentando adivinhar "a
+   fonte do Instagram" quando a receita certa ja estava escrita no repo. */
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400 900; font-display:swap;
+  src:url('inter-latin-ext.woff2') format('woff2'); unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400 900; font-display:swap;
+  src:url('inter-latin.woff2') format('woff2'); unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
