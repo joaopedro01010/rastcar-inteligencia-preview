@@ -937,6 +937,17 @@ body.light .kmbase{stroke:rgba(0,0,0,.14)}
   .tag{font-size:9px;letter-spacing:.1em;padding:4px 7px 3px}
   .rrow .model{gap:6px}
 }
+/* TELEFONE ESTREITO: em duas colunas cada celula fica com ~144px, e dentro dela
+   mora a pastilha de variacao com nowrap, que MEDIDA pede 173px. Ela empurrava
+   a grade para fora e a pagina estourava 36px em 320. Uma coluna resolve, e so
+   aqui embaixo: de 421px para cima as duas colunas seguem valendo.
+   Esta regra mora DEPOIS do bloco de 640 fechar. Na primeira tentativa eu abri
+   a chave no meio dele e joguei .rrow, .vig-top, .alerts e .comp-grid para
+   dentro do bloco novo: 430 e 640 passaram a estourar. */
+@media (max-width:420px){
+  .substats{grid-template-columns:1fr}
+}
+
 
 /* ---------- Impressão / PDF · fundo CLARO + acentos CRIMSON/MAGENTA da web (web intocada) ---------- */
 /* ---------- MODO CLARO (toggle na tela; mesma regra do print: superfície clara,
@@ -976,6 +987,100 @@ body.light{--bg:#FAFAF8;--ink:#16161A;--crimson-txt:#9F0B16;--muted:#4F4F57;--mu
   background-position:center center, center center;
   background-repeat:no-repeat, no-repeat;
   background-attachment:fixed, fixed}
+/* ===== Jornada de trabalho (app Motorista 7) ==============================
+   Sobrenome jr- em TUDO: nome generico ja vazou neste repo (.fundo, .grade).
+   COR COM SIGNIFICADO, e o par de cada uma medido nos dois temas:
+     verde   = encerrada pelo motorista  (conclusao)
+     dourado = encerrada pelo escritorio (correcao feita fora do app)
+     vermelho= nunca encerrada           (o unico alerta de verdade)
+   Verde e vermelho o olho separa num relance; dourado e ambar, que era o que
+   estava aqui antes, nao. */
+.jr-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin-top:18px}
+.jr-c{padding:15px 16px;display:flex;flex-direction:column;gap:5px}
+.jr-c .v{font-family:var(--title);font-variant-numeric:tabular-nums;
+  font-size:clamp(20px,3.2vw,29px);font-weight:700;letter-spacing:-.01em;color:var(--ink);line-height:1}
+.jr-c .l{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
+/* a DESCRICAO do numero: sem ela o dono le "13" e nao sabe se 13 e muito */
+.jr-c .d{font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:1px}
+.jr-c.alerta .v{color:#D8121F}
+body:not(.light) .jr-c.alerta .v{color:#FF6B6B}
+/* o numero do que deu certo leva o verde de CONCLUSAO, o mesmo da barra */
+.jr-c.bom .v{color:#0AA800}
+body:not(.light) .jr-c.bom .v{color:#6BE863}
+.jr-lin{display:grid;grid-template-columns:164px 1fr 44px 50px 52px 94px 86px;gap:11px;align-items:center;
+  padding:11px 0;border-top:1px solid var(--hair)}
+.jr-lin:first-of-type{border-top:0}
+.jr-hd{color:var(--muted-2);font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;padding-bottom:7px;border-top:0}
+.jr-hd .jr-num{font-weight:400}
+/* CINTO: com nowrap, "Como as jornadas fecharam" pede 211px e a caixa dele
+   encolhe para 143px em 760, entao o rotulo saia por cima de JORN./HORAS/
+   MEDIA. Cabecalho quebra linha; numero, que e curto, segue em linha unica. */
+.jr-hd > div{white-space:normal;line-height:1.25}
+.jr-nome{font-family:var(--title);font-weight:700;font-size:13px;color:var(--ink);line-height:1.25}
+.jr-nome small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  color:var(--muted-2);font-weight:400;margin-top:3px}
+/* UMA barra por motorista, cheia = as jornadas dele no mes. Empilhar faixa
+   translucida de 22 jornadas numa regua de 24h virava borrao, e borrao o olho
+   le como sujeira e nao como dado. */
+.jr-barra{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--hair)}
+.jr-barra i{display:block;height:100%;width:0;transition:width .9s cubic-bezier(.16,1,.3,1)}
+.jr-barra i.ok{background:#0AA800}
+.jr-barra i.edit{background:#B8941F}
+.jr-barra i.ab{background:#D8121F}
+body:not(.light) .jr-barra i.ok{background:#6BE863}
+body:not(.light) .jr-barra i.edit{background:#C9A84C}
+body:not(.light) .jr-barra i.ab{background:#FF6B6B}
+.jr-num{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:14px;font-weight:700;
+  text-align:right;color:var(--ink);white-space:nowrap}
+.jr-num.zero{color:var(--muted-2);font-weight:400}
+.jr-num.mal{color:#D8121F}
+body:not(.light) .jr-num.mal{color:#FF6B6B}
+.jr-num.bom{color:#0AA800}
+body:not(.light) .jr-num.bom{color:#6BE863}
+.jr-leg{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px}
+.jr-leg span{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted-2)}
+.jr-leg i{width:16px;height:8px;border-radius:2px;flex:0 0 auto;background:#0AA800}
+.jr-leg i.edit{background:#B8941F}
+.jr-leg i.ab{background:#D8121F}
+body:not(.light) .jr-leg i{background:#6BE863}
+body:not(.light) .jr-leg i.edit{background:#C9A84C}
+body:not(.light) .jr-leg i.ab{background:#FF6B6B}
+.jr-marcos{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin-top:20px}
+/* SEM background proprio: e assim que .substats faz, e por isso ela funciona nos
+   dois temas. Fixar var(--panel) aqui pintava o bloco de cinza-escuro no claro. */
+.jr-marcos .m{padding:16px 18px}
+.jr-marcos .mv{font-family:var(--title);font-variant-numeric:tabular-nums;
+  font-size:clamp(21px,3.4vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.jr-marcos .ml{font-family:var(--mono);font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted-2);margin-top:6px}
+.jr-marcos .md{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.35}
+.jr-marcos .mb{height:3px;border-radius:2px;background:var(--hair);margin-top:12px;overflow:hidden}
+.jr-marcos .mb>i{display:block;height:100%;width:0;background:#0AA800;
+  transition:width .9s cubic-bezier(.16,1,.3,1)}
+body:not(.light) .jr-marcos .mb>i{background:#6BE863}
+@media (max-width:1180px){ .jr-cards{grid-template-columns:repeat(3,1fr)} }
+/* SUSPENSORIO: sete colunas pedem espaco. Entre 641 e 860 elas cabiam no papel
+   e se espremiam na pratica; abaixo de 860 a linha empilha, como no telefone. */
+@media (max-width:860px){
+  .jr-cards{grid-template-columns:repeat(2,1fr)}
+  .jr-hd{display:none}
+  /* TRES COLUNAS IGUAIS, e nao `auto`: com `auto` as colunas se espremiam ao
+     conteudo e o rotulo ENCERRADAS saia cortado pela borda direita; os cinco
+     numeros ainda ficavam espalhados em duas linhas com um buraco no meio.
+     Em 390px cada coluna fica com ~119px e o rotulo mais longo pede ~64px. */
+  .jr-lin{grid-template-columns:repeat(3,1fr);gap:10px 10px}
+  .jr-lin .jr-nome{grid-column:1 / -1}
+  .jr-lin .jr-barra{grid-column:1 / -1;order:9;margin-top:2px}
+  .jr-num{text-align:left;font-size:14px}
+  .jr-num::after{content:attr(data-l);display:block;font-family:var(--mono);font-size:8.5px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);font-weight:400;margin-top:2px}
+  .jr-marcos{grid-template-columns:1fr}
+}
+@media (max-width:560px){ .jr-cards{grid-template-columns:1fr} }
 @media (max-width:760px){ body.light{background-attachment:scroll, scroll} }
 /* com a imagem no lugar, os orbes viram ruido por cima dela */
 body.light #rcOrbes{display:none}
@@ -1672,6 +1777,7 @@ footer.bot{padding-bottom:104px}
   <section class="block" id="benchmark"></section>
   <section class="block" id="vigilancia"></section>
   <section class="block" id="motoristas"></section>
+  <section class="block" id="jornada"></section>
   <section class="block" id="comportamento"></section>
   <section class="block" id="economia"></section>
   <section class="block" id="plano"></section>
@@ -1929,10 +2035,17 @@ function __boot(){
   if(D.vigilancia) SECS.push(['vigilancia','Vigilância']);
   var temMot = !!(D.motoristas && (D.motoristas.ranking||[]).length);
   if(temMot) SECS.push(['motoristas','Motoristas']);
+  /* Jornada nasce do payload igual a todas: sem D.jornada.registros ela nao
+     existe, nem no indice. Cliente sem app Motorista 7 nao ve secao vazia. */
+  var temJor = !!(D.jornada && (D.jornada.registros||[]).length);
+  if(temJor) SECS.push(['jornada','Jornada']);
   if(temComp) SECS.push(['comportamento','Comportamento']);
   if(D.economia) SECS.push(['economia','Economia']);
   if(temPlano) SECS.push(['plano','Plano']);
-  var SECNUM={}; SECS.forEach(function(s,i){ SECNUM[s[0]]='0'+(i+1); });
+  /* PAD DE VERDADE: era '0'+(i+1), que com dez secoes escreve "010". O defeito
+     estava dormindo desde sempre e so acordou quando a Jornada virou a decima. */
+  function secN(i){ return (i+1<10?'0':'')+(i+1); }
+  var SECNUM={}; SECS.forEach(function(s,i){ SECNUM[s[0]]=secN(i); });
 
   // ---------- Header ----------
   if(D.amostra){ var b=el('hdBadge'); if(b) b.hidden=false; }
@@ -1945,7 +2058,7 @@ function __boot(){
   (function(){
     var items=SECS;
     var nav=el('segNav'); if(!nav || !items.length) return;
-    nav.innerHTML = items.map(function(it,i){ return '<a href="#'+it[0]+'" data-t="'+it[0]+'"><span class="n">0'+(i+1)+'</span>'+it[1]+'</a>'; }).join('');
+    nav.innerHTML = items.map(function(it,i){ return '<a href="#'+it[0]+'" data-t="'+it[0]+'"><span class="n">'+secN(i)+'</span>'+it[1]+'</a>'; }).join('');
     var links={}; Array.prototype.forEach.call(nav.querySelectorAll('a'),function(a){ links[a.getAttribute('data-t')]=a; });
     function setActive(id){ items.forEach(function(it){ links[it[0]].classList.toggle('active', it[0]===id); }); }
     setActive(items[0][0]);
@@ -2344,7 +2457,7 @@ function __boot(){
       mntHtml()+
       ((D.rotas_calor&&D.rotas_calor.pontos&&D.rotas_calor.pontos.length)?(
         '<div class="heat-wrap reveal">'+
-          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque"> · abra uma placa ou uma cidade</span></div>'+
+          '<div class="heat-cap">Onde sua frota andou no mês<span class="cap-toque">, abra uma placa ou uma cidade</span></div>'+
           '<div id="rzMap" role="img" aria-label="Mapa com a posição dos veículos da frota na zona onde ficaram mais tempo"></div>'+
           ((D.rotas_calor.cidades&&D.rotas_calor.cidades.length)?('<div class="heat-cities">'+
             D.rotas_calor.cidades.map(function(c){ return '<span class="hc"><b>'+esc(c.nome)+'</b> '+c.pct+'%</span>'; }).join('')+
@@ -2870,6 +2983,157 @@ function __boot(){
     });
   })();
 
+  // ---------- Bloco · Jornada de trabalho (app Motorista 7) ----------
+  // BLINDAGEM: a secao inteira nasce de D.jornada.registros. TUDO aqui e DERIVADO
+  // dos registros (contagem, horas, media, percentuais, barras). Nenhum numero
+  // chumbado: foi numero chumbado que fez o CRM comemorar venda que nao existia.
+  // O relatorio fala da DISCIPLINA DA OPERACAO do cliente, nunca de falha da
+  // Rastcar: jornada aberta e esquecimento do motorista, nao defeito do rastreador.
+  (function(){
+    if(!temJor) return;
+    var J=D.jornada, R=J.registros;
+    function hm(min){ /* 534 -> "8h54"; o dono le hora, nao decimal */
+      var h=Math.floor(min/60), m=Math.round(min-h*60);
+      if(m===60){ h++; m=0; }
+      return h+'h'+(m<10?'0':'')+m;
+    }
+    function pct(a,b){ return b?Math.round(a/b*100):0; }
+
+    // --- derivacoes, uma passada so ---
+    var fechadas=0, abertas=0, editadas=0, minutos=0, comRef=0, comRep=0, longas=0;
+    var maior=null, porMot={}, ordem=[], dias={};
+    R.forEach(function(r){
+      dias[r.inicio.split('T')[0]]=1;
+      if(!porMot[r.codigo]){ porMot[r.codigo]={nome:r.motorista,codigo:r.codigo,
+        veiculos:{},n:0,min:0,fech:0,ab:0,ed:0,ref:0,rep:0}; ordem.push(r.codigo); }
+      var m=porMot[r.codigo]; m.n++; m.veiculos[r.veiculo]=1;
+      if(r.editada){ editadas++; m.ed++; }
+      if(!r.finalizada || !r.fim){ abertas++; m.ab++; return; }
+      fechadas++; m.fech++;
+      var d=(new Date(r.fim)-new Date(r.inicio))/60000;
+      minutos+=d; m.min+=d;
+      if(d>600) longas++;                       // 8 horas mais as 2 extras comuns
+      if(!maior || d>maior.min) maior={min:d, nome:r.motorista, dia:r.inicio.split('T')[0]};
+      if(r.marcos&&r.marcos.refeicao){ comRef++; m.ref++; }
+      if(r.marcos&&r.marcos.repouso){ comRep++; m.rep++; }
+    });
+    var horas=Math.round(minutos/60);
+    var media=fechadas?minutos/fechadas:0;
+    var motAb=ordem.filter(function(c){ return porMot[c].ab>0; }).length;
+    var motEd=ordem.filter(function(c){ return porMot[c].ed>0; }).length;
+    var nDias=Object.keys(dias).length;
+    var encMot=R.length-abertas-editadas;   // o que o motorista fechou sozinho
+    var pctRef=fechadas?pct(comRef,fechadas):null;
+    var pctRep=fechadas?pct(comRep,fechadas):null;
+    var semApp=(J.sem_app||[]);
+
+    // --- uma linha por motorista, PROBLEMA PRIMEIRO ---
+    // O dono nao quer interpretar grafico: quer saber quem nao esta fechando a
+    // jornada. Por isso a ordem e por jornada em aberto.
+    ordem.sort(function(x,y){
+      var A=porMot[x], B=porMot[y];
+      if(B.ab!==A.ab) return B.ab-A.ab;
+      if(B.ed!==A.ed) return B.ed-A.ed;
+      return B.n-A.n;
+    });
+    var cab='<div class="jr-lin jr-hd"><div>Motorista</div><div>Como as jornadas fecharam</div>'+
+      '<div class="jr-num">Jorn.</div><div class="jr-num">Horas</div><div class="jr-num">M\u00e9dia</div>'+
+      '<div class="jr-num">Encerradas</div><div class="jr-num">Em aberto</div></div>';
+    var linhas=ordem.map(function(c){
+      var m=porMot[c];
+      var vs=Object.keys(m.veiculos).join(', ');
+      var ok=m.n-m.ab-m.ed;
+      function w(v){ return m.n?(v/m.n*100).toFixed(2):0; }
+      return '<div class="jr-lin"><div class="jr-nome">'+esc(m.nome)+
+        '<small>'+esc(m.codigo)+(vs?(', '+esc(vs)):'')+'</small></div>'+
+        '<div class="jr-barra" role="img" aria-label="'+m.n+' jornadas, '+ok+' encerradas pelo motorista, '+
+          m.ed+' pelo escrit\u00f3rio, '+m.ab+' sem encerramento">'+
+          '<i class="ok" data-w="'+w(ok)+'"></i><i class="edit" data-w="'+w(m.ed)+'"></i>'+
+          '<i class="ab" data-w="'+w(m.ab)+'"></i></div>'+
+        '<div class="jr-num" data-l="jornadas">'+m.n+'</div>'+
+        '<div class="jr-num" data-l="horas">'+Math.round(m.min/60)+'h</div>'+
+        '<div class="jr-num" data-l="m\u00e9dia">'+(m.fech?hm(m.min/m.fech):'\u2014')+'</div>'+
+        /* VERMELHO SO NA EXCECAO: pintar o total de jornadas deixava os cinco
+           motoristas vermelhos, e alerta em tudo deixa de ser alerta. */
+        '<div class="jr-num bom" data-l="encerradas">'+(m.n-m.ab-m.ed)+'</div>'+
+        '<div class="jr-num '+(m.ab?'mal':'zero')+'" data-l="em aberto">'+(m.ab||'0')+'</div></div>';
+    }).join('');
+
+    // --- texto honesto: so afirma o que os registros sustentam ---
+    var piorAb=ordem[0];
+    var ins='';
+    if(abertas>0 && piorAb && porMot[piorAb].ab>0){
+      ins=nf(abertas)+(abertas===1?' jornada ficou aberta':' jornadas ficaram abertas')+
+        ' no m\u00eas, '+porMot[piorAb].ab+' delas de '+esc(porMot[piorAb].nome)+
+        '. Jornada que n\u00e3o se encerra no app continua contando hora, e o ajuste depois '+
+        'vira discuss\u00e3o. Cobrar o encerramento fecha o registro no dia.';
+    }
+
+    var h=''+
+      '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['jornada']+' Jornada</span>'+
+        '<h2>O dia de quem dirige</h2>'+
+        '<p class="sub">Marcado pelo pr\u00f3prio motorista no app '+esc(J.app||'Motorista 7')+
+        ', marca a marca, do in\u00edcio ao encerramento.</p></div>'+
+      '<div class="hero-stat reveal"><span class="big grad" id="jrN">0</span>'+
+        '<span class="cap"><span class="u">jornadas registradas no app</span>'+
+        '<span class="lbl">em '+nDias+' dias do m\u00eas, por '+ordem.length+' motoristas</span></span></div>'+
+      '<div class="jr-cards reveal">'+
+        '<div class="jr-c bom"><div class="v" id="jrK">0</div><div class="l">Encerradas pelo motorista</div>'+
+          '<div class="d">'+pct(encMot,R.length)+'% das jornadas</div></div>'+
+        '<div class="jr-c"><div class="v" id="jrH">0</div><div class="l">Em jornada encerrada</div>'+
+          '<div class="d">M\u00e9dia de '+hm(media)+'</div></div>'+
+        '<div class="jr-c alerta"><div class="v" id="jrA">0</div><div class="l">Sem encerramento</div>'+
+          '<div class="d">'+pct(abertas,R.length)+'%, em '+motAb+
+          (motAb===1?' motorista':' motoristas')+'</div></div>'+
+        '<div class="jr-c"><div class="v" id="jrE">0</div><div class="l">Fechadas pelo escrit\u00f3rio</div>'+
+          '<div class="d">'+pct(editadas,R.length)+'%, em '+motEd+
+          (motEd===1?' motorista':' motoristas')+'</div></div>'+
+        '<div class="jr-c"><div class="v" id="jrL">0</div><div class="l">Acima de 10 horas</div>'+
+          '<div class="d">'+(maior?('Maior: '+hm(maior.min)):'Nenhuma no m\u00eas')+'</div></div>'+
+      '</div>'+
+      '<p class="alerts-cap reveal" style="margin-top:26px">Quem registrou, motorista a motorista</p>'+
+      '<div class="reveal jr-lista">'+cab+linhas+'</div>'+
+      '<div class="jr-leg reveal"><span><i></i>Encerrada pelo motorista</span>'+
+        '<span><i class="edit"></i>Encerrada pelo escrit\u00f3rio</span>'+
+        '<span><i class="ab"></i>Nunca encerrada</span></div>'+
+      (pctRef!=null?('<div class="jr-marcos reveal">'+
+        '<div class="m"><div class="mv" id="jrRf">0</div><div class="ml">Jornadas com refei\u00e7\u00e3o marcada</div>'+
+          '<div class="md">'+nf(comRef)+' de '+nf(fechadas)+' encerradas</div>'+
+          '<div class="mb"><i id="jrRfB"></i></div></div>'+
+        '<div class="m"><div class="mv" id="jrRp">0</div><div class="ml">Jornadas com repouso marcado</div>'+
+          '<div class="md">'+nf(comRep)+' de '+nf(fechadas)+' encerradas</div>'+
+          '<div class="mb"><i id="jrRpB"></i></div></div></div>'):'')+
+      (semApp.length?('<p class="note reveal" style="margin-top:12px">'+
+        semApp.map(function(x){return esc(x.nome);}).join(', ')+
+        (semApp.length===1?' est\u00e1 identificado no ve\u00edculo mas nunca abriu o app':
+                           ' est\u00e3o identificados no ve\u00edculo mas nunca abriram o app')+
+        '. S\u00e3o jornadas que existiram e n\u00e3o ficaram registradas em lugar nenhum.</p>'):'')+
+      (ins?insightHtml(ins):'');
+
+    var sec=el('jornada'); sec.innerHTML=h;
+    Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
+    watch(sec.querySelector('.hero-stat'), function(){ countUp(el('jrN'), R.length); });
+    watch(sec.querySelector('.jr-cards'), function(){
+      countUp(el('jrK'), encMot);
+      countUp(el('jrH'), horas, {suf:'h'});
+      countUp(el('jrA'), abertas);
+      countUp(el('jrE'), editadas);
+      countUp(el('jrL'), longas);
+    });
+    watch(sec.querySelector('.jr-lista'), function(){
+      Array.prototype.forEach.call(sec.querySelectorAll('.jr-barra i'), function(n){
+        n.style.width = n.getAttribute('data-w') + '%';
+      });
+    });
+    if(pctRef!=null) watch(sec.querySelector('.jr-marcos'), function(){
+      countUp(el('jrRf'), pctRef, {suf:'%'});
+      countUp(el('jrRp'), pctRep, {suf:'%'});
+      var a=el('jrRfB'), b=el('jrRpB');
+      if(a) a.style.width=pctRef+'%';
+      if(b) b.style.width=pctRep+'%';
+    });
+  })();
+
   // ---------- Bloco 4 · Comportamento & risco ----------
   var cp = { filter:'tudo' };
   (function(){
@@ -2888,7 +3152,7 @@ function __boot(){
     var h=''+
       '<div class="block-head reveal"><span class="eyebrow">'+SECNUM['comportamento']+' Comportamento &amp; risco</span>'+
         '<h2>Como sua frota dirige</h2>'+
-        '<p class="sub">O score da frota primeiro<span class="scr"> · abra um veículo para ver de onde ele vem</span>.</p></div>'+
+        '<p class="sub">O score da frota primeiro<span class="scr">, abra um veículo para ver de onde ele vem</span>.</p></div>'+
       '<div class="controls reveal"><span class="ctl-label">Ver</span>'+
         '<div class="segset" id="cpFilter" role="group" aria-label="Filtro de comportamento">'+
           '<button data-f="tudo" aria-pressed="true">Tudo</button><button data-f="atencao" aria-pressed="false">Só atenção</button></div></div>'+
@@ -3120,6 +3384,12 @@ function __boot(){
           mnt.length <= 2 ? joinNat(mnt)
                           : mnt[0] + ' e mais ' + nf(mnt.length - 1) + ' veículos');
     }
+    /* A jornada entra na porta de entrada pela linha ACIONAVEL: o dono nao precisa
+       saber quantas jornadas houve, precisa saber quantas ficaram em aberto. */
+    if(D.jornada && (D.jornada.registros||[]).length){
+      var jab=D.jornada.registros.filter(function(x){ return !x.finalizada || !x.fim; }).length;
+      row('#jornada','Jornadas sem encerramento no app', nf(jab));
+    }
     var acao=document.querySelector('#plano .indic .it');
     if(acao) row('#plano','Primeira ação do mês que vem', esc(acao.textContent), '', true);
     if(rows.length<3) return; // com pouco dado a porta de entrada não ajuda
@@ -3127,7 +3397,10 @@ function __boot(){
     /* a frase inteira num SO item de flex: solta, o "<span class=scr>" virava
        item proprio e o gap de 11px do .dgt caia ANTES da virgula ("SEGUNDOS ,
        TOQUE"). O gap existe pro risco do ::before e nao pode sair. */
-    sec.innerHTML='<p class="dgt reveal"><span>O mês inteiro em nove linhas<span class="scr"> · abra qualquer uma</span></span></p>'+
+    /* A contagem SAI DA LISTA. Estava chumbada em "nove" e a lista tinha sete;
+       texto que discorda do que esta na tela e o defeito que ja nos custou caro. */
+    var NUMPT={3:'três',4:'quatro',5:'cinco',6:'seis',7:'sete',8:'oito',9:'nove',10:'dez',11:'onze',12:'doze'};
+    sec.innerHTML='<p class="dgt reveal"><span>O mês inteiro em '+(NUMPT[rows.length]||rows.length)+' linhas<span class="scr">, abra qualquer uma</span></span></p>'+
       '<div class="dgrid reveal">'+rows.join('')+'</div>';
     mn.insertBefore(sec, mn.firstElementChild);
     Array.prototype.forEach.call(sec.querySelectorAll('.reveal'),function(n){ watch(n); });
