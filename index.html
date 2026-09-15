@@ -1071,31 +1071,62 @@ body:not(.light) .jr-leg i.ab{background:#FF6B6B}
 .jr-listas .vazio{color:var(--muted)}
 @media (max-width:1180px){ .jr-quem{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:560px){ .jr-quem{grid-template-columns:1fr} }
-/* O RELOGIO DO MES. Um traco por DIA, nao as jornadas empilhadas: empilhar 22
-   faixas translucidas numa regua de 24h virava borrao, e borrao o olho le como
-   sujeira. Aqui cada dia tem a sua linha, entao o que salta e o dia fora do
-   padrao, que e exatamente o que o dono procura. */
-.jr-rel{margin-top:6px}
-.jr-rel .rw{display:grid;grid-template-columns:164px 1fr;gap:14px;align-items:center;
-  padding:14px 0;border-top:1px solid var(--hair)}
-.jr-rel .rw:first-child{border-top:0}
-.jr-rel .rn{font-family:var(--title);font-weight:700;font-size:13px;color:var(--ink);line-height:1.25}
-.jr-rel .rn small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+/* HORARIO TIPICO E FOLHA DE PONTO. O relogio de 24h com um traco por dia foi
+   REPROVADO pelo Joao: "mega dificil de entender". A causa nao era ajuste, era
+   o formato. Ele exigia tres traducoes antes de o leitor entender qualquer
+   coisa: posicao horizontal vira hora, linha vertical vira dia, buraco vira
+   pausa. Grafico que precisa de manual nao e grafico caro, e grafico ruim.
+   Horario se le em NUMERO. A folha de ponto e a forma que o mundo inteiro ja
+   sabe ler, e ela responde a pergunta inteira sem nenhuma traducao. */
+.jr-tip .tl{display:grid;grid-template-columns:172px repeat(4,1fr);gap:14px;align-items:center;
+  padding:13px 0;border-top:1px solid var(--hair)}
+.jr-tip .tl:first-child{border-top:0}
+.jr-tip .th{color:var(--muted-2);font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase;padding-bottom:7px;border-top:0}
+.jr-tip .rn{font-family:var(--title);font-weight:700;font-size:13px;color:var(--ink);line-height:1.25}
+.jr-tip .rn small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
   color:var(--muted-2);font-weight:400;margin-top:3px}
-.jr-rel svg{display:block;width:100%;height:auto;overflow:visible}
-.jr-eixo{display:grid;grid-template-columns:164px 1fr;gap:14px;margin-bottom:2px}
-.jr-eixo .hh{position:relative;height:13px}
-.jr-eixo .hh b{position:absolute;transform:translateX(-50%);font-family:var(--mono);
-  white-space:nowrap}
-.jr-eixo .hh b.ini{transform:none}
-.jr-eixo .hh b.fim{transform:translateX(-100%)}
-.jr-eixo .hh b{
-  font-size:9px;letter-spacing:.13em;color:var(--muted-2);font-weight:400}
-.jr-leg2{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px}
-.jr-leg2 span{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
-  font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted-2)}
-.jr-leg2 i{width:16px;height:7px;border-radius:2px;flex:0 0 auto}
+.jr-tip .tv{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:16px;
+  font-weight:700;color:var(--ink)}
+.jr-tip .tv em{display:block;font-style:normal;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.06em;color:var(--muted-2);font-weight:400;margin-top:3px}
+.jr-tip .tv.nao{color:var(--muted-2);font-weight:400}
 
+/* A FOLHA. Tres colunas de dias no computador: 31 linhas empilhadas viram parede,
+   e a folha de ponto de verdade tambem se le em colunas. */
+.jr-folha{margin-top:8px}
+.jr-folha .fb{padding:16px 0;border-top:1px solid var(--hair)}
+.jr-folha .fn{font-family:var(--title);font-weight:700;font-size:13px;color:var(--ink);
+  margin-bottom:10px}
+.jr-folha .fn span{font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  color:var(--muted-2);font-weight:400;margin-left:8px}
+.jr-folha .fg{display:grid;grid-template-columns:repeat(3,1fr);gap:0 26px}
+.jr-folha .fr{display:grid;grid-template-columns:26px 1fr 1fr 1fr 44px;gap:6px;
+  padding:4px 0;border-top:1px solid var(--hair);align-items:baseline}
+.jr-folha .fr.cab{border-top:0;color:var(--muted-2);font-family:var(--mono);font-size:8.5px;
+  letter-spacing:.13em;text-transform:uppercase;padding-bottom:6px}
+.jr-folha .fd{font-family:var(--mono);font-size:10px;color:var(--muted-2);letter-spacing:.04em}
+.jr-folha .fh{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:12.5px;
+  color:var(--ink)}
+.jr-folha .ft{font-family:var(--title);font-variant-numeric:tabular-nums;font-size:12.5px;
+  color:var(--ink);text-align:right}
+/* as cinco fichas nao cabem numa linha em telefone estreito: medido, elas
+   pediam 440px numa tela de 320. Quebram em duas linhas, sem rolagem. */
+#jrQuem{flex-wrap:wrap}
+.jr-folha .fr.folga{opacity:.42}
+.jr-folha .fr.folga .fh,.jr-folha .fr.folga .ft{color:var(--muted-2)}
+.jr-folha .fh.vazio{color:var(--muted-2)}
+.jr-folha .fr.aberta .ft{color:#D8121F;font-weight:700}
+body:not(.light) .jr-folha .fr.aberta .ft{color:#FF6B6B}
+.jr-folha .fr.edit .fd::after{content:"*";color:#B8941F;margin-left:2px}
+body:not(.light) .jr-folha .fr.edit .fd::after{color:#C9A84C}
+@media (max-width:1100px){ .jr-folha .fg{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:860px){
+  .jr-tip .tl{grid-template-columns:1fr 1fr;gap:8px 14px}
+  .jr-tip .tl .rn{grid-column:1 / -1}
+  .jr-tip .th{display:none}
+  .jr-folha .fg{grid-template-columns:1fr}
+}
 /* SCORE E O QUE MELHORAR. Score sozinho nao muda nada: ele precisa vir com a
    frase do que fazer, senao vira placar. */
 .jr-score{margin-top:6px}
@@ -3233,65 +3264,86 @@ function __boot(){
         '<div class="jr-num '+(m.ab?'mal':'zero')+'" data-l="em aberto">'+(m.ab||'0')+'</div></div>';
     }).join('');
 
-    // --- o relogio de um motorista: um traco por dia do mes ---
+    // --- horario tipico e folha de ponto ---
+    // Hora se le em NUMERO. A mediana, e nao a media: um dia que virou a noite
+    // puxaria a media para um horario que ele nunca fez.
     var VERDE='#0AA800', DOURADO='#B8941F', VERMELHO='#D8121F';
-    if(document.body.classList.contains('light')===false){}
-    function relogioSVG(m, regs){
-      var LARG=1000, PASSO=8, ALT=ULT*PASSO;
-      function x(min){ return (min/1440)*LARG; }
-      var g='';
-      // fios das horas, de 6 em 6: dao escala sem virar grade
-      [0,6,12,18,24].forEach(function(h){
-        g+='<line x1="'+x(h*60).toFixed(1)+'" y1="0" x2="'+x(h*60).toFixed(1)+'" y2="'+ALT+
-           '" stroke="var(--hair)" stroke-width="1"/>';
-      });
-      var porDia={};
-      regs.forEach(function(r){ (porDia[diaDe(r.inicio)]=porDia[diaDe(r.inicio)]||[]).push(r); });
-      for(var d=1; d<=ULT; d++){
-        var y=(d-1)*PASSO+1.5, h=PASSO-3;
-        (porDia[d]||[]).forEach(function(r){
-          var a=minDia(r.inicio), cor, larg;
-          if(!r.finalizada || !r.fim){ cor=VERMELHO; larg=1440-a; }
-          else { cor = r.editada?DOURADO:VERDE;
-                 larg=(new Date(r.fim)-new Date(r.inicio))/60000; }
-          var resto=larg, ini=a, guarda=0;
-          /* jornada que vira o dia continua no comeco da regua: e a mesma jornada,
-             entao ela aparece nos dois lados em vez de ser cortada e sumir */
-          while(resto>0 && guarda++<3){
-            var seg=Math.min(resto, 1440-ini);
-            g+='<rect x="'+x(ini).toFixed(1)+'" y="'+y+'" width="'+Math.max(x(seg),1.2).toFixed(1)+
-               '" height="'+h+'" rx="1.5" fill="'+cor+'" opacity="'+(r.finalizada?.92:.85)+'"/>';
-            resto-=seg; ini=0;
-          }
-          // a refeicao e o repouso sao RECORTES na barra, com a cor do fundo:
-          // o buraco mostra que ele parou, sem precisar de mais uma cor
-          ['refeicao','repouso'].forEach(function(k){
-            var mk = r.marcos && r.marcos[k];
-            if(!mk || !mk.inicio || !mk.fim) return;
-            var i0=minDia(mk.inicio), i1=minDia(mk.fim);
-            if(i1<i0) i1=1440;
-            g+='<rect x="'+x(i0).toFixed(1)+'" y="'+(y-0.5)+'" width="'+Math.max(x(i1-i0),1.2).toFixed(1)+
-               '" height="'+(h+1)+'" fill="var(--bg)"/>';
-            if(k==='repouso')
-              g+='<rect x="'+x(i0).toFixed(1)+'" y="'+(y+h/2-0.6)+'" width="'+Math.max(x(i1-i0),1.2).toFixed(1)+
-                 '" height="1.2" fill="'+cor+'" opacity=".55"/>';
-          });
-        });
-      }
-      return '<svg viewBox="0 0 '+LARG+' '+ALT+'" preserveAspectRatio="none" role="img" '+
-             'aria-label="Rel\u00f3gio de '+esc(m.nome)+', um tra\u00e7o por dia do m\u00eas">'+g+'</svg>';
+    function hhmm(iso){ return iso.split('T')[1]; }
+    function mediana(v){
+      if(!v.length) return null;
+      var a=v.slice().sort(function(x,y){ return x-y; });
+      return a[Math.floor(a.length/2)];
+    }
+    function comoHora(min){
+      if(min==null) return null;
+      var h=Math.floor(min/60)%24, m=Math.round(min%60);
+      return (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
     }
     var porMotRegs={};
     R.forEach(function(r){ (porMotRegs[r.codigo]=porMotRegs[r.codigo]||[]).push(r); });
-    var eixo='<div class="jr-eixo"><div></div><div class="hh">'+
-      [0,6,12,18,24].map(function(h){
-        var k = h===0?' ini':(h===24?' fim':'');
-        return '<b class="'+k.trim()+'" style="left:'+(h/24*100)+'%">'+(h<10?'0'+h:h)+'h</b>'; }).join('')+'</div></div>';
-    var relogios = ordem.map(function(c){
-      var m=porMot[c];
-      return '<div class="rw"><div class="rn">'+esc(m.nome)+
-        '<small>'+esc(m.codigo)+'</small></div><div>'+relogioSVG(m, porMotRegs[c]||[])+'</div></div>';
-    }).join('');
+
+    var tipico = ordem.map(function(c){
+      var m=porMot[c], regs=porMotRegs[c]||[];
+      var ent=[], alm=[], sai=[], dur=[];
+      regs.forEach(function(r){
+        ent.push(minDia(r.inicio));
+        if(r.marcos && r.marcos.refeicao && r.marcos.refeicao.inicio) alm.push(minDia(r.marcos.refeicao.inicio));
+        if(r.finalizada && r.fim){
+          sai.push(minDia(r.fim));
+          dur.push((new Date(r.fim)-new Date(r.inicio))/60000);
+        }
+      });
+      return {nome:m.nome, codigo:m.codigo, ent:mediana(ent), alm:mediana(alm),
+              sai:mediana(sai), dur:mediana(dur), semAlm: regs.length-alm.length};
+    });
+    var linhasTip = '<div class="tl th"><div>Motorista</div><div>Entra</div><div>Almo\u00e7a</div>'+
+      '<div>Sai</div><div>Jornada</div></div>' +
+      tipico.map(function(t){
+        return '<div class="tl"><div class="rn">'+esc(t.nome)+'<small>'+esc(t.codigo)+'</small></div>'+
+          '<div class="tv">'+comoHora(t.ent)+'<em>em geral</em></div>'+
+          (t.alm!=null
+            ? '<div class="tv">'+comoHora(t.alm)+'<em>'+(t.semAlm?(t.semAlm+(t.semAlm===1?' dia sem marcar':' dias sem marcar')):'todo dia')+'</em></div>'
+            : '<div class="tv nao">n\u00e3o marcou<em>nenhum dia do m\u00eas</em></div>')+
+          '<div class="tv">'+(t.sai!=null?comoHora(t.sai):'')+'<em>em geral</em></div>'+
+          '<div class="tv">'+(t.dur!=null?hm(t.dur):'')+'<em>em geral</em></div></div>';
+      }).join('');
+
+    // a folha: TODOS os dias do mes, inclusive os que ele nao rodou
+    function folhaDe(c){
+      var m=porMot[c], regs=porMotRegs[c]||[], porDia={};
+      regs.forEach(function(r){ porDia[diaDe(r.inicio)] = r; });
+      var cab='<div class="fr cab"><div>Dia</div><div>Entrada</div><div>Almo\u00e7o</div>'+
+              '<div>Sa\u00edda</div><div>Total</div></div>';
+      var col=['','',''], porCol=Math.ceil(ULT/3);
+      for(var d=1; d<=ULT; d++){
+        var r=porDia[d], k=Math.min(2, Math.floor((d-1)/porCol));
+        var dd=(d<10?'0':'')+d;
+        if(!r){
+          col[k]+='<div class="fr folga"><div class="fd">'+dd+'</div>'+
+            '<div class="fh vazio"></div><div class="fh vazio"></div>'+
+            '<div class="fh vazio"></div><div class="ft"></div></div>';
+          continue;
+        }
+        var aberta = !r.finalizada || !r.fim;
+        var ref = r.marcos && r.marcos.refeicao;
+        var total = aberta ? 'aberta' : hm((new Date(r.fim)-new Date(r.inicio))/60000);
+        col[k]+='<div class="fr'+(aberta?' aberta':'')+(r.editada?' edit':'')+'">'+
+          '<div class="fd">'+dd+'</div>'+
+          '<div class="fh">'+hhmm(r.inicio)+'</div>'+
+          '<div class="fh'+(ref?'':' vazio')+'">'+(ref?hhmm(ref.inicio):'')+'</div>'+
+          '<div class="fh'+(aberta?' vazio':'')+'">'+(aberta?'':hhmm(r.fim))+'</div>'+
+          '<div class="ft">'+total+'</div></div>';
+      }
+      return '<div class="fb" data-mot="'+esc(m.codigo)+'"><div class="fn">'+esc(m.nome)+'<span>'+esc(m.codigo)+'</span></div>'+
+        '<div class="fg">'+col.map(function(x){ return '<div>'+cab+x+'</div>'; }).join('')+'</div></div>';
+    }
+    var ordemFolha = ordem.slice().sort(function(a,b){ return porMot[b].score-porMot[a].score; });
+    var folhas = ordemFolha.map(folhaDe).join('');
+    var fichas = '<div class="controls"><span class="ctl-label">Ver o m\u00eas de</span>'+
+      '<div class="segset" id="jrQuem" role="group" aria-label="Escolher motorista">'+
+      ordemFolha.map(function(c,i){
+        return '<button data-m="'+esc(c)+'" aria-pressed="'+(i===0?'true':'false')+'">'+
+          esc(porMot[c].nome.split(' ')[0])+'</button>'; }).join('')+'</div></div>';
 
     // --- o mes dia a dia, no molde do chart do Spell UI ---
     function caminho(vals, L, A, arred){
@@ -3415,16 +3467,14 @@ function __boot(){
         (refeicao.length?('<div class="li"><span class="lk">Menos marcaram refei\u00e7\u00e3o, em % das jornadas que encerraram</span>'+
           '<span class="lv">'+pctLista(refeicao)+'</span></div>'):'')+
       '</div>'+
-      '<p class="alerts-cap reveal" style="margin-top:26px">O rel\u00f3gio do m\u00eas, um tra\u00e7o por dia</p>'+
-      '<p class="note reveal" style="margin:0 0 14px">Cada linha \u00e9 um dia, do dia 01 no alto ao dia '+
-        (ULT<10?'0'+ULT:ULT)+' embaixo. A barra vai do in\u00edcio ao encerramento, e o buraco nela '+
-        '\u00e9 a refei\u00e7\u00e3o ou o repouso que o motorista marcou.</p>'+
-      '<div class="jr-rel reveal">'+eixo+relogios+'</div>'+
-      '<div class="jr-leg2 reveal">'+
-        '<span><i style="background:'+VERDE+'"></i>Encerrada pelo motorista</span>'+
-        '<span><i style="background:'+DOURADO+'"></i>Encerrada pelo escrit\u00f3rio</span>'+
-        '<span><i style="background:'+VERMELHO+'"></i>Nunca encerrada</span>'+
-        '<span><i style="background:var(--hair)"></i>Buraco na barra, refei\u00e7\u00e3o ou repouso</span></div>'+
+      '<p class="alerts-cap reveal" style="margin-top:26px">O hor\u00e1rio de cada um</p>'+
+      '<div class="jr-tip reveal">'+linhasTip+'</div>'+
+      '<p class="alerts-cap reveal" style="margin-top:26px">A folha do m\u00eas, dia a dia</p>'+
+      '<p class="note reveal" style="margin:0 0 12px">Todos os dias do m\u00eas, inclusive os que ele n\u00e3o '+
+        'rodou: dia em cinza e linha em branco \u00e9 dia sem registro. O <b>*</b> ao lado do dia '+
+        'marca a jornada que o escrit\u00f3rio fechou na m\u00e3o.</p>'+
+      fichas+
+      '<div class="jr-folha reveal" id="jrFolha">'+folhas+'</div>'+
       '<p class="alerts-cap reveal" style="margin-top:26px">Horas em jornada, dia a dia</p>'+
       graf+
       '<p class="alerts-cap reveal" style="margin-top:26px">Como cada um est\u00e1 indo, e o que melhorar</p>'+
@@ -3458,6 +3508,21 @@ function __boot(){
       countUp(el('jrE'), editadas);
       countUp(el('jrL'), longas);
     });
+    (function(){
+      /* O MINI SISTEMA: uma folha por vez. As 5 folhas somam 155 linhas de dia,
+         e empilhadas viram parede; a pergunta do dono e sempre sobre UM nome. */
+      var cx=el('jrFolha'), nav=el('jrQuem'); if(!cx||!nav) return;
+      var fbs=Array.prototype.slice.call(cx.querySelectorAll('.fb'));
+      function mostra(cod){
+        fbs.forEach(function(f){ f.hidden = f.getAttribute('data-mot')!==cod; });
+        Array.prototype.forEach.call(nav.querySelectorAll('button'), function(b){
+          b.setAttribute('aria-pressed', b.getAttribute('data-m')===cod ? 'true':'false'); });
+      }
+      nav.addEventListener('click', function(e){
+        var b=e.target.closest('button'); if(b) mostra(b.getAttribute('data-m'));
+      });
+      if(fbs.length) mostra(fbs[0].getAttribute('data-mot'));
+    })();
     (function(){
       /* CURSOR QUE ENCAIXA NO PONTO. Guia que pousa entre dois dias mostra valor
          de dia nenhum. E o ponto NAO leva halo: como ele acompanha o dedo, halo
